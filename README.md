@@ -7,11 +7,23 @@ BepInEx、MelonLoader 等插件框架。
 > 本 MOD 与特定游戏版本强绑定。游戏本体更新后，类名、方法签名、字段偏移和
 > 场景布局都需要重新核对。
 
+## 一键安装包
+
+一键安装包位于仓库根目录：
+
+```text
+SecretFlasherManaka.EscapeFromManaka.Setup.exe
+```
+
+该安装包已经包含 MOD 所需的装备、地图、音频、字体、更新宿主和其他运行时资源。
+关闭游戏后直接运行安装包，选择游戏主目录即可完成安装，无需手动复制文件。
+
 ## 安装
 
 1. 关闭游戏。
-2. 运行 `SecretFlasherManaka.EscapeFromManaka.Setup.exe`。
-3. 选择包含以下文件的游戏目录：
+2. 运行仓库根目录的一键安装包
+   `SecretFlasherManaka.EscapeFromManaka.Setup.exe`。
+3. 选择游戏主目录，通常包含以下文件：
 
 ```text
 SecretFlasherManaka.exe

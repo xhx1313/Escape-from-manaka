@@ -32,6 +32,7 @@ id_rsa*
 
 # Build products and archives are reproducible from source.
 *.exe
+!/SecretFlasherManaka.EscapeFromManaka.Setup.exe
 *.dll
 *.pdb
 *.zip
