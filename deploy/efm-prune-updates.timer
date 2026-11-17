@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily Escape from Manaka update object pruning
+
+[Timer]
+OnCalendar=*-*-* 03:17:00
+Persistent=true
+RandomizedDelaySec=20m
+
+[Install]
+WantedBy=timers.target

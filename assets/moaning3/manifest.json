@@ -1,0 +1,24 @@
+{
+  "name": "Moaning3 audio pack",
+  "pack": "ryuzen-nikomi-2",
+  "version": "1.0.0",
+  "runtimeRoot": "Moaning3/ryuzen-nikomi-2",
+  "source": "05ryuzen-nikomi(2破防)",
+  "expectedFileCount": 140,
+  "expectedBytes": 60638352,
+  "format": {
+    "container": "RIFF/WAVE",
+    "audioFormat": 3,
+    "channels": 2,
+    "sampleRate": 48000,
+    "bitsPerSample": 32
+  },
+  "categories": {
+    "gasping": 15,
+    "low": 41,
+    "medium": 35,
+    "high": 35,
+    "peak": 8,
+    "orgasm": 6
+  }
+}

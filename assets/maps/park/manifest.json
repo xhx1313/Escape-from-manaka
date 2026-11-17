@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scene": "park",
+  "displayName": "综合公园",
+  "stageType": 14,
+  "level": "level5",
+  "rootName": "Environment",
+  "extraGroundRootNames": [],
+  "debugOnly": false,
+  "imageSize": 2560,
+  "previewSize": 512,
+  "bounds": {
+    "minX": 21.07611592102051,
+    "maxX": 144.7036120147705,
+    "minY": 49.002,
+    "maxY": 49.002,
+    "minZ": 19.792262260437013,
+    "maxZ": 142.649912651062
+  },
+  "floorCount": 1,
+  "floors": [
+    {
+      "index": 1,
+      "label": "1F",
+      "height": 49.002,
+      "image2560": "floor_01_2560.png",
+      "preview512": "floor_01_512.png",
+      "minX": 21.07611592102051,
+      "maxX": 144.7036120147705,
+      "minY": 49.002,
+      "maxY": 49.002,
+      "minZ": 19.792262260437013,
+      "maxZ": 142.649912651062,
+      "renderers": 1404,
+      "floorTriangles": 219579,
+      "wallTriangles": 204259,
+      "floorPixels": 2409026,
+      "wallPixels": 329354,
+      "colliderPixels": 469608
+    }
+  ],
+  "contactSheet": "all_floors_512.png"
+}

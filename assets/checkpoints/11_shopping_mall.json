@@ -1,0 +1,360 @@
+{
+  "schemaVersion": 1,
+  "stage": {
+    "key": "shopping_mall",
+    "type": 11,
+    "scene": "Mall",
+    "displayName": "购物中心"
+  },
+  "defaults": {
+    "visual": {
+      "diameter": 0.8,
+      "color": "#FFFFFFFF",
+      "heightOffset": 0.02
+    },
+    "trigger": {
+      "mode": "manual_interact",
+      "radius": 1.1,
+      "heightTolerance": 1.5,
+      "once": true
+    }
+  },
+  "taskPool": [
+    {
+      "id": "mall.walk_30",
+      "label": "漫步I",
+      "description": "行走30米；保持裸露且全程行走。",
+      "difficulty": 1,
+      "kind": "distance",
+      "gait": "walk",
+      "distance": 30,
+      "targetCount": 0,
+      "protectionSeconds": 3,
+      "interrupt": "reset"
+    },
+    {
+      "id": "mall.crawl_20",
+      "label": "匍匐I",
+      "description": "爬行20米；保持裸露且全程爬行。",
+      "difficulty": 2,
+      "kind": "distance",
+      "gait": "crawl",
+      "distance": 20,
+      "targetCount": 0,
+      "protectionSeconds": 5,
+      "interrupt": "reset"
+    },
+    {
+      "id": "mall.move_current",
+      "label": "移动II",
+      "description": "从原地移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "kind": "reach",
+      "gait": "any",
+      "targetCount": 1,
+      "startMode": "current",
+      "protectionSeconds": 3,
+      "interrupt": "reset"
+    },
+    {
+      "id": "mall.move_random",
+      "label": "移动III",
+      "description": "从随机位置移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "kind": "reach",
+      "gait": "any",
+      "targetCount": 1,
+      "startMode": "random",
+      "protectionSeconds": 5,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.walk_current",
+      "label": "漫步II",
+      "description": "从原地行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "kind": "reach",
+      "gait": "walk",
+      "targetCount": 1,
+      "startMode": "current",
+      "protectionSeconds": 3,
+      "interrupt": "reset"
+    },
+    {
+      "id": "mall.walk_random",
+      "label": "漫步III",
+      "description": "从随机位置行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "kind": "reach",
+      "gait": "walk",
+      "targetCount": 1,
+      "startMode": "random",
+      "protectionSeconds": 5,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.crawl_current",
+      "label": "匍匐II",
+      "description": "从原地爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "kind": "reach",
+      "gait": "crawl",
+      "targetCount": 1,
+      "startMode": "current",
+      "protectionSeconds": 5,
+      "interrupt": "reset"
+    },
+    {
+      "id": "mall.crawl_random",
+      "label": "匍匐III",
+      "description": "从随机位置爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "kind": "reach",
+      "gait": "crawl",
+      "targetCount": 1,
+      "startMode": "random",
+      "protectionSeconds": 7,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.route_any",
+      "label": "移动IV",
+      "description": "从原地开始经过3个检查点；全程保持裸露。",
+      "difficulty": 3,
+      "kind": "checkpoints",
+      "gait": "any",
+      "targetCount": 3,
+      "startMode": "current",
+      "protectionSeconds": 5,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.route_walk",
+      "label": "漫步IV",
+      "description": "从原地开始以行走姿态经过3个检查点。",
+      "difficulty": 4,
+      "kind": "checkpoints",
+      "gait": "walk",
+      "targetCount": 3,
+      "startMode": "current",
+      "protectionSeconds": 5,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.route_crawl",
+      "label": "匍匐IV",
+      "description": "从原地开始以爬行姿态经过3个检查点。",
+      "difficulty": 5,
+      "kind": "checkpoints",
+      "gait": "crawl",
+      "targetCount": 3,
+      "startMode": "current",
+      "protectionSeconds": 7,
+      "interrupt": "fail"
+    },
+    {
+      "id": "mall.lurk_10",
+      "label": "潜伏I",
+      "description": "在路人附近保持裸露累计10秒；离开路人不会清空已有进度。",
+      "difficulty": 1,
+      "kind": "near_npc_hold",
+      "requiredSeconds": 10,
+      "protectionSeconds": 0,
+      "interrupt": "keep",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.lurk_20",
+      "label": "潜伏II",
+      "description": "在路人附近保持裸露累计20秒；离开路人不会清空已有进度。",
+      "difficulty": 2,
+      "kind": "near_npc_hold",
+      "requiredSeconds": 20,
+      "protectionSeconds": 0,
+      "interrupt": "keep",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.lurk_orgasm",
+      "label": "潜伏III",
+      "description": "在高潮期间位于任务认定的路人附近。",
+      "difficulty": 1,
+      "kind": "near_npc_orgasm",
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": false
+    },
+    {
+      "id": "mall.pose_light",
+      "label": "指定动作I",
+      "description": "保持裸露，在光源下完成随机的指定动作10秒。",
+      "difficulty": 1,
+      "kind": "pose_hold",
+      "requiredSeconds": 10,
+      "lightOnly": true,
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.pose_location",
+      "label": "指定动作II",
+      "description": "到任务黄点按F确认，在该位置保持随机的指定动作10秒。",
+      "difficulty": 2,
+      "kind": "pose_hold",
+      "requiredSeconds": 10,
+      "targetCount": 1,
+      "startMode": "current",
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.orgasm_location",
+      "label": "高潮I",
+      "description": "进入任务黄点范围后触发高潮动画。",
+      "difficulty": 2,
+      "kind": "orgasm_location",
+      "targetCount": 1,
+      "startMode": "current",
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": false
+    },
+    {
+      "id": "mall.orgasm_checkpoints",
+      "label": "高潮II",
+      "description": "保持全程裸露，在三个任务黄点范围内分别触发高潮动画。",
+      "difficulty": 5,
+      "kind": "orgasm_checkpoints",
+      "targetCount": 3,
+      "startMode": "current",
+      "protectionSeconds": 5,
+      "interrupt": "fail",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.vending",
+      "label": "售货机",
+      "description": "以裸露状态使用一次售货机。",
+      "difficulty": 1,
+      "kind": "vending_once",
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.bench_30",
+      "label": "长椅",
+      "description": "在长椅上保持裸露30秒；离开长椅或切换大衣时进度清零。",
+      "difficulty": 2,
+      "kind": "bench_hold",
+      "requiredSeconds": 30,
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.escalator",
+      "label": "自动扶梯",
+      "description": "保持裸露，完整乘坐一次自动扶梯并从另一端离开。",
+      "difficulty": 4,
+      "kind": "escalator_once",
+      "requiredSeconds": 2,
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.elevator_30",
+      "label": "电梯I",
+      "description": "在电梯内保持裸露30秒；离开电梯时进度清零。",
+      "difficulty": 2,
+      "kind": "elevator_hold",
+      "requiredSeconds": 30,
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    },
+    {
+      "id": "mall.elevator_npc_10",
+      "label": "电梯II",
+      "description": "与路人一起在电梯内保持裸露10秒；任一条件中断时进度清零。",
+      "difficulty": 2,
+      "kind": "elevator_npc_hold",
+      "requiredSeconds": 10,
+      "protectionSeconds": 0,
+      "interrupt": "reset",
+      "requiresNaked": true
+    }
+  ],
+  "supplyRules": {
+    "pointQualityWeights": [
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0
+    ],
+    "itemQualityWeights": [
+      [
+        53.8,
+        24.4,
+        10.6,
+        6.5,
+        4.6
+      ],
+      [
+        20.4,
+        44.9,
+        20.4,
+        8.9,
+        5.4
+      ],
+      [
+        8.6,
+        19.7,
+        43.4,
+        19.7,
+        8.6
+      ],
+      [
+        5.4,
+        8.9,
+        20.4,
+        44.9,
+        20.4
+      ],
+      [
+        4.6,
+        6.5,
+        10.6,
+        24.4,
+        53.8
+      ]
+    ]
+  },
+  "checkpoints": [
+    {
+      "id": "shopping_mall.spawn.01",
+      "kind": "spawn",
+      "position": {
+        "x": 19.24,
+        "y": -8.53,
+        "z": 13.6
+      },
+      "visual": {
+        "visible": false
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ]
+    }
+  ]
+}

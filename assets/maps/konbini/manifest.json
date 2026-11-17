@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "scene": "konbini",
+  "displayName": "便利店",
+  "stageType": 6,
+  "level": "level2",
+  "rootName": "Environment",
+  "debugOnly": false,
+  "imageSize": 2560,
+  "previewSize": 512,
+  "bounds": {
+    "minX": -6.082716369628907,
+    "maxX": 5.0970052719116214,
+    "minY": 0.113,
+    "maxY": 0.113,
+    "minZ": -16.61207046508789,
+    "maxZ": -3.5166250228881837
+  },
+  "floorCount": 1,
+  "floors": [
+    {
+      "index": 1,
+      "label": "1F",
+      "height": 0.113,
+      "image2560": "floor_01_2560.png",
+      "preview512": "floor_01_512.png",
+      "minX": -6.082716369628907,
+      "maxX": 5.0970052719116214,
+      "minY": 0.113,
+      "maxY": 0.113,
+      "minZ": -16.61207046508789,
+      "maxZ": -3.5166250228881837,
+      "renderers": 770,
+      "floorTriangles": 71344,
+      "wallTriangles": 77583,
+      "floorPixels": 4908750,
+      "wallPixels": 85315,
+      "colliderPixels": 39262
+    }
+  ],
+  "contactSheet": "all_floors_512.png"
+}

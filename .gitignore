@@ -1,0 +1,50 @@
+# Agent and developer documentation is local-only. The user-facing root
+# README remains part of the repository.
+*.md
+!/README.md
+
+# Local validation, generated packages, release staging and backups.
+/artifacts/
+/publish/
+/work/
+/sandbox/
+/sandbox2/
+/smoke/
+
+# Local screenshots used during development.
+/title-*.png
+*.bak-*
+*.supply-bak-*
+*.badcopy
+
+# Never commit credentials or private signing material.
+/deploy/trust/dev-access-token.txt
+/deploy/ops.local.psd1
+/deploy/efm-updates.nginx.conf
+/deploy/install_update_service.sh
+*.pem
+*.key
+*.pfx
+*.p12
+id_rsa*
+.env
+.env.*
+
+# Build products and archives are reproducible from source.
+*.exe
+*.dll
+*.pdb
+*.zip
+*.log
+*.dmp
+*.ilk
+*.obj
+*.o
+
+# Editor and operating-system metadata.
+/.vs/
+/.vscode/
+__pycache__/
+*.pyc
+Thumbs.db
+desktop.ini

@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "scenes": [
+    {
+      "scene": "konbini",
+      "displayName": "便利店",
+      "stageType": 6,
+      "floorCount": 1,
+      "manifest": "konbini/manifest.json",
+      "contactSheet": "konbini/all_floors_512.png"
+    },
+    {
+      "scene": "fashion_shop",
+      "displayName": "服装店",
+      "stageType": 7,
+      "floorCount": 1,
+      "manifest": "fashion_shop/manifest.json",
+      "contactSheet": "fashion_shop/all_floors_512.png"
+    },
+    {
+      "scene": "residence",
+      "displayName": "住宅区",
+      "stageType": 10,
+      "floorCount": 1,
+      "manifest": "residence/manifest.json",
+      "contactSheet": "residence/all_floors_512.png"
+    },
+    {
+      "scene": "station_front",
+      "displayName": "繁华街",
+      "stageType": 12,
+      "floorCount": 1,
+      "manifest": "station_front/manifest.json",
+      "contactSheet": "station_front/all_floors_512.png"
+    },
+    {
+      "scene": "park",
+      "displayName": "综合公园",
+      "stageType": 14,
+      "floorCount": 1,
+      "manifest": "park/manifest.json",
+      "contactSheet": "park/all_floors_512.png"
+    },
+    {
+      "scene": "mall",
+      "displayName": "购物中心",
+      "stageType": 11,
+      "floorCount": 3,
+      "manifest": "mall/manifest.json",
+      "contactSheet": "mall/all_floors_512.png"
+    },
+    {
+      "scene": "mansion",
+      "displayName": "公寓前",
+      "stageType": 15,
+      "floorCount": 10,
+      "manifest": "mansion/manifest.json",
+      "contactSheet": "mansion/all_floors_512.png"
+    }
+  ]
+}

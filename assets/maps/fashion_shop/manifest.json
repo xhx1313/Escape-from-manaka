@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "scene": "fashion_shop",
+  "displayName": "服装店",
+  "stageType": 7,
+  "level": "level6",
+  "rootName": "Environment",
+  "debugOnly": false,
+  "imageSize": 2560,
+  "previewSize": 512,
+  "bounds": {
+    "minX": 49.47385940551758,
+    "maxX": 66.71204223632813,
+    "minY": 0.075,
+    "maxY": 0.075,
+    "minZ": -156.609716796875,
+    "maxZ": -134.6255889892578
+  },
+  "floorCount": 1,
+  "floors": [
+    {
+      "index": 1,
+      "label": "1F",
+      "height": 0.075,
+      "image2560": "floor_01_2560.png",
+      "preview512": "floor_01_512.png",
+      "minX": 49.47385940551758,
+      "maxX": 66.71204223632813,
+      "minY": 0.075,
+      "maxY": 0.075,
+      "minZ": -156.609716796875,
+      "maxZ": -134.6255889892578,
+      "renderers": 37,
+      "floorTriangles": 1749,
+      "wallTriangles": 2173,
+      "floorPixels": 6213966,
+      "wallPixels": 32793,
+      "colliderPixels": 987216
+    }
+  ],
+  "contactSheet": "all_floors_512.png"
+}

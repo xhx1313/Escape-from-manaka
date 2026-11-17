@@ -1,0 +1,9 @@
+[Unit]
+Description=Prune Escape from Manaka update objects
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/python3 /usr/local/sbin/efm-prune-updates.py
+User=root
+Group=root

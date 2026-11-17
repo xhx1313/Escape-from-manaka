@@ -1,0 +1,654 @@
+{
+  "checkpoints": [
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.01",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 5,
+        "sourceNote": ""
+      },
+      "position": {
+        "x": 55.41,
+        "y": 0.08,
+        "z": -153.13
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.02",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 4,
+        "sourceNote": ""
+      },
+      "position": {
+        "x": 65.92,
+        "y": 0.07,
+        "z": -149.81
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.03",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 3,
+        "sourceNote": ""
+      },
+      "position": {
+        "x": 61.79,
+        "y": 0.74,
+        "z": -140.12
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.04",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 2,
+        "sourceNote": ""
+      },
+      "position": {
+        "x": 65.96,
+        "y": 0.07,
+        "z": -135.48
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.05",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 1,
+        "sourceNote": ""
+      },
+      "position": {
+        "x": 55.28,
+        "y": 0.07,
+        "z": -136.87
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.06",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 0.5,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 52.95,
+        "y": 0.08,
+        "z": -139.89
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.extract.01",
+      "kind": "extract",
+      "metadata": {
+        "requiresTask": false
+      },
+      "position": {
+        "x": 52.77,
+        "y": 0.08,
+        "z": -141.28
+      },
+      "visual": {
+        "color": "#38D6BDFF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.transfer.01",
+      "kind": "transfer",
+      "metadata": {
+        "targetCheckpointId": "shopping_mall.spawn.01",
+        "targetStageType": 11
+      },
+      "position": {
+        "x": 62.11,
+        "y": 0.08,
+        "z": -153.08
+      },
+      "visual": {
+        "color": "#38D6BDFF"
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "fashion_shop.spawn.01",
+      "kind": "spawn",
+      "metadata": {},
+      "position": {
+        "x": 59.55,
+        "y": 0.07,
+        "z": -152.84
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.02",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 61.78,
+        "y": 0.07,
+        "z": -145.62
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.03",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 60.91,
+        "y": 0.07,
+        "z": -138.81
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.04",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 60.41,
+        "y": 0.07,
+        "z": -135.88
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.05",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 64.48,
+        "y": 0.07,
+        "z": -144.72
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.06",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 65.46,
+        "y": 0.08,
+        "z": -139.08
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.07",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 57.64,
+        "y": 0.07,
+        "z": -142.59
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.08",
+      "kind": "task_random",
+      "metadata": {},
+      "position": {
+        "x": 55.77,
+        "y": 0.07,
+        "z": -149.81
+      },
+      "trigger": {
+        "mode": "none"
+      },
+      "visual": {
+        "color": "#FFE600FF"
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "fashion_shop.spawn.map_editor.01",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 52.76,
+        "y": 0.07,
+        "z": -141.17
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "fashion_shop.spawn.map_editor.02",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 65.22,
+        "y": 0.07,
+        "z": -136.05
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    }
+  ],
+  "defaults": {
+    "trigger": {
+      "heightTolerance": 1.5,
+      "mode": "manual_interact",
+      "once": true,
+      "radius": 1.1
+    },
+    "visual": {
+      "color": "#FFFFFFFF",
+      "diameter": 0.8,
+      "heightOffset": 0.02
+    }
+  },
+  "schemaVersion": 1,
+  "stage": {
+    "displayName": "服装店",
+    "key": "fashion_shop",
+    "scene": "Fashion_shop",
+    "type": 7
+  },
+  "supplyRules": {
+    "itemQualityWeights": [
+      [
+        53.8,
+        24.4,
+        10.6,
+        6.5,
+        4.6
+      ],
+      [
+        20.4,
+        44.9,
+        20.4,
+        8.9,
+        5.4
+      ],
+      [
+        8.6,
+        19.7,
+        43.4,
+        19.7,
+        8.6
+      ],
+      [
+        5.4,
+        8.9,
+        20.4,
+        44.9,
+        20.4
+      ],
+      [
+        4.6,
+        6.5,
+        10.6,
+        24.4,
+        53.8
+      ]
+    ],
+    "pointQualityWeights": [
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0
+    ]
+  },
+  "taskPool": [
+    {
+      "description": "行走15米；保持裸露且全程行走。",
+      "difficulty": 1,
+      "distance": 15,
+      "gait": "walk",
+      "id": "fashion.walk_15",
+      "interrupt": "reset",
+      "kind": "distance",
+      "label": "漫步I",
+      "protectionSeconds": 3,
+      "targetCount": 0
+    },
+    {
+      "description": "从原地移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "distance": 0,
+      "gait": "any",
+      "id": "fashion.move_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "移动II",
+      "protectionSeconds": 3,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "distance": 0,
+      "gait": "any",
+      "id": "fashion.move_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "移动III",
+      "protectionSeconds": 5,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "爬行10米；保持裸露且全程爬行。",
+      "difficulty": 2,
+      "distance": 10,
+      "gait": "crawl",
+      "id": "fashion.crawl_10",
+      "interrupt": "reset",
+      "kind": "distance",
+      "label": "匍匐I",
+      "protectionSeconds": 5,
+      "targetCount": 0
+    },
+    {
+      "description": "从原地行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "distance": 0,
+      "gait": "walk",
+      "id": "fashion.walk_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "漫步II",
+      "protectionSeconds": 3,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "distance": 0,
+      "gait": "walk",
+      "id": "fashion.walk_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "漫步III",
+      "protectionSeconds": 5,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "从原地爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "distance": 0,
+      "gait": "crawl",
+      "id": "fashion.crawl_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "匍匐II",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "distance": 0,
+      "gait": "crawl",
+      "id": "fashion.crawl_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "匍匐III",
+      "protectionSeconds": 7,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "从原地开始经过3个检查点；全程保持裸露。",
+      "difficulty": 3,
+      "distance": 0,
+      "gait": "any",
+      "id": "fashion.route_any",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "移动IV",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "从原地开始以行走姿态经过3个检查点。",
+      "difficulty": 4,
+      "distance": 0,
+      "gait": "walk",
+      "id": "fashion.route_walk",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "漫步IV",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "从原地开始以爬行姿态经过3个检查点。",
+      "difficulty": 5,
+      "distance": 0,
+      "gait": "crawl",
+      "id": "fashion.route_crawl",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "匍匐IV",
+      "protectionSeconds": 7,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "在路人附近保持裸露累计10秒；离开路人不会清空已有进度。",
+      "difficulty": 1,
+      "id": "fashion.lurk_10",
+      "interrupt": "keep",
+      "kind": "near_npc_hold",
+      "label": "潜伏I",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true
+    },
+    {
+      "description": "在路人附近保持裸露累计20秒；离开路人不会清空已有进度。",
+      "difficulty": 2,
+      "id": "fashion.lurk_20",
+      "interrupt": "keep",
+      "kind": "near_npc_hold",
+      "label": "潜伏II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 20,
+      "requiresNaked": true
+    },
+    {
+      "description": "在高潮期间位于任务认定的路人附近。",
+      "difficulty": 1,
+      "id": "fashion.lurk_orgasm",
+      "interrupt": "reset",
+      "kind": "near_npc_orgasm",
+      "label": "潜伏III",
+      "protectionSeconds": 0,
+      "requiresNaked": false
+    },
+    {
+      "description": "到任务黄点按F确认，在该位置保持随机的指定动作10秒。",
+      "difficulty": 2,
+      "id": "fashion.pose_location",
+      "interrupt": "reset",
+      "kind": "pose_hold",
+      "label": "指定动作II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "进入任务黄点范围后触发高潮动画。",
+      "difficulty": 2,
+      "id": "fashion.orgasm_location",
+      "interrupt": "reset",
+      "kind": "orgasm_location",
+      "label": "高潮I",
+      "protectionSeconds": 0,
+      "requiresNaked": false,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "保持全程裸露，在三个任务黄点范围内分别触发高潮动画。",
+      "difficulty": 5,
+      "id": "fashion.orgasm_checkpoints",
+      "interrupt": "fail",
+      "kind": "orgasm_checkpoints",
+      "label": "高潮II",
+      "protectionSeconds": 5,
+      "requiresNaked": true,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "以裸露状态使用一次售货机。",
+      "difficulty": 1,
+      "id": "fashion.vending",
+      "interrupt": "reset",
+      "kind": "vending_once",
+      "label": "售货机",
+      "protectionSeconds": 0,
+      "requiresNaked": true
+    },
+    {
+      "description": "在长椅上保持裸露30秒；离开长椅或切换大衣时进度清零。",
+      "difficulty": 2,
+      "id": "fashion.bench_30",
+      "interrupt": "reset",
+      "kind": "bench_hold",
+      "label": "长椅",
+      "protectionSeconds": 0,
+      "requiredSeconds": 30,
+      "requiresNaked": true
+    },
+    {
+      "description": "在电梯内保持裸露30秒；离开电梯时进度清零。",
+      "difficulty": 2,
+      "id": "fashion.elevator_30",
+      "interrupt": "reset",
+      "kind": "elevator_hold",
+      "label": "电梯I",
+      "protectionSeconds": 0,
+      "requiredSeconds": 30,
+      "requiresNaked": true
+    },
+    {
+      "description": "与路人一起在电梯内保持裸露10秒；任一条件中断时进度清零。",
+      "difficulty": 2,
+      "id": "fashion.elevator_npc_10",
+      "interrupt": "reset",
+      "kind": "elevator_npc_hold",
+      "label": "电梯II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true
+    }
+  ]
+}

@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "scene": "station_front",
+  "displayName": "繁华街",
+  "stageType": 12,
+  "level": "level3",
+  "rootName": "Environment",
+  "debugOnly": false,
+  "imageSize": 2560,
+  "previewSize": 512,
+  "bounds": {
+    "minX": -361.7434607543945,
+    "maxX": -165.17647637939453,
+    "minY": 0.0,
+    "maxY": 0.0,
+    "minZ": -82.46639263916016,
+    "maxZ": 37.54468548583984
+  },
+  "floorCount": 1,
+  "floors": [
+    {
+      "index": 1,
+      "label": "1F",
+      "height": 0.0,
+      "image2560": "floor_01_2560.png",
+      "preview512": "floor_01_512.png",
+      "minX": -361.7434607543945,
+      "maxX": -165.17647637939453,
+      "minY": 0.0,
+      "maxY": 0.0,
+      "minZ": -82.46639263916016,
+      "maxZ": 37.54468548583984,
+      "renderers": 3137,
+      "floorTriangles": 608904,
+      "wallTriangles": 665359,
+      "floorPixels": 5003153,
+      "wallPixels": 17269,
+      "colliderPixels": 1262009
+    }
+  ],
+  "contactSheet": "all_floors_512.png"
+}

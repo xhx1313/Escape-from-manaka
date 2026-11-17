@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "scene": "residence",
+  "displayName": "住宅区",
+  "stageType": 10,
+  "level": "level8",
+  "rootName": "Environment",
+  "extraGroundRootNames": [],
+  "debugOnly": false,
+  "imageSize": 2560,
+  "previewSize": 512,
+  "bounds": {
+    "minX": -60.341347976684574,
+    "maxX": 66.46637467956543,
+    "minY": -0.1,
+    "maxY": -0.1,
+    "minZ": -157.27260244750977,
+    "maxZ": -41.80479776000976
+  },
+  "floorCount": 1,
+  "floors": [
+    {
+      "index": 1,
+      "label": "1F",
+      "height": -0.1,
+      "image2560": "floor_01_2560.png",
+      "preview512": "floor_01_512.png",
+      "minX": -60.341347976684574,
+      "maxX": 66.46637467956543,
+      "minY": -0.1,
+      "maxY": -0.1,
+      "minZ": -157.27260244750977,
+      "maxZ": -41.80479776000976,
+      "renderers": 1485,
+      "floorTriangles": 390738,
+      "wallTriangles": 445993,
+      "floorPixels": 1234384,
+      "wallPixels": 43907,
+      "colliderPixels": 153360
+    }
+  ],
+  "contactSheet": "all_floors_512.png"
+}
