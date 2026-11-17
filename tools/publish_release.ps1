@@ -73,6 +73,13 @@ if ([string]::IsNullOrWhiteSpace($updateBaseUrl) -or
 }
 $updateBaseUrl = $updateBaseUrl.TrimEnd("/") + "/"
 $devBaseUrl = $devBaseUrl.TrimEnd("/") + "/"
+$GameDir = Resolve-OpsValue `
+    -Value $GameDir `
+    -EnvironmentName "EFM_GAME_DIR" `
+    -ConfigName "GameDir"
+if ([string]::IsNullOrWhiteSpace($GameDir)) {
+    throw "Game directory is required. Set EFM_GAME_DIR or deploy/ops.local.psd1."
+}
 
 if ([string]::IsNullOrWhiteSpace($SigningKeyPath)) {
     $SigningKeyPath = if ($Channel -eq "stable") {
