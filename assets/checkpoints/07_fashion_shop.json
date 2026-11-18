@@ -5,10 +5,10 @@
       "id": "fashion_shop.supply.01",
       "kind": "supply",
       "metadata": {
+        "sourceNote": "",
         "spawnChance": 1.0,
         "supplyCount": 1,
-        "supplyQuality": 5,
-        "sourceNote": ""
+        "supplyQuality": 5
       },
       "position": {
         "x": 55.41,
@@ -21,10 +21,10 @@
       "id": "fashion_shop.supply.02",
       "kind": "supply",
       "metadata": {
+        "sourceNote": "",
         "spawnChance": 1.0,
         "supplyCount": 1,
-        "supplyQuality": 4,
-        "sourceNote": ""
+        "supplyQuality": 4
       },
       "position": {
         "x": 65.92,
@@ -37,10 +37,10 @@
       "id": "fashion_shop.supply.03",
       "kind": "supply",
       "metadata": {
+        "sourceNote": "",
         "spawnChance": 1.0,
         "supplyCount": 1,
-        "supplyQuality": 3,
-        "sourceNote": ""
+        "supplyQuality": 3
       },
       "position": {
         "x": 61.79,
@@ -53,10 +53,10 @@
       "id": "fashion_shop.supply.04",
       "kind": "supply",
       "metadata": {
+        "sourceNote": "",
         "spawnChance": 1.0,
         "supplyCount": 1,
-        "supplyQuality": 2,
-        "sourceNote": ""
+        "supplyQuality": 2
       },
       "position": {
         "x": 65.96,
@@ -69,10 +69,10 @@
       "id": "fashion_shop.supply.05",
       "kind": "supply",
       "metadata": {
+        "sourceNote": "",
         "spawnChance": 1.0,
         "supplyCount": 1,
-        "supplyQuality": 1,
-        "sourceNote": ""
+        "supplyQuality": 1
       },
       "position": {
         "x": 55.28,
@@ -327,6 +327,249 @@
         "diameter": 0.800000011920929,
         "heightOffset": 0.019999999552965164,
         "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.01",
+      "kind": "supply",
+      "metadata": {
+        "sourceNote": "必定出现红色物资",
+        "spawnChance": 0.2,
+        "supplyCount": 3,
+        "supplyQuality": 5
+      },
+      "position": {
+        "x": 60.76,
+        "y": 0.45,
+        "z": -140.62
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.task_random.map_editor.01",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 58.25,
+        "y": 0.07,
+        "z": -148.11
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.02",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 55.5,
+        "y": 0.07,
+        "z": -145.25
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.03",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 57.94,
+        "y": 0.07,
+        "z": -138.19
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.04",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 65.49,
+        "y": 0.07,
+        "z": -142.06
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "fashion_shop.spawn.map_editor.03",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 65.83,
+        "y": 0.07,
+        "z": -152.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.extract.map_editor.01",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 65.86,
+        "y": 0.07,
+        "z": -152.4
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.05",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 58.17,
+        "y": 0.07,
+        "z": -150.39
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "fashion_shop.supply.map_editor.06",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 56.89,
+        "y": 0.07,
+        "z": -151.96
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
       }
     }
   ],

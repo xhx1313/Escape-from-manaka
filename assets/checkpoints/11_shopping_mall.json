@@ -1,301 +1,1938 @@
 {
-  "schemaVersion": 1,
-  "stage": {
-    "key": "shopping_mall",
-    "type": 11,
-    "scene": "Mall",
-    "displayName": "购物中心"
-  },
-  "defaults": {
-    "visual": {
-      "diameter": 0.8,
-      "color": "#FFFFFFFF",
-      "heightOffset": 0.02
-    },
-    "trigger": {
-      "mode": "manual_interact",
-      "radius": 1.1,
-      "heightTolerance": 1.5,
-      "once": true
-    }
-  },
-  "taskPool": [
+  "checkpoints": [
     {
-      "id": "mall.walk_30",
-      "label": "漫步I",
-      "description": "行走30米；保持裸露且全程行走。",
-      "difficulty": 1,
-      "kind": "distance",
-      "gait": "walk",
-      "distance": 30,
-      "targetCount": 0,
-      "protectionSeconds": 3,
-      "interrupt": "reset"
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.01",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 10.92,
+        "y": -8.37,
+        "z": 12.38
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.crawl_20",
-      "label": "匍匐I",
-      "description": "爬行20米；保持裸露且全程爬行。",
-      "difficulty": 2,
-      "kind": "distance",
-      "gait": "crawl",
-      "distance": 20,
-      "targetCount": 0,
-      "protectionSeconds": 5,
-      "interrupt": "reset"
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.01",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 10.73,
+        "y": -8.55,
+        "z": 0.83
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.move_current",
-      "label": "移动II",
-      "description": "从原地移动到指定位置；全程保持裸露。",
-      "difficulty": 1,
-      "kind": "reach",
-      "gait": "any",
-      "targetCount": 1,
-      "startMode": "current",
-      "protectionSeconds": 3,
-      "interrupt": "reset"
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.02",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 17.49,
+        "y": -8.55,
+        "z": 2.76
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.move_random",
-      "label": "移动III",
-      "description": "从随机位置移动到指定位置；全程保持裸露。",
-      "difficulty": 1,
-      "kind": "reach",
-      "gait": "any",
-      "targetCount": 1,
-      "startMode": "random",
-      "protectionSeconds": 5,
-      "interrupt": "fail"
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.03",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -2.3,
+        "y": -8.55,
+        "z": 8.95
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.walk_current",
-      "label": "漫步II",
-      "description": "从原地行走到指定位置；保持裸露且全程行走。",
-      "difficulty": 2,
-      "kind": "reach",
-      "gait": "walk",
-      "targetCount": 1,
-      "startMode": "current",
-      "protectionSeconds": 3,
-      "interrupt": "reset"
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.02",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -0.06,
+        "y": -8.55,
+        "z": -4.53
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.walk_random",
-      "label": "漫步III",
-      "description": "从随机位置行走到指定位置；保持裸露且全程行走。",
-      "difficulty": 2,
-      "kind": "reach",
-      "gait": "walk",
-      "targetCount": 1,
-      "startMode": "random",
-      "protectionSeconds": 5,
-      "interrupt": "fail"
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.04",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 0.1,
+        "supplyCount": 1,
+        "supplyQuality": 5
+      },
+      "position": {
+        "x": 8.41,
+        "y": -8.55,
+        "z": 0.2
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.crawl_current",
-      "label": "匍匐II",
-      "description": "从原地爬行到指定位置；保持裸露且全程爬行。",
-      "difficulty": 3,
-      "kind": "reach",
-      "gait": "crawl",
-      "targetCount": 1,
-      "startMode": "current",
-      "protectionSeconds": 5,
-      "interrupt": "reset"
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.03",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -0.32,
+        "y": -8.42,
+        "z": -13.37
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.crawl_random",
-      "label": "匍匐III",
-      "description": "从随机位置爬行到指定位置；保持裸露且全程爬行。",
-      "difficulty": 3,
-      "kind": "reach",
-      "gait": "crawl",
-      "targetCount": 1,
-      "startMode": "random",
-      "protectionSeconds": 7,
-      "interrupt": "fail"
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.04",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 0.59,
+        "y": -8.42,
+        "z": -13.37
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.route_any",
-      "label": "移动IV",
-      "description": "从原地开始经过3个检查点；全程保持裸露。",
-      "difficulty": 3,
-      "kind": "checkpoints",
-      "gait": "any",
-      "targetCount": 3,
-      "startMode": "current",
-      "protectionSeconds": 5,
-      "interrupt": "fail"
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.05",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -0.08,
+        "y": -8.53,
+        "z": -23.09
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.route_walk",
-      "label": "漫步IV",
-      "description": "从原地开始以行走姿态经过3个检查点。",
-      "difficulty": 4,
-      "kind": "checkpoints",
-      "gait": "walk",
-      "targetCount": 3,
-      "startMode": "current",
-      "protectionSeconds": 5,
-      "interrupt": "fail"
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "shopping_mall.spawn.map_editor.01",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 8.44,
+        "y": -8.53,
+        "z": -10.85
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
     },
     {
-      "id": "mall.route_crawl",
-      "label": "匍匐IV",
-      "description": "从原地开始以爬行姿态经过3个检查点。",
-      "difficulty": 5,
-      "kind": "checkpoints",
-      "gait": "crawl",
-      "targetCount": 3,
-      "startMode": "current",
-      "protectionSeconds": 7,
-      "interrupt": "fail"
+      "actions": [],
+      "id": "shopping_mall.extract.map_editor.01",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 8.44,
+        "y": -8.53,
+        "z": -10.85
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.lurk_10",
-      "label": "潜伏I",
-      "description": "在路人附近保持裸露累计10秒；离开路人不会清空已有进度。",
-      "difficulty": 1,
-      "kind": "near_npc_hold",
-      "requiredSeconds": 10,
-      "protectionSeconds": 0,
-      "interrupt": "keep",
-      "requiresNaked": true
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "shopping_mall.spawn.map_editor.02",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 18.88,
+        "y": -8.55,
+        "z": 16.22
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
     },
     {
-      "id": "mall.lurk_20",
-      "label": "潜伏II",
-      "description": "在路人附近保持裸露累计20秒；离开路人不会清空已有进度。",
-      "difficulty": 2,
-      "kind": "near_npc_hold",
-      "requiredSeconds": 20,
-      "protectionSeconds": 0,
-      "interrupt": "keep",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.transfer.map_editor.01",
+      "kind": "transfer",
+      "metadata": {
+        "sourceNote": "去街区",
+        "spawnChance": 1.0,
+        "targetCheckpointId": "fashion_shop.spawn.01",
+        "targetStageType": 7
+      },
+      "position": {
+        "x": 18.88,
+        "y": -8.55,
+        "z": 16.22
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.lurk_orgasm",
-      "label": "潜伏III",
-      "description": "在高潮期间位于任务认定的路人附近。",
-      "difficulty": 1,
-      "kind": "near_npc_orgasm",
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": false
+      "actions": [],
+      "id": "shopping_mall.extract.map_editor.02",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -1.17,
+        "y": -8.54,
+        "z": 16.07
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.pose_light",
-      "label": "指定动作I",
-      "description": "保持裸露，在光源下完成随机的指定动作10秒。",
-      "difficulty": 1,
-      "kind": "pose_hold",
-      "requiredSeconds": 10,
-      "lightOnly": true,
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.05",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 0.5,
+        "supplyCount": 3,
+        "supplyQuality": 5
+      },
+      "position": {
+        "x": 1.43,
+        "y": -8.17,
+        "z": -38.66
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.pose_location",
-      "label": "指定动作II",
-      "description": "到任务黄点按F确认，在该位置保持随机的指定动作10秒。",
-      "difficulty": 2,
-      "kind": "pose_hold",
-      "requiredSeconds": 10,
-      "targetCount": 1,
-      "startMode": "current",
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.06",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 10.6,
+        "y": -8.55,
+        "z": -33.7
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.orgasm_location",
-      "label": "高潮I",
-      "description": "进入任务黄点范围后触发高潮动画。",
-      "difficulty": 2,
-      "kind": "orgasm_location",
-      "targetCount": 1,
-      "startMode": "current",
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": false
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.06",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 4.8,
+        "y": -8.55,
+        "z": -35.13
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.orgasm_checkpoints",
-      "label": "高潮II",
-      "description": "保持全程裸露，在三个任务黄点范围内分别触发高潮动画。",
-      "difficulty": 5,
-      "kind": "orgasm_checkpoints",
-      "targetCount": 3,
-      "startMode": "current",
-      "protectionSeconds": 5,
-      "interrupt": "fail",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.07",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 10.2,
+        "y": -8.55,
+        "z": -40.43
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.vending",
-      "label": "售货机",
-      "description": "以裸露状态使用一次售货机。",
-      "difficulty": 1,
-      "kind": "vending_once",
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.07",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 18.15,
+        "y": -8.55,
+        "z": -49.64
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.bench_30",
-      "label": "长椅",
-      "description": "在长椅上保持裸露30秒；离开长椅或切换大衣时进度清零。",
-      "difficulty": 2,
-      "kind": "bench_hold",
-      "requiredSeconds": 30,
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.08",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 22.88,
+        "y": -8.42,
+        "z": -44.35
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.escalator",
-      "label": "自动扶梯",
-      "description": "保持裸露，完整乘坐一次自动扶梯并从另一端离开。",
-      "difficulty": 4,
-      "kind": "escalator_once",
-      "requiredSeconds": 2,
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.09",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 4
+      },
+      "position": {
+        "x": 33.46,
+        "y": -8.53,
+        "z": -37.24
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.elevator_30",
-      "label": "电梯I",
-      "description": "在电梯内保持裸露30秒；离开电梯时进度清零。",
-      "difficulty": 2,
-      "kind": "elevator_hold",
-      "requiredSeconds": 30,
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.08",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 36.29,
+        "y": -8.53,
+        "z": -37.15
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     },
     {
-      "id": "mall.elevator_npc_10",
-      "label": "电梯II",
-      "description": "与路人一起在电梯内保持裸露10秒；任一条件中断时进度清零。",
-      "difficulty": 2,
-      "kind": "elevator_npc_hold",
-      "requiredSeconds": 10,
-      "protectionSeconds": 0,
-      "interrupt": "reset",
-      "requiresNaked": true
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.09",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 22.99,
+        "y": -8.42,
+        "z": -45.49
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.10",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 35.79,
+        "y": -8.53,
+        "z": -48.17
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.11",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 54.35,
+        "y": -8.53,
+        "z": -47.42
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.10",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 61.67,
+        "y": -8.53,
+        "z": -50.72
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.12",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 3,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 57.73,
+        "y": -8.55,
+        "z": -32.07
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.13",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 3
+      },
+      "position": {
+        "x": 48.5,
+        "y": -8.55,
+        "z": -23.65
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.11",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 42.47,
+        "y": -8.55,
+        "z": -23.47
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.14",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 42.54,
+        "y": -8.55,
+        "z": -20.64
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.extract.map_editor.03",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 58.42,
+        "y": -8.55,
+        "z": -19.63
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.15",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 54.79,
+        "y": -3.13,
+        "z": -33.46
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.12",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 54.79,
+        "y": -3.13,
+        "z": -28.12
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.16",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 51.36,
+        "y": -3.13,
+        "z": -27.12
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.17",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 43.8,
+        "y": -3.13,
+        "z": -20.64
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.18",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 63.21,
+        "y": -3.13,
+        "z": -24.73
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.19",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 66.13,
+        "y": -3.13,
+        "z": -33.52
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.13",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 57.44,
+        "y": -3.15,
+        "z": -38.1
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.20",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 55.85,
+        "y": -3.15,
+        "z": -49.43
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.14",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 40.71,
+        "y": -3.14,
+        "z": -51.04
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.21",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 35.58,
+        "y": -3.14,
+        "z": -49.3
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.22",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 30.71,
+        "y": -3.14,
+        "z": -43.27
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.23",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 37.75,
+        "y": -3.14,
+        "z": -39.4
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.24",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 14.33,
+        "y": -3.14,
+        "z": -37.2
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.25",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 14.37,
+        "y": -3.14,
+        "z": -44.72
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.15",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 5.66,
+        "y": -3.14,
+        "z": -44.55
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.16",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -0.96,
+        "y": -3.14,
+        "z": -35.8
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.26",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 2,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 0.39,
+        "y": -3.14,
+        "z": -31.0
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.extract.map_editor.04",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 8.32,
+        "y": -3.14,
+        "z": -10.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "shopping_mall.spawn.map_editor.03",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 8.32,
+        "y": -3.14,
+        "z": -10.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.27",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 4.21,
+        "y": -3.14,
+        "z": -4.97
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.17",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 14.4,
+        "y": -3.14,
+        "z": 0.2
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.28",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 8.96,
+        "y": -3.14,
+        "z": 0.73
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.18",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -2.46,
+        "y": -3.14,
+        "z": 17.83
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.29",
+      "kind": "supply",
+      "metadata": {
+        "sourceNote": "必定出红色物资",
+        "spawnChance": 0.5,
+        "supplyCount": 3,
+        "supplyQuality": 5
+      },
+      "position": {
+        "x": 11.8,
+        "y": -3.14,
+        "z": 17.83
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.30",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 7.99,
+        "y": -3.14,
+        "z": 9.68
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.19",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 0.98,
+        "y": -3.14,
+        "z": 3.48
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.31",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -4.43,
+        "y": -3.14,
+        "z": -5.15
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.32",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -0.23,
+        "y": -3.14,
+        "z": -14.02
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.33",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 1
+      },
+      "position": {
+        "x": 42.47,
+        "y": 2.26,
+        "z": -23.47
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.20",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 48.51,
+        "y": 2.26,
+        "z": -23.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.34",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 58.32,
+        "y": 2.26,
+        "z": -23.86
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.35",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 66.01,
+        "y": 2.26,
+        "z": -22.68
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.21",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 63.03,
+        "y": 2.26,
+        "z": -31.74
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.extract.map_editor.05",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 68.52,
+        "y": 2.26,
+        "z": -37.42
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "shopping_mall.spawn.map_editor.04",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 68.52,
+        "y": 2.26,
+        "z": -37.42
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.36",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 64.19,
+        "y": 2.26,
+        "z": -47.72
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.22",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 43.53,
+        "y": 2.26,
+        "z": -41.44
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.37",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 29.15,
+        "y": 2.26,
+        "z": -40.94
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "shopping_mall.spawn.map_editor.05",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 18.71,
+        "y": 2.26,
+        "z": -40.51
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.supply.map_editor.38",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 0.8,
+        "supplyCount": 1,
+        "supplyQuality": 4
+      },
+      "position": {
+        "x": 22.66,
+        "y": 2.26,
+        "z": -39.49
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "shopping_mall.task_random.map_editor.23",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 18.71,
+        "y": 2.26,
+        "z": -40.51
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
     }
   ],
+  "defaults": {
+    "trigger": {
+      "heightTolerance": 1.5,
+      "mode": "manual_interact",
+      "once": true,
+      "radius": 1.1
+    },
+    "visual": {
+      "color": "#FFFFFFFF",
+      "diameter": 0.8,
+      "heightOffset": 0.02
+    }
+  },
+  "schemaVersion": 1,
+  "stage": {
+    "displayName": "购物中心",
+    "key": "shopping_mall",
+    "scene": "Mall",
+    "type": 11
+  },
   "supplyRules": {
-    "pointQualityWeights": [
-      20.0,
-      20.0,
-      20.0,
-      20.0,
-      20.0
-    ],
     "itemQualityWeights": [
       [
         53.8,
@@ -332,29 +1969,282 @@
         24.4,
         53.8
       ]
+    ],
+    "pointQualityWeights": [
+      20.0,
+      20.0,
+      20.0,
+      20.0,
+      20.0
     ]
   },
-  "checkpoints": [
+  "taskPool": [
     {
-      "id": "shopping_mall.spawn.01",
-      "kind": "spawn",
-      "position": {
-        "x": 19.24,
-        "y": -8.53,
-        "z": 13.6
-      },
-      "visual": {
-        "visible": false
-      },
-      "trigger": {
-        "mode": "none"
-      },
-      "actions": [
-        {
-          "handler": "system.select_spawn",
-          "params": {}
-        }
-      ]
+      "description": "行走30米；保持裸露且全程行走。",
+      "difficulty": 1,
+      "distance": 30,
+      "gait": "walk",
+      "id": "mall.walk_30",
+      "interrupt": "reset",
+      "kind": "distance",
+      "label": "漫步I",
+      "protectionSeconds": 3,
+      "targetCount": 0
+    },
+    {
+      "description": "爬行20米；保持裸露且全程爬行。",
+      "difficulty": 2,
+      "distance": 20,
+      "gait": "crawl",
+      "id": "mall.crawl_20",
+      "interrupt": "reset",
+      "kind": "distance",
+      "label": "匍匐I",
+      "protectionSeconds": 5,
+      "targetCount": 0
+    },
+    {
+      "description": "从原地移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "gait": "any",
+      "id": "mall.move_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "移动II",
+      "protectionSeconds": 3,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置移动到指定位置；全程保持裸露。",
+      "difficulty": 1,
+      "gait": "any",
+      "id": "mall.move_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "移动III",
+      "protectionSeconds": 5,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "从原地行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "gait": "walk",
+      "id": "mall.walk_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "漫步II",
+      "protectionSeconds": 3,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置行走到指定位置；保持裸露且全程行走。",
+      "difficulty": 2,
+      "gait": "walk",
+      "id": "mall.walk_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "漫步III",
+      "protectionSeconds": 5,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "从原地爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "gait": "crawl",
+      "id": "mall.crawl_current",
+      "interrupt": "reset",
+      "kind": "reach",
+      "label": "匍匐II",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "从随机位置爬行到指定位置；保持裸露且全程爬行。",
+      "difficulty": 3,
+      "gait": "crawl",
+      "id": "mall.crawl_random",
+      "interrupt": "fail",
+      "kind": "reach",
+      "label": "匍匐III",
+      "protectionSeconds": 7,
+      "startMode": "random",
+      "targetCount": 1
+    },
+    {
+      "description": "从原地开始经过3个检查点；全程保持裸露。",
+      "difficulty": 3,
+      "gait": "any",
+      "id": "mall.route_any",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "移动IV",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "从原地开始以行走姿态经过3个检查点。",
+      "difficulty": 4,
+      "gait": "walk",
+      "id": "mall.route_walk",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "漫步IV",
+      "protectionSeconds": 5,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "从原地开始以爬行姿态经过3个检查点。",
+      "difficulty": 5,
+      "gait": "crawl",
+      "id": "mall.route_crawl",
+      "interrupt": "fail",
+      "kind": "checkpoints",
+      "label": "匍匐IV",
+      "protectionSeconds": 7,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "在路人附近保持裸露累计10秒；离开路人不会清空已有进度。",
+      "difficulty": 1,
+      "id": "mall.lurk_10",
+      "interrupt": "keep",
+      "kind": "near_npc_hold",
+      "label": "潜伏I",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true
+    },
+    {
+      "description": "在路人附近保持裸露累计20秒；离开路人不会清空已有进度。",
+      "difficulty": 2,
+      "id": "mall.lurk_20",
+      "interrupt": "keep",
+      "kind": "near_npc_hold",
+      "label": "潜伏II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 20,
+      "requiresNaked": true
+    },
+    {
+      "description": "在高潮期间位于任务认定的路人附近。",
+      "difficulty": 1,
+      "id": "mall.lurk_orgasm",
+      "interrupt": "reset",
+      "kind": "near_npc_orgasm",
+      "label": "潜伏III",
+      "protectionSeconds": 0,
+      "requiresNaked": false
+    },
+    {
+      "description": "保持裸露，在光源下完成随机的指定动作10秒。",
+      "difficulty": 1,
+      "id": "mall.pose_light",
+      "interrupt": "reset",
+      "kind": "pose_hold",
+      "label": "指定动作I",
+      "lightOnly": true,
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true
+    },
+    {
+      "description": "到任务黄点按F确认，在该位置保持随机的指定动作10秒。",
+      "difficulty": 2,
+      "id": "mall.pose_location",
+      "interrupt": "reset",
+      "kind": "pose_hold",
+      "label": "指定动作II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "进入任务黄点范围后触发高潮动画。",
+      "difficulty": 2,
+      "id": "mall.orgasm_location",
+      "interrupt": "reset",
+      "kind": "orgasm_location",
+      "label": "高潮I",
+      "protectionSeconds": 0,
+      "requiresNaked": false,
+      "startMode": "current",
+      "targetCount": 1
+    },
+    {
+      "description": "保持全程裸露，在三个任务黄点范围内分别触发高潮动画。",
+      "difficulty": 5,
+      "id": "mall.orgasm_checkpoints",
+      "interrupt": "fail",
+      "kind": "orgasm_checkpoints",
+      "label": "高潮II",
+      "protectionSeconds": 5,
+      "requiresNaked": true,
+      "startMode": "current",
+      "targetCount": 3
+    },
+    {
+      "description": "以裸露状态使用一次售货机。",
+      "difficulty": 1,
+      "id": "mall.vending",
+      "interrupt": "reset",
+      "kind": "vending_once",
+      "label": "售货机",
+      "protectionSeconds": 0,
+      "requiresNaked": true
+    },
+    {
+      "description": "在长椅上保持裸露30秒；离开长椅或切换大衣时进度清零。",
+      "difficulty": 2,
+      "id": "mall.bench_30",
+      "interrupt": "reset",
+      "kind": "bench_hold",
+      "label": "长椅",
+      "protectionSeconds": 0,
+      "requiredSeconds": 30,
+      "requiresNaked": true
+    },
+    {
+      "description": "保持裸露，完整乘坐一次自动扶梯并从另一端离开。",
+      "difficulty": 4,
+      "id": "mall.escalator",
+      "interrupt": "reset",
+      "kind": "escalator_once",
+      "label": "自动扶梯",
+      "protectionSeconds": 0,
+      "requiredSeconds": 2,
+      "requiresNaked": true
+    },
+    {
+      "description": "在电梯内保持裸露30秒；离开电梯时进度清零。",
+      "difficulty": 2,
+      "id": "mall.elevator_30",
+      "interrupt": "reset",
+      "kind": "elevator_hold",
+      "label": "电梯I",
+      "protectionSeconds": 0,
+      "requiredSeconds": 30,
+      "requiresNaked": true
+    },
+    {
+      "description": "与路人一起在电梯内保持裸露10秒；任一条件中断时进度清零。",
+      "difficulty": 2,
+      "id": "mall.elevator_npc_10",
+      "interrupt": "reset",
+      "kind": "elevator_npc_hold",
+      "label": "电梯II",
+      "protectionSeconds": 0,
+      "requiredSeconds": 10,
+      "requiresNaked": true
     }
   ]
 }

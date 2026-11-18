@@ -1,0 +1,470 @@
+{
+  "checkpoints": [
+    {
+      "actions": [],
+      "id": "konbini.transfer.map_editor.01",
+      "kind": "transfer",
+      "metadata": {
+        "sourceNote": "去住宅",
+        "spawnChance": 1.0,
+        "targetCheckpointId": "fashion_shop.spawn.01",
+        "targetStageType": 7
+      },
+      "position": {
+        "x": 3.76,
+        "y": 0.12,
+        "z": -8.39
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "konbini.extract.map_editor.01",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -2.47,
+        "y": 0.12,
+        "z": -6.58
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.extract.map_editor.02",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -2.36,
+        "y": 0.12,
+        "z": -6.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.task_random.map_editor.01",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -0.01,
+        "y": 0.12,
+        "z": -6.89
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.01",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 1.48,
+        "y": 0.12,
+        "z": -6.79
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.02",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -3.02,
+        "y": 0.12,
+        "z": -8.26
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.extract.map_editor.03",
+      "kind": "extract",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -3.18,
+        "y": 0.12,
+        "z": -14.2
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#38D6BDFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "konbini.spawn.map_editor.01",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -3.18,
+        "y": 0.12,
+        "z": -14.2
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [
+        {
+          "handler": "system.select_spawn",
+          "params": {}
+        }
+      ],
+      "id": "konbini.spawn.map_editor.02",
+      "kind": "spawn",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 3.73,
+        "y": 0.12,
+        "z": -8.61
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#006B3CFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": false
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.task_random.map_editor.02",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 2.71,
+        "y": 0.12,
+        "z": -11.31
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.task_random.map_editor.03",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": 0.26,
+        "y": 0.12,
+        "z": -13.94
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.task_random.map_editor.04",
+      "kind": "task_random",
+      "metadata": {
+        "spawnChance": 1.0
+      },
+      "position": {
+        "x": -3.11,
+        "y": 0.12,
+        "z": -11.85
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "none",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFE600FF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.03",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 4
+      },
+      "position": {
+        "x": -0.09,
+        "y": 0.12,
+        "z": -8.4
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.04",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": -1.14,
+        "y": 0.12,
+        "z": -11.12
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.05",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 2,
+        "supplyQuality": 2
+      },
+      "position": {
+        "x": 1.08,
+        "y": 0.12,
+        "z": -11.11
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.06",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 0.2,
+        "supplyCount": 1,
+        "supplyQuality": 5
+      },
+      "position": {
+        "x": 3.23,
+        "y": 0.12,
+        "z": -14.1
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#E5333DF9",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    },
+    {
+      "actions": [],
+      "id": "konbini.supply.map_editor.07",
+      "kind": "supply",
+      "metadata": {
+        "spawnChance": 1.0,
+        "supplyCount": 1,
+        "supplyQuality": 0
+      },
+      "position": {
+        "x": 2.72,
+        "y": 0.12,
+        "z": -12.67
+      },
+      "trigger": {
+        "heightTolerance": 1.5,
+        "mode": "manual_interact",
+        "once": true,
+        "radius": 1.100000023841858
+      },
+      "visual": {
+        "color": "#FFFFFFFF",
+        "diameter": 0.800000011920929,
+        "heightOffset": 0.019999999552965164,
+        "visible": true
+      }
+    }
+  ],
+  "defaults": {},
+  "schemaVersion": 1,
+  "stage": {
+    "displayName": "便利店",
+    "key": "konbini",
+    "type": 6
+  },
+  "supplyRules": {},
+  "taskPool": []
+}
