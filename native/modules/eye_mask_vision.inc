@@ -6,7 +6,6 @@ constexpr float kEyeMaskVisionMaximum = 225.0f;
 constexpr float kEyeMaskVisionDensityAtOneMeter = 1.7308184f;
 constexpr float kEyeMaskVisionDefaultValue = 0.0f;
 constexpr float kEyeMaskVisionVignetteResponsePower = 6.0f;
-constexpr float kEyeMaskVisionAdjustmentStep = 10.0f;
 constexpr unsigned long long kEyeMaskVisionConfigPollMs = 500;
 
 struct EyeMaskVisionSettings
@@ -25,7 +24,6 @@ EyeMaskVisionSettings g_eyeMaskVisionSettings;
 std::atomic<float> g_eyeMaskVisionExternalValue{
     kEyeMaskVisionDefaultValue};
 std::atomic<bool> g_eyeMaskVisionUseExternalValue{false};
-std::atomic<bool> g_eyeMaskVisionAdjustmentAvailable{false};
 bool g_eyeMaskVisionForceThirdPersonOnRemoval = false;
 bool g_eyeMaskVisionPreviousActive = false;
 bool g_eyeMaskVisionPreviousViewWasFirstPerson = false;
@@ -221,15 +219,18 @@ void EyeMaskVision_LoadConfig()
 
 float EyeMaskVision_GetValue()
 {
+    float baseValue = 0.0f;
     if (g_eyeMaskVisionUseExternalValue.load())
     {
-        return std::clamp(
-            g_eyeMaskVisionExternalValue.load(),
-            kEyeMaskVisionMinimum,
-            kEyeMaskVisionMaximum);
+        baseValue = g_eyeMaskVisionExternalValue.load();
+    }
+    else
+    {
+        baseValue = g_eyeMaskVisionSettings.value;
     }
     return std::clamp(
-        g_eyeMaskVisionSettings.value,
+        baseValue +
+            static_cast<float>(EquipmentStats_GetEffectivePerception()),
         kEyeMaskVisionMinimum,
         kEyeMaskVisionMaximum);
 }
@@ -247,43 +248,6 @@ void EyeMaskVision_SetValue(float value)
 void EyeMaskVision_UseConfigValue()
 {
     g_eyeMaskVisionUseExternalValue = false;
-}
-
-bool EyeMaskVision_RequestAdjustment(
-    int direction,
-    const wchar_t* source)
-{
-    if (!g_eyeMaskVisionAdjustmentAvailable.load() ||
-        direction == 0)
-    {
-        return false;
-    }
-    const float value = std::clamp(
-        EyeMaskVision_GetValue() +
-            (direction > 0
-                ? kEyeMaskVisionAdjustmentStep
-                : -kEyeMaskVisionAdjustmentStep),
-        kEyeMaskVisionMinimum,
-        kEyeMaskVisionMaximum);
-    EyeMaskVision_SetValue(value);
-    LogInfo(LogCategory_Action, L"Action", 
-        L"Eye-mask vision adjusted to %.1f by %s.",
-        value,
-        source != nullptr ? source : L"the arrow key");
-    return true;
-}
-
-bool EyeMaskVision_ShouldSuppressUnityArrowKey(int keyCode)
-{
-    constexpr int kUnityArrowUpKeyCode = 273;
-    constexpr int kUnityArrowDownKeyCode = 274;
-    return g_eyeMaskVisionAdjustmentAvailable.load() &&
-        (keyCode == kUnityArrowUpKeyCode ||
-         keyCode == kUnityArrowDownKeyCode) &&
-        !g_extendedOriginalSystemMenuVisible.load() &&
-        !g_extendedOriginalInteractionMenuActive.load() &&
-        !g_extendedOriginalHandcuffsPanelActive.load() &&
-        !GameplayInput_IsCustomModalUiOpen();
 }
 
 float EyeMaskVision_ComputeTargetDistance(float value)
@@ -382,7 +346,6 @@ void EyeMaskVision_ForceThirdPersonAfterRemoval()
 
 void EyeMaskVision_ResetCameraTracking()
 {
-    g_eyeMaskVisionAdjustmentAvailable = false;
     g_eyeMaskVisionForceThirdPersonOnRemoval = false;
     g_eyeMaskVisionPreviousActive = false;
     g_eyeMaskVisionPreviousViewWasFirstPerson = false;
@@ -560,10 +523,6 @@ void EyeMaskVision_ApplyAfterOriginalUpdate()
     }
 
     const bool eyeMaskActive = EyeMaskVision_IsEyeMaskActive();
-    g_eyeMaskVisionAdjustmentAvailable =
-        g_eyeMaskVisionSettings.enabled &&
-        eyeMaskActive &&
-        g_extendedModeState.load() == ExtendedMode_Gameplay;
     if (eyeMaskActive != g_eyeMaskVisionPreviousActive)
     {
         if (eyeMaskActive)

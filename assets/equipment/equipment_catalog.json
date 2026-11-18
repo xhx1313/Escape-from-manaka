@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 5,
   "quality_order": [
     "white",
     "green",
@@ -61,77 +61,69 @@
     }
   ],
   "stats": {
-    "reward_bonus": {
-      "label": "奖励值",
-      "game_field": "RpBonus100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
+    "perception": {
+      "label": "感知力",
+      "runtime_field": "perceptionBase",
+      "description": "控制眼罩状态下的可视距离。"
     },
-    "high_quality_probability": {
-      "label": "高品质概率",
-      "game_field": "HighQualityProbability100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
+    "conservatism": {
+      "label": "保守度",
+      "runtime_field": "conservatismBase",
+      "description": "控制NPC正向怀疑值的增长效率；数值越高，越不容易引起怀疑。"
     },
-    "climax_speed": {
+    "normality": {
+      "label": "正常度",
+      "runtime_field": "normalityBase",
+      "description": "控制怀疑值开始下降前的时间和下降速度；数值越高，怀疑下降越快。"
+    },
+    "strength": {
+      "label": "忍耐力",
+      "runtime_field": "strengthBase",
+      "description": "控制爬行和振动器强档状态下的移动速度。"
+    },
+    "speed": {
+      "label": "速度",
+      "runtime_field": "speedBase",
+      "description": "控制普通行走和奔跑的移动速度。"
+    },
+    "climax_speed_base": {
       "label": "高潮速度",
-      "game_field": "EcstasyGauge100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
+      "runtime_field": "climaxSpeedBase",
+      "description": "控制高潮值累计速度与自然衰减速度。"
     },
-    "max_mental": {
-      "label": "最大精神值",
-      "game_field": "MaxMental",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
+    "stamina_capacity_base": {
+      "label": "体力上限",
+      "runtime_field": "staminaCapacityBase",
+      "description": "控制最大体力和体力恢复等待时间。"
     },
-    "mental_decrease": {
-      "label": "精神下降值",
-      "game_field": "MentalDecreaseScale100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": -1
+    "stamina_recovery_base": {
+      "label": "体力恢复",
+      "runtime_field": "staminaRecoveryBase",
+      "description": "控制体力消耗倍率和体力恢复量。"
     },
-    "protection": {
-      "label": "防护度",
-      "game_field": "Bareyasusa100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": -1
+    "handcuff_proficiency_base": {
+      "label": "手铐熟练度",
+      "runtime_field": "handcuffProficiencyBase",
+      "description": "控制普通手铐的按住解锁速度和累计解锁进度。"
     },
-    "max_stamina": {
-      "label": "最大体力",
-      "game_field": "Stamina100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
-    },
-    "stamina_regeneration": {
-      "label": "体力恢复速度",
-      "game_field": "StaminaRegenerate100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
-    },
-    "dash_speed": {
-      "label": "冲刺速度",
-      "game_field": "DashSpeed100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
-    },
-    "footstep_reduction": {
-      "label": "脚步声降低",
-      "game_field": "ReduceFootStepSound100",
-      "unit": "%",
-      "mode": "additive_percent",
-      "bonus_multiplier": 1
+    "reward_base": {
+      "label": "奖励值",
+      "runtime_field": "rewardBase",
+      "description": "控制暴露状态下的MOD金钱收益倍率。"
     }
   },
+  "stat_order": [
+    "perception",
+    "conservatism",
+    "normality",
+    "strength",
+    "speed",
+    "climax_speed_base",
+    "stamina_capacity_base",
+    "stamina_recovery_base",
+    "handcuff_proficiency_base",
+    "reward_base"
+  ],
   "items": {
     "001-costume-004-rcostumebaibubikinibra": {
       "id": "001-costume-004-rcostumebaibubikinibra",
@@ -167,10 +159,21 @@
         "gold": "crops/gold/001-costume-004-rcostumebaibubikinibra.png",
         "black": "crops/black/001-costume-004-rcostumebaibubikinibra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "比基尼胸衣，属于基础服装系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "基础服装·比基尼胸衣",
       "theme": "保守",
       "series": "基础服装"
@@ -209,10 +212,21 @@
         "gold": "crops/gold/002-costume-005-rcostumeoriginalglove.png",
         "black": "crops/black/002-costume-005-rcostumeoriginalglove.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版手套，属于基础服装系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "基础服装·原版手套",
       "theme": "保守",
       "series": "基础服装"
@@ -251,10 +265,21 @@
         "gold": "crops/gold/003-costume-000-rcostumeshoes.png",
         "black": "crops/black/003-costume-000-rcostumeshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 1,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版鞋子，属于基础服装系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "基础服装·原版鞋子",
       "theme": "保守",
       "series": "基础服装"
@@ -293,10 +318,21 @@
         "gold": "crops/gold/004-costume-003-rcostumeoriginalbra.png",
         "black": "crops/black/004-costume-003-rcostumeoriginalbra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版胸衣，属于基础服装系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "基础服装·原版胸衣",
       "theme": "保守",
       "series": "基础服装"
@@ -335,10 +371,21 @@
         "gold": "crops/gold/005-costume-001-rcostumeoriginalpants.png",
         "black": "crops/black/005-costume-001-rcostumeoriginalpants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 1,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版内裤，属于基础服装系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "基础服装·原版内裤",
       "theme": "保守",
       "series": "基础服装"
@@ -377,10 +424,21 @@
         "gold": "crops/gold/006-costume-006-rcostumeoriginalstocking.png",
         "black": "crops/black/006-costume-006-rcostumeoriginalstocking.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版长袜，属于基础服装系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "基础服装·原版长袜",
       "theme": "保守",
       "series": "基础服装"
@@ -419,10 +477,21 @@
         "gold": "crops/gold/008-cosplay-02-000-rcosplaypartsrainboots.png",
         "black": "crops/black/008-cosplay-02-000-rcosplaypartsrainboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "雨靴，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用腿部·雨靴",
       "theme": "保守",
       "series": "通用腿部"
@@ -461,10 +530,21 @@
         "gold": "crops/gold/009-cosplay-02-001-rcosplaypartsoriginalstockingnieso.png",
         "black": "crops/black/009-cosplay-02-001-rcosplaypartsoriginalstockingnieso.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "系带原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用腿部·系带原版长袜",
       "theme": "保守",
       "series": "通用腿部"
@@ -503,10 +583,21 @@
         "gold": "crops/gold/010-cosplay-02-002-rcosplaypartsoriginalstockingrace.png",
         "black": "crops/black/010-cosplay-02-002-rcosplaypartsoriginalstockingrace.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "蕾丝原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "通用腿部·蕾丝原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -545,10 +636,21 @@
         "gold": "crops/gold/011-cosplay-02-003-rcosplaypartsoriginalstockingracedark.png",
         "black": "crops/black/011-cosplay-02-003-rcosplaypartsoriginalstockingracedark.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "深色蕾丝原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用腿部·深色蕾丝原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -587,10 +689,21 @@
         "gold": "crops/gold/012-cosplay-02-004-rcosplaypartsoriginalstockingnet.png",
         "black": "crops/black/012-cosplay-02-004-rcosplaypartsoriginalstockingnet.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "网纹原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用腿部·网纹原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -629,10 +742,21 @@
         "gold": "crops/gold/013-cosplay-02-005-rcosplaypartsoriginalstockingnetthin.png",
         "black": "crops/black/013-cosplay-02-005-rcosplaypartsoriginalstockingnetthin.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "细网纹原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用腿部·细网纹原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -671,10 +795,21 @@
         "gold": "crops/gold/014-cosplay-02-006-rcosplaypartsoriginalstockingnetdark.png",
         "black": "crops/black/014-cosplay-02-006-rcosplaypartsoriginalstockingnetdark.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "深色网纹原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用腿部·深色网纹原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -713,10 +848,21 @@
         "gold": "crops/gold/015-cosplay-02-007-rcosplaypartsoriginalstockingnetthindark.png",
         "black": "crops/black/015-cosplay-02-007-rcosplaypartsoriginalstockingnetthindark.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 2,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "深色细网纹原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用腿部·深色细网纹原版长袜",
       "theme": "开放",
       "series": "通用腿部"
@@ -755,10 +901,21 @@
         "gold": "crops/gold/016-cosplay-02-008-rcosplaypartsoriginalstocking.png",
         "black": "crops/black/016-cosplay-02-008-rcosplaypartsoriginalstocking.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "原版长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用腿部·原版长袜",
       "theme": "保守",
       "series": "通用腿部"
@@ -797,10 +954,21 @@
         "gold": "crops/gold/017-cosplay-02-009-rcosplaypartsoriginalstockingstripe.png",
         "black": "crops/black/017-cosplay-02-009-rcosplaypartsoriginalstockingstripe.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版条纹长袜，属于原版腿部与鞋履系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用腿部·原版条纹长袜",
       "theme": "保守",
       "series": "通用腿部"
@@ -839,10 +1007,21 @@
         "gold": "crops/gold/018-cosplay-02-010-rcosplaypartsoriginalshoes.png",
         "black": "crops/black/018-cosplay-02-010-rcosplaypartsoriginalshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版鞋，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用腿部·原版鞋",
       "theme": "保守",
       "series": "通用腿部"
@@ -881,10 +1060,21 @@
         "gold": "crops/gold/019-cosplay-02-011-rcosplaypartssneaker.png",
         "black": "crops/black/019-cosplay-02-011-rcosplaypartssneaker.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "运动鞋，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用腿部·运动鞋",
       "theme": "保守",
       "series": "通用腿部"
@@ -923,10 +1113,21 @@
         "gold": "crops/gold/020-cosplay-02-012-rcosplaypartspinheel.png",
         "black": "crops/black/020-cosplay-02-012-rcosplaypartspinheel.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "细高跟鞋，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用腿部·细高跟鞋",
       "theme": "开放",
       "series": "通用腿部"
@@ -965,10 +1166,21 @@
         "gold": "crops/gold/021-cosplay-02-013-rcosplaypartsoriginalgarterbelt.png",
         "black": "crops/black/021-cosplay-02-013-rcosplaypartsoriginalgarterbelt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版吊袜带，属于原版腿部与鞋履系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用腿部·原版吊袜带",
       "theme": "开放",
       "series": "通用腿部"
@@ -1007,10 +1219,21 @@
         "gold": "crops/gold/022-cosplay-02-014-rcosplaypartsoriginalboots.png",
         "black": "crops/black/022-cosplay-02-014-rcosplaypartsoriginalboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版靴，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用腿部·原版靴",
       "theme": "开放",
       "series": "通用腿部"
@@ -1049,10 +1272,21 @@
         "gold": "crops/gold/023-cosplay-02-015-rcosplaypartslongboots.png",
         "black": "crops/black/023-cosplay-02-015-rcosplaypartslongboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "长靴，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用腿部·长靴",
       "theme": "保守",
       "series": "通用腿部"
@@ -1091,10 +1325,21 @@
         "gold": "crops/gold/024-cosplay-02-016-rcosplaypartshighheelboots.png",
         "black": "crops/black/024-cosplay-02-016-rcosplaypartshighheelboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "高跟靴，属于原版腿部与鞋履系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "通用腿部·高跟靴",
       "theme": "保守",
       "series": "通用腿部"
@@ -1133,10 +1378,21 @@
         "gold": "crops/gold/025-cosplay-03-000-rcosplaypartsoriginalmaebari.png",
         "black": "crops/black/025-cosplay-03-000-rcosplaypartsoriginalmaebari.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "原版乳贴链饰，属于通用身体配件系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用性器·原版乳贴链饰",
       "theme": "开放",
       "series": "通用性器"
@@ -1175,10 +1431,21 @@
         "gold": "crops/gold/026-cosplay-20-001-rcosplaypartswintershirt.png",
         "black": "crops/black/026-cosplay-20-001-rcosplaypartswintershirt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 4,
+        "normality": -4,
+        "strength": -3,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "冬季衬衫，属于SchoolGal 校园辣妹系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园辣妹·冬季衬衫",
       "theme": "保守",
       "series": "校园辣妹"
@@ -1217,10 +1484,21 @@
         "gold": "crops/gold/027-cosplay-11-000-rcosplaypartshairband.png",
         "black": "crops/black/027-cosplay-11-000-rcosplaypartshairband.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "发带，属于Cow 奶牛系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "奶牛·发带",
       "theme": "开放",
       "series": "奶牛"
@@ -1259,10 +1537,21 @@
         "gold": "crops/gold/028-cosplay-11-001-rcosplaypartschoker.png",
         "black": "crops/black/028-cosplay-11-001-rcosplaypartschoker.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "颈环，属于Cow 奶牛系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "奶牛·颈环",
       "theme": "开放",
       "series": "奶牛"
@@ -1301,10 +1590,21 @@
         "gold": "crops/gold/029-cosplay-11-002-rcosplaypartsglove.png",
         "black": "crops/black/029-cosplay-11-002-rcosplaypartsglove.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 3,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "手套，属于Cow 奶牛系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "奶牛·手套",
       "theme": "开放",
       "series": "奶牛"
@@ -1343,10 +1643,21 @@
         "gold": "crops/gold/030-cosplay-11-003-rcosplaypartsbra.png",
         "black": "crops/black/030-cosplay-11-003-rcosplaypartsbra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 3,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "胸衣，属于Cow 奶牛系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "奶牛·胸衣",
       "theme": "开放",
       "series": "奶牛"
@@ -1385,10 +1696,21 @@
         "gold": "crops/gold/031-cosplay-11-004-rcosplaypartspants.png",
         "black": "crops/black/031-cosplay-11-004-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "内裤，属于Cow 奶牛系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "奶牛·内裤",
       "theme": "开放",
       "series": "奶牛"
@@ -1397,12 +1719,10 @@
       "id": "032-cosplay-11-005-rcosplaypartstailplag",
       "display_name": "032-cosplay-11-005-rcosplaypartstailplag",
       "categories": [
-        "accessory",
-        "prop"
+        "accessory"
       ],
       "categories_suggested": [
-        "accessory",
-        "prop"
+        "accessory"
       ],
       "occupancy": {
         "label": "1x2",
@@ -1429,10 +1749,21 @@
         "gold": "crops/gold/032-cosplay-11-005-rcosplaypartstailplag.png",
         "black": "crops/black/032-cosplay-11-005-rcosplaypartstailplag.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": 3,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "尾巴塞，属于Cow 奶牛系列，可作为饰品、道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "奶牛·尾巴塞",
       "theme": "开放",
       "series": "奶牛"
@@ -1471,10 +1802,21 @@
         "gold": "crops/gold/033-cosplay-11-006-rcosplaypartsboots.png",
         "black": "crops/black/033-cosplay-11-006-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": -1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "靴子，属于Cow 奶牛系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "奶牛·靴子",
       "theme": "保守",
       "series": "奶牛"
@@ -1513,10 +1855,21 @@
         "gold": "crops/gold/034-cosplay-01-028-rcosplaypartsoriginalchackbikinibra.png",
         "black": "crops/black/034-cosplay-01-028-rcosplaypartsoriginalchackbikinibra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "Chack 比基尼胸衣，属于Original 原创系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用上半身·Chack 比基尼胸衣",
       "theme": "开放",
       "series": "通用上半身"
@@ -1555,10 +1908,21 @@
         "gold": "crops/gold/035-cosplay-09-009-rcosplaypartsloafer.png",
         "black": "crops/black/035-cosplay-09-009-rcosplaypartsloafer.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "乐福鞋，属于TacticalMaid 战术女仆系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "战术女仆·乐福鞋",
       "theme": "保守",
       "series": "战术女仆"
@@ -1597,10 +1961,21 @@
         "gold": "crops/gold/036-cosplay-20-009-rcosplaypartsnecklace.png",
         "black": "crops/black/036-cosplay-20-009-rcosplaypartsnecklace.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": 0,
+        "normality": 3,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": -4,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "项链，属于SchoolGal 校园辣妹系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园辣妹·项链",
       "theme": "保守",
       "series": "校园辣妹"
@@ -1639,10 +2014,21 @@
         "gold": "crops/gold/037-cosplay-10-005-rcosplaypartstail.png",
         "black": "crops/black/037-cosplay-10-005-rcosplaypartstail.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "尾巴，属于Succubus 魅魔系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "魅魔·尾巴",
       "theme": "开放",
       "series": "魅魔"
@@ -1681,10 +2067,21 @@
         "gold": "crops/gold/038-cosplay-06-006-rcosplaypartsglove.png",
         "black": "crops/black/038-cosplay-06-006-rcosplaypartsglove.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -3,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 3,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": -5,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "手套，属于LatexPonyGirl 乳胶小马娘系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 6700,
       "name": "乳胶小马·手套",
       "theme": "开放",
       "series": "乳胶小马"
@@ -1723,10 +2120,21 @@
         "gold": "crops/gold/039-cosplay-09-002-rcosplaypartssleeve.png",
         "black": "crops/black/039-cosplay-09-002-rcosplaypartssleeve.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 3,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "袖套，属于TacticalMaid 战术女仆系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "战术女仆·袖套",
       "theme": "保守",
       "series": "战术女仆"
@@ -1765,10 +2173,21 @@
         "gold": "crops/gold/040-cosplay-16-001-rcosplaypartsidjacket.png",
         "black": "crops/black/040-cosplay-16-001-rcosplaypartsidjacket.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": 4,
+        "normality": -1,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "ID 夹克，属于SuitLuxe 奢华西装系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4400,
       "name": "奢华西装·ID 夹克",
       "theme": "保守",
       "series": "奢华西装"
@@ -1807,10 +2226,21 @@
         "gold": "crops/gold/041-cosplay-03-002-rcosplaypartsbansoukouunder.png",
         "black": "crops/black/041-cosplay-03-002-rcosplaypartsbansoukouunder.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "内穿绑腿，属于通用身体配件系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用性器·内穿绑腿",
       "theme": "保守",
       "series": "通用性器"
@@ -1849,10 +2279,21 @@
         "gold": "crops/gold/042-cosplay-05-005-rcosplaypartsboots.png",
         "black": "crops/black/042-cosplay-05-005-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": -3,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 4,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "靴子，属于LzJailer 狱警系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "狱警·靴子",
       "theme": "保守",
       "series": "狱警"
@@ -1891,10 +2332,21 @@
         "gold": "crops/gold/043-cosplay-05-003-rcosplaypartscappants.png",
         "black": "crops/black/043-cosplay-05-003-rcosplaypartscappants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": -4,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "配套长裤，属于LzJailer 狱警系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "狱警·配套长裤",
       "theme": "开放",
       "series": "狱警"
@@ -1933,10 +2385,21 @@
         "gold": "crops/gold/044-cosplay-01-030-rcosplaypartsoriginamicrobikinibra.png",
         "black": "crops/black/044-cosplay-01-030-rcosplaypartsoriginamicrobikinibra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "微型比基尼胸衣，属于Original 原创系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·微型比基尼胸衣",
       "theme": "开放",
       "series": "通用上半身"
@@ -1975,10 +2438,21 @@
         "gold": "crops/gold/045-cosplay-15-002-rcosplaypartsidcard.png",
         "black": "crops/black/045-cosplay-15-002-rcosplaypartsidcard.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 4,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 1,
+        "reward_base": -3
+      },
       "complete": true,
       "description": "ID 卡，属于SuitChic 西装系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 4600,
       "name": "Chic西装·ID 卡",
       "theme": "保守",
       "series": "Chic西装"
@@ -2017,10 +2491,21 @@
         "gold": "crops/gold/046-cosplay-04-001-rcosplaypartsface.png",
         "black": "crops/black/046-cosplay-04-001-rcosplaypartsface.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "面部部件，属于Cultist 邪教修女系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "邪教修女·面部部件",
       "theme": "保守",
       "series": "邪教修女"
@@ -2059,10 +2544,21 @@
         "gold": "crops/gold/047-cosplay-20-002-rcosplaypartswintertie.png",
         "black": "crops/black/047-cosplay-20-002-rcosplaypartswintertie.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 2,
+        "strength": -2,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": -4,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "冬季领带，属于SchoolGal 校园辣妹系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园辣妹·冬季领带",
       "theme": "保守",
       "series": "校园辣妹"
@@ -2101,10 +2597,21 @@
         "gold": "crops/gold/048-cosplay-04-002-rcosplaypartscloth.png",
         "black": "crops/black/048-cosplay-04-002-rcosplaypartscloth.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 2,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "胸布，属于Cultist 邪教修女系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3100,
       "name": "邪教修女·胸布",
       "theme": "保守",
       "series": "邪教修女"
@@ -2145,10 +2652,21 @@
         "gold": "crops/gold/049-cosplay-04-003-rcosplaypartsleotard.png",
         "black": "crops/black/049-cosplay-04-003-rcosplaypartsleotard.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "连体衣，属于Cultist 邪教修女系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3100,
       "name": "邪教修女·连体衣",
       "theme": "保守",
       "series": "邪教修女"
@@ -2187,10 +2705,21 @@
         "gold": "crops/gold/050-cosplay-04-000-rcosplaypartshead.png",
         "black": "crops/black/050-cosplay-04-000-rcosplaypartshead.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": 0,
+        "normality": 3,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "头部部件，属于Cultist 邪教修女系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "邪教修女·头部部件",
       "theme": "保守",
       "series": "邪教修女"
@@ -2229,10 +2758,21 @@
         "gold": "crops/gold/051-cosplay-04-004-rcosplaypartsbreastcurtain.png",
         "black": "crops/black/051-cosplay-04-004-rcosplaypartsbreastcurtain.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "胸帘，属于Cultist 邪教修女系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "邪教修女·胸帘",
       "theme": "保守",
       "series": "邪教修女"
@@ -2271,10 +2811,21 @@
         "gold": "crops/gold/052-cosplay-04-005-rcosplaypartssistercollar.png",
         "black": "crops/black/052-cosplay-04-005-rcosplaypartssistercollar.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 3,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "修女领，属于Cultist 邪教修女系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "邪教修女·修女领",
       "theme": "保守",
       "series": "邪教修女"
@@ -2313,10 +2864,21 @@
         "gold": "crops/gold/053-cosplay-04-008-rcosplaypartssocks.png",
         "black": "crops/black/053-cosplay-04-008-rcosplaypartssocks.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "袜子，属于Cultist 邪教修女系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "邪教修女·袜子",
       "theme": "保守",
       "series": "邪教修女"
@@ -2355,10 +2917,21 @@
         "gold": "crops/gold/054-cosplay-04-006-rcosplaypartsshoulder.png",
         "black": "crops/black/054-cosplay-04-006-rcosplaypartsshoulder.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "肩部部件，属于Cultist 邪教修女系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "邪教修女·肩部部件",
       "theme": "保守",
       "series": "邪教修女"
@@ -2397,10 +2970,21 @@
         "gold": "crops/gold/055-cosplay-04-007-rcosplaypartsarm.png",
         "black": "crops/black/055-cosplay-04-007-rcosplaypartsarm.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "臂套，属于Cultist 邪教修女系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "邪教修女·臂套",
       "theme": "保守",
       "series": "邪教修女"
@@ -2439,10 +3023,21 @@
         "gold": "crops/gold/056-cosplay-04-009-rcosplaypartsshoes.png",
         "black": "crops/black/056-cosplay-04-009-rcosplaypartsshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 1,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "鞋子，属于Cultist 邪教修女系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "邪教修女·鞋子",
       "theme": "保守",
       "series": "邪教修女"
@@ -2481,10 +3076,21 @@
         "gold": "crops/gold/057-cosplay-04-010-rcosplaypartspants.png",
         "black": "crops/black/057-cosplay-04-010-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -3,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "裤子，属于Cultist 邪教修女系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3400,
       "name": "邪教修女·裤子",
       "theme": "保守",
       "series": "邪教修女"
@@ -2523,10 +3129,21 @@
         "gold": "crops/gold/058-cosplay-05-000-rcosplaypartscap.png",
         "black": "crops/black/058-cosplay-05-000-rcosplaypartscap.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 3,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -3,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": -2,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "帽子，属于LzJailer 狱警系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 5300,
       "name": "狱警·帽子",
       "theme": "保守",
       "series": "狱警"
@@ -2565,10 +3182,21 @@
         "gold": "crops/gold/059-cosplay-05-001-rcosplaypartsjaket.png",
         "black": "crops/black/059-cosplay-05-001-rcosplaypartsjaket.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 0,
+        "normality": 3,
+        "strength": -3,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "夹克，属于LzJailer 狱警系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "狱警·夹克",
       "theme": "保守",
       "series": "狱警"
@@ -2609,10 +3237,21 @@
         "gold": "crops/gold/060-cosplay-05-002-rcosplaypartscapleotard.png",
         "black": "crops/black/060-cosplay-05-002-rcosplaypartscapleotard.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 4,
+        "normality": -3,
+        "strength": 1,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": -4,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "帽式连体衣，属于LzJailer 狱警系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "狱警·帽式连体衣",
       "theme": "保守",
       "series": "狱警"
@@ -2651,10 +3290,21 @@
         "gold": "crops/gold/061-cosplay-05-004-rcosplaypartslegbag.png",
         "black": "crops/black/061-cosplay-05-004-rcosplaypartslegbag.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": -2,
+        "strength": -1,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": -3,
+        "stamina_recovery_base": 4,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "腿包，属于LzJailer 狱警系列，可作为背包装备使用，提供2×4容量。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "狱警·腿包",
       "theme": "保守",
       "series": "狱警"
@@ -2693,10 +3343,21 @@
         "gold": "crops/gold/062-cosplay-01-005-rcosplaypartsoriginalcondom.png",
         "black": "crops/black/062-cosplay-01-005-rcosplaypartsoriginalcondom.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "成人用品，属于Original 原创系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·成人用品",
       "theme": "开放",
       "series": "通用上半身"
@@ -2735,10 +3396,21 @@
         "gold": "crops/gold/063-cosplay-01-008-rcosplaypartsoriginalnecktie.png",
         "black": "crops/black/063-cosplay-01-008-rcosplaypartsoriginalnecktie.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "领带，属于Original 原创系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用上半身·领带",
       "theme": "保守",
       "series": "通用上半身"
@@ -2777,10 +3449,21 @@
         "gold": "crops/gold/064-cosplay-06-009-rcosplaypartsboots.png",
         "black": "crops/black/064-cosplay-06-009-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": -2,
+        "speed": 5,
+        "climax_speed_base": 3,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -5,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "靴子，属于LatexPonyGirl 乳胶小马娘系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 6300,
       "name": "乳胶小马·靴子",
       "theme": "开放",
       "series": "乳胶小马"
@@ -2819,10 +3502,21 @@
         "gold": "crops/gold/065-cosplay-09-007-rcosplaypartsstocking.png",
         "black": "crops/black/065-cosplay-09-007-rcosplaypartsstocking.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 3,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "长袜，属于TacticalMaid 战术女仆系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3700,
       "name": "战术女仆·长袜",
       "theme": "保守",
       "series": "战术女仆"
@@ -2861,10 +3555,21 @@
         "gold": "crops/gold/066-cosplay-09-008-rcosplaypartsanklebelt.png",
         "black": "crops/black/066-cosplay-09-008-rcosplaypartsanklebelt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "踝带，属于TacticalMaid 战术女仆系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "战术女仆·踝带",
       "theme": "保守",
       "series": "战术女仆"
@@ -2903,10 +3608,21 @@
         "gold": "crops/gold/067-cosplay-00-000-rcosplaypartsoriginalmaskwhite.png",
         "black": "crops/black/067-cosplay-00-000-rcosplaypartsoriginalmaskwhite.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 2,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "白色面具，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用头部·白色面具",
       "theme": "保守",
       "series": "通用头部"
@@ -2945,10 +3661,21 @@
         "gold": "crops/gold/068-cosplay-03-001-rcosplaypartsoriginalanalplug.png",
         "black": "crops/black/068-cosplay-03-001-rcosplaypartsoriginalanalplug.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "肛塞，属于通用身体配件系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "通用性器·肛塞",
       "theme": "开放",
       "series": "通用性器"
@@ -2957,12 +3684,10 @@
       "id": "069-cosplay-03-008-rcosplaypartsoriginatailplug",
       "display_name": "069-cosplay-03-008-rcosplaypartsoriginatailplug",
       "categories": [
-        "accessory",
-        "prop"
+        "accessory"
       ],
       "categories_suggested": [
-        "accessory",
-        "prop"
+        "accessory"
       ],
       "occupancy": {
         "label": "1x2",
@@ -2989,10 +3714,21 @@
         "gold": "crops/gold/069-cosplay-03-008-rcosplaypartsoriginatailplug.png",
         "black": "crops/black/069-cosplay-03-008-rcosplaypartsoriginatailplug.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": -1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "尾巴塞，属于通用身体配件系列，可作为饰品、道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用性器·尾巴塞",
       "theme": "开放",
       "series": "通用性器"
@@ -3031,10 +3767,21 @@
         "gold": "crops/gold/070-cosplay-06-003-rcosplaypartscollar.png",
         "black": "crops/black/070-cosplay-06-003-rcosplaypartscollar.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -5,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -5
+      },
       "complete": true,
       "description": "项圈，属于LatexPonyGirl 乳胶小马娘系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 6500,
       "name": "乳胶小马·项圈",
       "theme": "开放",
       "series": "乳胶小马"
@@ -3073,10 +3820,21 @@
         "gold": "crops/gold/071-cosplay-06-004-rcosplaypartstops.png",
         "black": "crops/black/071-cosplay-06-004-rcosplaypartstops.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -5,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 4,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 4
+      },
       "complete": true,
       "description": "上衣，属于LatexPonyGirl 乳胶小马娘系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 6700,
       "name": "乳胶小马·上衣",
       "theme": "开放",
       "series": "乳胶小马"
@@ -3115,10 +3873,21 @@
         "gold": "crops/gold/072-cosplay-06-007-rcosplayparts-hipbelt.png",
         "black": "crops/black/072-cosplay-06-007-rcosplayparts-hipbelt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 4,
+        "normality": 0,
+        "strength": -5,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -4
+      },
       "complete": true,
       "description": "腰胯带，属于LatexPonyGirl 乳胶小马娘系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 6300,
       "name": "乳胶小马·腰胯带",
       "theme": "保守",
       "series": "乳胶小马"
@@ -3157,10 +3926,21 @@
         "gold": "crops/gold/073-cosplay-06-008-rcosplaypartstail.png",
         "black": "crops/black/073-cosplay-06-008-rcosplaypartstail.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": -3,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": -5,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "尾巴，属于LatexPonyGirl 乳胶小马娘系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 6500,
       "name": "乳胶小马·尾巴",
       "theme": "开放",
       "series": "乳胶小马"
@@ -3199,10 +3979,21 @@
         "gold": "crops/gold/074-cosplay-00-007-rcosplaypartsoriginalmekakusi.png",
         "black": "crops/black/074-cosplay-00-007-rcosplaypartsoriginalmekakusi.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "遮眼罩，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用头部·遮眼罩",
       "theme": "开放",
       "series": "通用头部"
@@ -3241,10 +4032,21 @@
         "gold": "crops/gold/075-cosplay-06-001-rcosplaypartsfullface.png",
         "black": "crops/black/075-cosplay-06-001-rcosplaypartsfullface.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": -3,
+        "strength": -3,
+        "speed": 5,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -3,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "全覆盖面罩，属于LatexPonyGirl 乳胶小马娘系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 6700,
       "name": "乳胶小马·全覆盖面罩",
       "theme": "开放",
       "series": "乳胶小马"
@@ -3283,10 +4085,21 @@
         "gold": "crops/gold/076-cosplay-08-000-rcosplaypartsneckmohu.png",
         "black": "crops/black/076-cosplay-08-000-rcosplaypartsneckmohu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 1,
+        "normality": 3,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "颈部毛饰，属于WildBeast 野兽系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "野兽·颈部毛饰",
       "theme": "保守",
       "series": "野兽"
@@ -3325,10 +4138,21 @@
         "gold": "crops/gold/077-cosplay-07-004-rcosplaypartsjacket.png",
         "black": "crops/black/077-cosplay-07-004-rcosplaypartsjacket.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 3,
+        "normality": 1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "夹克，属于Bunny 兔女郎系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3600,
       "name": "兔女郎·夹克",
       "theme": "保守",
       "series": "兔女郎"
@@ -3367,10 +4191,21 @@
         "gold": "crops/gold/078-cosplay-07-005-rcosplaypartsnippless.png",
         "black": "crops/black/078-cosplay-07-005-rcosplaypartsnippless.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "露乳贴上装，属于Bunny 兔女郎系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "兔女郎·露乳贴上装",
       "theme": "开放",
       "series": "兔女郎"
@@ -3409,10 +4244,21 @@
         "gold": "crops/gold/079-cosplay-10-001-rcosplaypartstops.png",
         "black": "crops/black/079-cosplay-10-001-rcosplaypartstops.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": 1,
+        "speed": -1,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "上衣，属于Succubus 魅魔系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "魅魔·上衣",
       "theme": "保守",
       "series": "魅魔"
@@ -3451,10 +4297,21 @@
         "gold": "crops/gold/080-cosplay-10-002-rcosplaypartswing.png",
         "black": "crops/black/080-cosplay-10-002-rcosplaypartswing.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "翅膀，属于Succubus 魅魔系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "魅魔·翅膀",
       "theme": "开放",
       "series": "魅魔"
@@ -3493,10 +4350,21 @@
         "gold": "crops/gold/081-cosplay-00-000-rcosplaypartsoriginalmaskblack.png",
         "black": "crops/black/081-cosplay-00-000-rcosplaypartsoriginalmaskblack.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 2,
+        "speed": -1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "黑色面具，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用头部·黑色面具",
       "theme": "保守",
       "series": "通用头部"
@@ -3535,10 +4403,21 @@
         "gold": "crops/gold/082-cosplay-10-003-rcosplaypartsskirts.png",
         "black": "crops/black/082-cosplay-10-003-rcosplaypartsskirts.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "短裙，属于Succubus 魅魔系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "魅魔·短裙",
       "theme": "开放",
       "series": "魅魔"
@@ -3577,10 +4456,21 @@
         "gold": "crops/gold/083-cosplay-10-004-rcosplaypartspants.png",
         "black": "crops/black/083-cosplay-10-004-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 3,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "裤子，属于Succubus 魅魔系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "魅魔·裤子",
       "theme": "开放",
       "series": "魅魔"
@@ -3619,10 +4509,21 @@
         "gold": "crops/gold/084-cosplay-00-000-rcosplaypartsoriginalstockingoriginal.png",
         "black": "crops/black/084-cosplay-00-000-rcosplaypartsoriginalstockingoriginal.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版长袜，属于通用配饰系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "通用头部·原版长袜",
       "theme": "保守",
       "series": "通用头部"
@@ -3661,10 +4562,21 @@
         "gold": "crops/gold/085-cosplay-06-002-rcosplaypartshead.png",
         "black": "crops/black/085-cosplay-06-002-rcosplaypartshead.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 5,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 4,
+        "stamina_capacity_base": -5,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": -2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "头部部件，属于LatexPonyGirl 乳胶小马娘系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 6300,
       "name": "乳胶小马·头部部件",
       "theme": "开放",
       "series": "乳胶小马"
@@ -3703,10 +4615,21 @@
         "gold": "crops/gold/086-cosplay-01-004-rcosplaypartsoriginalpants.png",
         "black": "crops/black/086-cosplay-01-004-rcosplaypartsoriginalpants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "原版裤子，属于Original 原创系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "通用上半身·原版裤子",
       "theme": "保守",
       "series": "通用上半身"
@@ -3745,10 +4668,21 @@
         "gold": "crops/gold/087-cosplay-10-000-rcosplaypartshorn.png",
         "black": "crops/black/087-cosplay-10-000-rcosplaypartshorn.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": -1,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "角饰，属于Succubus 魅魔系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "魅魔·角饰",
       "theme": "保守",
       "series": "魅魔"
@@ -3787,10 +4721,21 @@
         "gold": "crops/gold/088-cosplay-00-002-rcosplaypartsoriginalglassessun.png",
         "black": "crops/black/088-cosplay-00-002-rcosplaypartsoriginalglassessun.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "太阳镜，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用头部·太阳镜",
       "theme": "保守",
       "series": "通用头部"
@@ -3829,10 +4774,21 @@
         "gold": "crops/gold/089-cosplay-00-005-rcosplaypartsoriginalkuchikase.png",
         "black": "crops/black/089-cosplay-00-005-rcosplaypartsoriginalkuchikase.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "口塞，属于通用配饰系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用头部·口塞",
       "theme": "开放",
       "series": "通用头部"
@@ -3872,10 +4828,21 @@
         "gold": "crops/gold/090-cosplay-01-023-rcosplaypartsoriginaslingshot.png",
         "black": "crops/black/090-cosplay-01-023-rcosplaypartsoriginaslingshot.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "弹弓，属于Original 原创系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·弹弓",
       "theme": "开放",
       "series": "通用上半身"
@@ -3914,10 +4881,21 @@
         "gold": "crops/gold/091-cosplay-01-001-rcosplaypartsoriginalmufflar.png",
         "black": "crops/black/091-cosplay-01-001-rcosplaypartsoriginalmufflar.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 2,
+        "normality": 1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "围巾，属于Original 原创系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用上半身·围巾",
       "theme": "保守",
       "series": "通用上半身"
@@ -3956,10 +4934,21 @@
         "gold": "crops/gold/092-cosplay-01-012-rcosplaypartsoriginalnippless.png",
         "black": "crops/black/092-cosplay-01-012-rcosplaypartsoriginalnippless.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "露乳贴上装，属于Original 原创系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·露乳贴上装",
       "theme": "开放",
       "series": "通用上半身"
@@ -3998,10 +4987,21 @@
         "gold": "crops/gold/093-cosplay-01-013-rcosplaypartsoriginalglobe.png",
         "black": "crops/black/093-cosplay-01-013-rcosplaypartsoriginalglobe.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "长手套，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "通用上半身·长手套",
       "theme": "保守",
       "series": "通用上半身"
@@ -4040,10 +5040,21 @@
         "gold": "crops/gold/094-cosplay-01-000-rcosplaypartsoriginalkubiwa.png",
         "black": "crops/black/094-cosplay-01-000-rcosplaypartsoriginalkubiwa.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "颈圈，属于Original 原创系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用上半身·颈圈",
       "theme": "开放",
       "series": "通用上半身"
@@ -4083,10 +5094,21 @@
         "gold": "crops/gold/095-cosplay-01-032-rcosplaypartsoriginalkikkou.png",
         "black": "crops/black/095-cosplay-01-032-rcosplaypartsoriginalkikkou.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "绳缚胸背带，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·绳缚胸背带",
       "theme": "开放",
       "series": "通用上半身"
@@ -4126,10 +5148,21 @@
         "gold": "crops/gold/096-cosplay-07-002-rcosplaypartsharnesstop.png",
         "black": "crops/black/096-cosplay-07-002-rcosplaypartsharnesstop.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "上身背带，属于Bunny 兔女郎系列，可作为上衣、饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3500,
       "name": "兔女郎·上身背带",
       "theme": "开放",
       "series": "兔女郎"
@@ -4168,10 +5201,21 @@
         "gold": "crops/gold/097-cosplay-07-003-rcosplaypartsharnessunder.png",
         "black": "crops/black/097-cosplay-07-003-rcosplaypartsharnessunder.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "内层背带，属于Bunny 兔女郎系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3400,
       "name": "兔女郎·内层背带",
       "theme": "开放",
       "series": "兔女郎"
@@ -4210,10 +5254,21 @@
         "gold": "crops/gold/098-cosplay-08-005-rcosplaypartsupperlegmohu.png",
         "black": "crops/black/098-cosplay-08-005-rcosplaypartsupperlegmohu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "大腿毛饰，属于WildBeast 野兽系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "野兽·大腿毛饰",
       "theme": "开放",
       "series": "野兽"
@@ -4252,10 +5307,21 @@
         "gold": "crops/gold/099-cosplay-08-006-rcosplaypartsfootmohu.png",
         "black": "crops/black/099-cosplay-08-006-rcosplaypartsfootmohu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "足部毛饰，属于WildBeast 野兽系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "野兽·足部毛饰",
       "theme": "开放",
       "series": "野兽"
@@ -4294,10 +5360,21 @@
         "gold": "crops/gold/100-cosplay-08-001-rcosplaypartsbelt.png",
         "black": "crops/black/100-cosplay-08-001-rcosplaypartsbelt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 3,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "腰带，属于WildBeast 野兽系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3100,
       "name": "野兽·腰带",
       "theme": "保守",
       "series": "野兽"
@@ -4336,10 +5413,21 @@
         "gold": "crops/gold/101-cosplay-08-002-rcosplaypartsnipplesmohu.png",
         "black": "crops/black/101-cosplay-08-002-rcosplaypartsnipplesmohu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": -1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "乳头毛饰，属于WildBeast 野兽系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "野兽·乳头毛饰",
       "theme": "保守",
       "series": "野兽"
@@ -4378,10 +5466,21 @@
         "gold": "crops/gold/102-cosplay-03-005-rcosplaypartsoriginalanalbeads.png",
         "black": "crops/black/102-cosplay-03-005-rcosplaypartsoriginalanalbeads.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "串珠形用品，属于通用身体配件系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "通用性器·串珠形用品",
       "theme": "开放",
       "series": "通用性器"
@@ -4420,10 +5519,21 @@
         "gold": "crops/gold/103-cosplay-03-009-rcosplaypartsoriginalanalpluglight.png",
         "black": "crops/black/103-cosplay-03-009-rcosplaypartsoriginalanalpluglight.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "发光肛塞，属于通用身体配件系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用性器·发光肛塞",
       "theme": "开放",
       "series": "通用性器"
@@ -4462,10 +5572,21 @@
         "gold": "crops/gold/104-cosplay-00-000-rcosplaypartsoriginalglassesblack.png",
         "black": "crops/black/104-cosplay-00-000-rcosplaypartsoriginalglassesblack.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "黑色眼镜，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用头部·黑色眼镜",
       "theme": "保守",
       "series": "通用头部"
@@ -4504,10 +5625,21 @@
         "gold": "crops/gold/105-cosplay-00-001-rcosplaypartsoriginalglassesred.png",
         "black": "crops/black/105-cosplay-00-001-rcosplaypartsoriginalglassesred.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "红色眼镜，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用头部·红色眼镜",
       "theme": "保守",
       "series": "通用头部"
@@ -4546,10 +5678,21 @@
         "gold": "crops/gold/106-cosplay-07-006-rcosplaypartssockes.png",
         "black": "crops/black/106-cosplay-07-006-rcosplaypartssockes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "袜子，属于Bunny 兔女郎系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "兔女郎·袜子",
       "theme": "开放",
       "series": "兔女郎"
@@ -4588,10 +5731,21 @@
         "gold": "crops/gold/107-cosplay-07-007-rcosplaypartsshoes.png",
         "black": "crops/black/107-cosplay-07-007-rcosplaypartsshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "鞋子，属于Bunny 兔女郎系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3500,
       "name": "兔女郎·鞋子",
       "theme": "开放",
       "series": "兔女郎"
@@ -4630,10 +5784,21 @@
         "gold": "crops/gold/108-cosplay-09-000-rcosplaypartschoker.png",
         "black": "crops/black/108-cosplay-09-000-rcosplaypartschoker.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "颈环，属于TacticalMaid 战术女仆系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "战术女仆·颈环",
       "theme": "开放",
       "series": "战术女仆"
@@ -4674,10 +5839,21 @@
         "gold": "crops/gold/109-cosplay-09-001-rcosplaypartsonepiece.png",
         "black": "crops/black/109-cosplay-09-001-rcosplaypartsonepiece.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 3,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "连衣裙，属于TacticalMaid 战术女仆系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3500,
       "name": "战术女仆·连衣裙",
       "theme": "保守",
       "series": "战术女仆"
@@ -4716,10 +5892,21 @@
         "gold": "crops/gold/110-cosplay-09-003-rcosplaypartsbelt.png",
         "black": "crops/black/110-cosplay-09-003-rcosplaypartsbelt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 3,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "腰带，属于TacticalMaid 战术女仆系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "战术女仆·腰带",
       "theme": "保守",
       "series": "战术女仆"
@@ -4758,10 +5945,21 @@
         "gold": "crops/gold/111-cosplay-09-004-rcosplaypartsapron.png",
         "black": "crops/black/111-cosplay-09-004-rcosplaypartsapron.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "围裙，属于TacticalMaid 战术女仆系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "战术女仆·围裙",
       "theme": "保守",
       "series": "战术女仆"
@@ -4800,10 +5998,21 @@
         "gold": "crops/gold/112-cosplay-07-000-rcosplaypartsear.png",
         "black": "crops/black/112-cosplay-07-000-rcosplaypartsear.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -2,
+        "normality": 1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "耳饰，属于Bunny 兔女郎系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3700,
       "name": "兔女郎·耳饰",
       "theme": "开放",
       "series": "兔女郎"
@@ -4843,10 +6052,21 @@
         "gold": "crops/gold/113-cosplay-07-001-rcosplaypartstops.png",
         "black": "crops/black/113-cosplay-07-001-rcosplaypartstops.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "上衣，属于Bunny 兔女郎系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "兔女郎·上衣",
       "theme": "开放",
       "series": "兔女郎"
@@ -4885,10 +6105,21 @@
         "gold": "crops/gold/114-cosplay-01-009-rcosplaypartsoriginalkanban.png",
         "black": "crops/black/114-cosplay-01-009-rcosplaypartsoriginalkanban.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "挂牌，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "通用上半身·挂牌",
       "theme": "保守",
       "series": "通用上半身"
@@ -4927,10 +6158,21 @@
         "gold": "crops/gold/115-cosplay-08-003-rcosplaypartshandmohu.png",
         "black": "crops/black/115-cosplay-08-003-rcosplaypartshandmohu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 3,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "手部毛饰，属于WildBeast 野兽系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "野兽·手部毛饰",
       "theme": "开放",
       "series": "野兽"
@@ -4969,10 +6211,21 @@
         "gold": "crops/gold/116-cosplay-08-004-rcosplaypartspants.png",
         "black": "crops/black/116-cosplay-08-004-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "裤子，属于WildBeast 野兽系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "野兽·裤子",
       "theme": "开放",
       "series": "野兽"
@@ -5011,10 +6264,21 @@
         "gold": "crops/gold/117-cosplay-06-005-rcosplaypartsnippless.png",
         "black": "crops/black/117-cosplay-06-005-rcosplaypartsnippless.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": -2,
+        "speed": 2,
+        "climax_speed_base": -5,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 4
+      },
       "complete": true,
       "description": "露乳贴上装，属于LatexPonyGirl 乳胶小马娘系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 6500,
       "name": "乳胶小马·露乳贴上装",
       "theme": "开放",
       "series": "乳胶小马"
@@ -5053,10 +6317,21 @@
         "gold": "crops/gold/118-cosplay-01-003-rcosplaypartsoriginalbra.png",
         "black": "crops/black/118-cosplay-01-003-rcosplaypartsoriginalbra.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "胸衣，属于Original 原创系列，可作为胸衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "通用上半身·胸衣",
       "theme": "保守",
       "series": "通用上半身"
@@ -5095,10 +6370,21 @@
         "gold": "crops/gold/119-cosplay-09-005-rcosplaypartsribbon.png",
         "black": "crops/black/119-cosplay-09-005-rcosplaypartsribbon.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "蝴蝶结，属于TacticalMaid 战术女仆系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "战术女仆·蝴蝶结",
       "theme": "保守",
       "series": "战术女仆"
@@ -5137,10 +6423,21 @@
         "gold": "crops/gold/120-cosplay-09-006-rcosplaypartslegbag.png",
         "black": "crops/black/120-cosplay-09-006-rcosplaypartslegbag.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "腿包，属于TacticalMaid 战术女仆系列，可作为背包装备使用，提供3×4容量。",
-      "reference_price": 0,
+      "reference_price": 3600,
       "name": "战术女仆·腿包",
       "theme": "保守",
       "series": "战术女仆"
@@ -5179,10 +6476,21 @@
         "gold": "crops/gold/121-cosplay-00-003-rcosplaypartsosyaburi.png",
         "black": "crops/black/121-cosplay-00-003-rcosplaypartsosyaburi.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "奶嘴状饰品，属于通用配饰系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用头部·奶嘴状饰品",
       "theme": "保守",
       "series": "通用头部"
@@ -5221,10 +6529,21 @@
         "gold": "crops/gold/122-cosplay-01-022-rcosplaypartsoriginalfullglove.png",
         "black": "crops/black/122-cosplay-01-022-rcosplaypartsoriginalfullglove.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "连指长手套，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用上半身·连指长手套",
       "theme": "保守",
       "series": "通用上半身"
@@ -5263,10 +6582,21 @@
         "gold": "crops/gold/123-cosplay-12-002-rcosplaypartssleeve.png",
         "black": "crops/black/123-cosplay-12-002-rcosplaypartssleeve.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "袖套，属于Ninja 忍者系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3600,
       "name": "忍者·袖套",
       "theme": "保守",
       "series": "忍者"
@@ -5305,10 +6635,21 @@
         "gold": "crops/gold/124-cosplay-14-001-rcosplaypartsboots.png",
         "black": "crops/black/124-cosplay-14-001-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 2,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "靴子，属于JumpSuit 连体服系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "兔女郎·靴子",
       "theme": "开放",
       "series": "兔女郎"
@@ -5347,10 +6688,21 @@
         "gold": "crops/gold/125-cosplay-01-024-rcosplaypartsoriginalharness.png",
         "black": "crops/black/125-cosplay-01-024-rcosplaypartsoriginalharness.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "胸背带，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用上半身·胸背带",
       "theme": "开放",
       "series": "通用上半身"
@@ -5391,10 +6743,21 @@
         "gold": "crops/gold/126-cosplay-01-006-rcosplaypartsoriginalraincoat.png",
         "black": "crops/black/126-cosplay-01-006-rcosplaypartsoriginalraincoat.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 2,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "雨衣，属于Original 原创系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3100,
       "name": "通用上半身·雨衣",
       "theme": "保守",
       "series": "通用上半身"
@@ -5433,10 +6796,21 @@
         "gold": "crops/gold/127-cosplay-01-020-rcosplaypartsoriginalnetglove.png",
         "black": "crops/black/127-cosplay-01-020-rcosplaypartsoriginalnetglove.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "网眼手套，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·网眼手套",
       "theme": "开放",
       "series": "通用上半身"
@@ -5475,10 +6849,21 @@
         "gold": "crops/gold/128-cosplay-12-000-rcosplaypartsomen.png",
         "black": "crops/black/128-cosplay-12-000-rcosplaypartsomen.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "面罩，属于Ninja 忍者系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "忍者·面罩",
       "theme": "保守",
       "series": "忍者"
@@ -5517,10 +6902,21 @@
         "gold": "crops/gold/129-cosplay-03-004-rcosplaypartsgentlehandunder.png",
         "black": "crops/black/129-cosplay-03-004-rcosplaypartsgentlehandunder.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "内层手部装饰，属于通用身体配件系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用性器·内层手部装饰",
       "theme": "开放",
       "series": "通用性器"
@@ -5559,10 +6955,21 @@
         "gold": "crops/gold/130-cosplay-01-007-rcosplaypartsoriginalongfar.png",
         "black": "crops/black/130-cosplay-01-007-rcosplaypartsoriginalongfar.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": -1,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "长毛手套，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用上半身·长毛手套",
       "theme": "保守",
       "series": "通用上半身"
@@ -5601,10 +7008,21 @@
         "gold": "crops/gold/131-cosplay-00-008-rcosplaypartsmekakushihoutai.png",
         "black": "crops/black/131-cosplay-00-008-rcosplaypartsmekakushihoutai.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "遮眼绷带，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用头部·遮眼绷带",
       "theme": "开放",
       "series": "通用头部"
@@ -5646,10 +7064,21 @@
         "gold": "crops/gold/132-cosplay-14-000-rcosplaypartssuit.png",
         "black": "crops/black/132-cosplay-14-000-rcosplaypartssuit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "连体网衣，属于JumpSuit 连体服系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3500,
       "name": "兔女郎·连体网衣",
       "theme": "开放",
       "series": "兔女郎"
@@ -5688,10 +7117,21 @@
         "gold": "crops/gold/133-cosplay-01-021-rcosplaypartsoriginalongleathergloves.png",
         "black": "crops/black/133-cosplay-01-021-rcosplaypartsoriginalongleathergloves.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "原版长皮手套，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·原版长皮手套",
       "theme": "开放",
       "series": "通用上半身"
@@ -5730,10 +7170,21 @@
         "gold": "crops/gold/134-cosplay-13-002-rcosplaypartshand.png",
         "black": "crops/black/134-cosplay-13-002-rcosplaypartshand.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 3,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "手部部件，属于NekoFril 猫娘系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "猫娘·手部部件",
       "theme": "开放",
       "series": "猫娘"
@@ -5772,10 +7223,21 @@
         "gold": "crops/gold/135-cosplay-13-003-rcosplaypartstaio.png",
         "black": "crops/black/135-cosplay-13-003-rcosplaypartstaio.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "尾部挂饰，属于NekoFril 猫娘系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "猫娘·尾部挂饰",
       "theme": "开放",
       "series": "猫娘"
@@ -5814,10 +7276,21 @@
         "gold": "crops/gold/136-cosplay-03-003-rcosplaypartsofudaunder.png",
         "black": "crops/black/136-cosplay-03-003-rcosplaypartsofudaunder.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "内层符纸下装，属于通用身体配件系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用性器·内层符纸下装",
       "theme": "开放",
       "series": "通用性器"
@@ -5856,10 +7329,21 @@
         "gold": "crops/gold/137-cosplay-01-015-rcosplaypartsoriginalbansoukoutit.png",
         "black": "crops/black/137-cosplay-01-015-rcosplaypartsoriginalbansoukoutit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": -1,
+        "strength": 2,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "兜裆布，属于Original 原创系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用上半身·兜裆布",
       "theme": "开放",
       "series": "通用上半身"
@@ -5898,10 +7382,21 @@
         "gold": "crops/gold/138-cosplay-12-003-rcosplaypartstop.png",
         "black": "crops/black/138-cosplay-12-003-rcosplaypartstop.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "上衣，属于Ninja 忍者系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "忍者·上衣",
       "theme": "开放",
       "series": "忍者"
@@ -5940,10 +7435,21 @@
         "gold": "crops/gold/139-cosplay-03-007-rcosplaypartsninjin.png",
         "black": "crops/black/139-cosplay-03-007-rcosplaypartsninjin.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "胡萝卜，属于通用身体配件系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用性器·胡萝卜",
       "theme": "开放",
       "series": "通用性器"
@@ -5982,10 +7488,21 @@
         "gold": "crops/gold/140-cosplay-01-016-rcosplaypartsoriginalofutanip.png",
         "black": "crops/black/140-cosplay-01-016-rcosplaypartsoriginalofutanip.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "符纸乳贴，属于Original 原创系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2400,
       "name": "通用上半身·符纸乳贴",
       "theme": "开放",
       "series": "通用上半身"
@@ -6024,10 +7541,21 @@
         "gold": "crops/gold/141-cosplay-03-006-rcosplaypartsrubbittail.png",
         "black": "crops/black/141-cosplay-03-006-rcosplaypartsrubbittail.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "兔尾，属于通用身体配件系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用性器·兔尾",
       "theme": "保守",
       "series": "通用性器"
@@ -6066,10 +7594,21 @@
         "gold": "crops/gold/142-cosplay-00-000-rcosplaypartspants.png",
         "black": "crops/black/142-cosplay-00-000-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "裤子，属于通用配饰系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "通用头部·裤子",
       "theme": "保守",
       "series": "通用头部"
@@ -6108,10 +7647,21 @@
         "gold": "crops/gold/143-cosplay-01-011-rcosplaypartsoriginalrandoseru.png",
         "black": "crops/black/143-cosplay-01-011-rcosplaypartsoriginalrandoseru.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "双肩书包，属于Original 原创系列，可作为背包装备使用，提供6×8容量。",
-      "reference_price": 0,
+      "reference_price": 3100,
       "name": "通用上半身·双肩书包",
       "theme": "保守",
       "series": "通用上半身"
@@ -6150,10 +7700,21 @@
         "gold": "crops/gold/144-cosplay-12-004-rcosplaypartsboots.png",
         "black": "crops/black/144-cosplay-12-004-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "靴子，属于Ninja 忍者系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "忍者·靴子",
       "theme": "保守",
       "series": "忍者"
@@ -6192,10 +7753,21 @@
         "gold": "crops/gold/145-cosplay-01-002-rcosplaypartskubiwaseisyori.png",
         "black": "crops/black/145-cosplay-01-002-rcosplaypartskubiwaseisyori.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "束缚颈圈，属于Original 原创系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·束缚颈圈",
       "theme": "开放",
       "series": "通用上半身"
@@ -6234,10 +7806,21 @@
         "gold": "crops/gold/146-cosplay-01-031-rcosplaypartsoriginamicrobikinipants.png",
         "black": "crops/black/146-cosplay-01-031-rcosplaypartsoriginamicrobikinipants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "微型比基尼内裤，属于Original 原创系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "通用上半身·微型比基尼内裤",
       "theme": "开放",
       "series": "通用上半身"
@@ -6276,10 +7859,21 @@
         "gold": "crops/gold/147-cosplay-12-001-rcosplaypartsmask.png",
         "black": "crops/black/147-cosplay-12-001-rcosplaypartsmask.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "面罩，属于Ninja 忍者系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "忍者·面罩·147",
       "theme": "开放",
       "series": "忍者"
@@ -6319,10 +7913,21 @@
         "gold": "crops/gold/148-cosplay-01-010-rcosplaypartsoriginalbodynet.png",
         "black": "crops/black/148-cosplay-01-010-rcosplaypartsoriginalbodynet.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": 0,
+        "strength": 2,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "原版网衣，属于Original 原创系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "通用上半身·原版网衣",
       "theme": "开放",
       "series": "通用上半身"
@@ -6361,10 +7966,21 @@
         "gold": "crops/gold/149-cosplay-01-014-rcosplaypartsoriginallultimatepants.png",
         "black": "crops/black/149-cosplay-01-014-rcosplaypartsoriginallultimatepants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "极限内裤，属于Original 原创系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·极限内裤",
       "theme": "保守",
       "series": "通用上半身"
@@ -6403,10 +8019,21 @@
         "gold": "crops/gold/150-cosplay-13-004-rcosplaypartsfoot.png",
         "black": "crops/black/150-cosplay-13-004-rcosplaypartsfoot.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "足部部件，属于NekoFril 猫娘系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "猫娘·足部部件",
       "theme": "保守",
       "series": "猫娘"
@@ -6445,10 +8072,21 @@
         "gold": "crops/gold/151-cosplay-01-019-rcosplaypartsoriginalnippiasu.png",
         "black": "crops/black/151-cosplay-01-019-rcosplaypartsoriginalnippiasu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "乳贴，属于Original 原创系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2300,
       "name": "通用上半身·乳贴",
       "theme": "开放",
       "series": "通用上半身"
@@ -6487,10 +8125,21 @@
         "gold": "crops/gold/152-cosplay-01-018-rcosplaypartsoriginalcrossnippiasu.png",
         "black": "crops/black/152-cosplay-01-018-rcosplaypartsoriginalcrossnippiasu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "十字乳贴，属于Original 原创系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·十字乳贴",
       "theme": "开放",
       "series": "通用上半身"
@@ -6529,10 +8178,21 @@
         "gold": "crops/gold/153-cosplay-01-029-rcosplaypartsoriginalchackbikinipants.png",
         "black": "crops/black/153-cosplay-01-029-rcosplaypartsoriginalchackbikinipants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "Chack 比基尼内裤，属于Original 原创系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·Chack 比基尼内裤",
       "theme": "开放",
       "series": "通用上半身"
@@ -6571,10 +8231,21 @@
         "gold": "crops/gold/154-cosplay-01-017-rcosplaypartsoriginalgentlehandbreast.png",
         "black": "crops/black/154-cosplay-01-017-rcosplaypartsoriginalgentlehandbreast.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -1,
+        "normality": 0,
+        "strength": 2,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 2,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "手形胸饰，属于Original 原创系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "通用上半身·手形胸饰",
       "theme": "开放",
       "series": "通用上半身"
@@ -6614,10 +8285,21 @@
         "gold": "crops/gold/155-cosplay-15-004-rcosplaypartspants.png",
         "black": "crops/black/155-cosplay-15-004-rcosplaypartspants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 4,
+        "normality": 0,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "裤子，属于SuitChic 西装系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4100,
       "name": "Chic西装·裤子",
       "theme": "保守",
       "series": "Chic西装"
@@ -6657,10 +8339,21 @@
         "gold": "crops/gold/156-cosplay-18-001-rcosplaypartsknit.png",
         "black": "crops/black/156-cosplay-18-001-rcosplaypartsknit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 4,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "针织上衣，属于Glossy 光泽服系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4600,
       "name": "奢华西装·针织上衣",
       "theme": "保守",
       "series": "奢华西装"
@@ -6699,10 +8392,21 @@
         "gold": "crops/gold/157-cosplay-19-003-rcosplaypartsbag.png",
         "black": "crops/black/157-cosplay-19-003-rcosplaypartsbag.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": -4,
+        "speed": 0,
+        "climax_speed_base": -3,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "包袋，属于SchoolHoodie 校园连帽系列，可作为背包装备使用，提供5×6容量。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园连帽·包袋",
       "theme": "保守",
       "series": "校园连帽"
@@ -6741,10 +8445,21 @@
         "gold": "crops/gold/158-cosplay-19-005-rcosplaypartsskirts.png",
         "black": "crops/black/158-cosplay-19-005-rcosplaypartsskirts.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": 0,
+        "normality": 3,
+        "strength": -3,
+        "speed": 1,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": -4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "短裙，属于SchoolHoodie 校园连帽系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园连帽·短裙",
       "theme": "保守",
       "series": "校园连帽"
@@ -6783,10 +8498,21 @@
         "gold": "crops/gold/159-cosplay-19-000-rcosplaypartsribbon.png",
         "black": "crops/black/159-cosplay-19-000-rcosplaypartsribbon.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": 4,
+        "strength": -3,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": -4,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "蝴蝶结，属于SchoolHoodie 校园连帽系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园连帽·蝴蝶结",
       "theme": "保守",
       "series": "校园连帽"
@@ -6825,10 +8551,21 @@
         "gold": "crops/gold/160-cosplay-00-006-rcosplaypartseyecensor.png",
         "black": "crops/black/160-cosplay-00-006-rcosplaypartseyecensor.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -2,
+        "normality": -1,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "视线遮挡面罩，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "通用头部·视线遮挡面罩",
       "theme": "开放",
       "series": "通用头部"
@@ -6867,10 +8604,21 @@
         "gold": "crops/gold/161-cosplay-19-001-rcosplaypartstie.png",
         "black": "crops/black/161-cosplay-19-001-rcosplaypartstie.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -4,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "领带，属于SchoolHoodie 校园连帽系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园连帽·领带",
       "theme": "保守",
       "series": "校园连帽"
@@ -6909,10 +8657,21 @@
         "gold": "crops/gold/162-cosplay-17-003-rcosplaypartsleg.png",
         "black": "crops/black/162-cosplay-17-003-rcosplaypartsleg.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 3,
+        "speed": 0,
+        "climax_speed_base": 3,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "腿部部件，属于Sweater 毛衣系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "毛衣·腿部部件",
       "theme": "保守",
       "series": "毛衣"
@@ -6953,10 +8712,21 @@
         "gold": "crops/gold/163-cosplay-01-025-rcosplaypartsoriginalswimsuit.png",
         "black": "crops/black/163-cosplay-01-025-rcosplaypartsoriginalswimsuit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "连体泳衣，属于Original 原创系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2900,
       "name": "通用上半身·连体泳衣",
       "theme": "保守",
       "series": "通用上半身"
@@ -6995,10 +8765,21 @@
         "gold": "crops/gold/164-cosplay-19-002-rcosplaypartshoodie.png",
         "black": "crops/black/164-cosplay-19-002-rcosplaypartshoodie.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": -3,
+        "speed": 2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": -3,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "连帽衫，属于SchoolHoodie 校园连帽系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园连帽·连帽衫",
       "theme": "保守",
       "series": "校园连帽"
@@ -7037,10 +8818,21 @@
         "gold": "crops/gold/165-cosplay-16-000-rcosplaypartschoker.png",
         "black": "crops/black/165-cosplay-16-000-rcosplaypartschoker.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 1,
+        "conservatism": -1,
+        "normality": -2,
+        "strength": 0,
+        "speed": -1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "颈环，属于SuitLuxe 奢华西装系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 3900,
       "name": "奢华西装·颈环",
       "theme": "保守",
       "series": "奢华西装"
@@ -7079,10 +8871,21 @@
         "gold": "crops/gold/166-cosplay-16-004-rcosplaypartsidshoes.png",
         "black": "crops/black/166-cosplay-16-004-rcosplaypartsidshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 1,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": -1,
+        "handcuff_proficiency_base": 3,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "ID 鞋，属于SuitLuxe 奢华西装系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 4000,
       "name": "奢华西装·ID 鞋",
       "theme": "保守",
       "series": "奢华西装"
@@ -7123,10 +8926,21 @@
         "gold": "crops/gold/167-cosplay-01-026-rcosplaypartsoriginalsukumizu.png",
         "black": "crops/black/167-cosplay-01-026-rcosplaypartsoriginalsukumizu.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "学校泳装，属于Original 原创系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2700,
       "name": "通用上半身·学校泳装",
       "theme": "保守",
       "series": "通用上半身"
@@ -7165,10 +8979,21 @@
         "gold": "crops/gold/168-cosplay-19-007-rcosplaypartsshoes.png",
         "black": "crops/black/168-cosplay-19-007-rcosplaypartsshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": -3,
+        "speed": 4,
+        "climax_speed_base": -4,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "鞋子，属于SchoolHoodie 校园连帽系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园连帽·鞋子",
       "theme": "保守",
       "series": "校园连帽"
@@ -7207,10 +9032,21 @@
         "gold": "crops/gold/169-cosplay-16-002-rcosplaypartsidtop.png",
         "black": "crops/black/169-cosplay-16-002-rcosplaypartsidtop.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": -3,
+        "normality": -2,
+        "strength": 0,
+        "speed": -1,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -1,
+        "reward_base": 4
+      },
       "complete": true,
       "description": "ID 上衣，属于SuitLuxe 奢华西装系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4800,
       "name": "奢华西装·ID 上衣",
       "theme": "开放",
       "series": "奢华西装"
@@ -7249,10 +9085,21 @@
         "gold": "crops/gold/170-cosplay-19-006-rcosplaypartssocks.png",
         "black": "crops/black/170-cosplay-19-006-rcosplaypartssocks.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": -4,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 4,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -3,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "袜子，属于SchoolHoodie 校园连帽系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园连帽·袜子",
       "theme": "开放",
       "series": "校园连帽"
@@ -7293,10 +9140,21 @@
         "gold": "crops/gold/171-cosplay-01-027-rcosplaypartsoriginarubbersuit.png",
         "black": "crops/black/171-cosplay-01-027-rcosplaypartsoriginarubbersuit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": -1,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "乳胶连体衣，属于Original 原创系列，可作为上衣、下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 3000,
       "name": "通用上半身·乳胶连体衣",
       "theme": "保守",
       "series": "通用上半身"
@@ -7335,10 +9193,21 @@
         "gold": "crops/gold/172-cosplay-15-001-rcosplaypartsjacket.png",
         "black": "crops/black/172-cosplay-15-001-rcosplaypartsjacket.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 4,
+        "normality": 2,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "夹克，属于SuitChic 西装系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4600,
       "name": "Chic西装·夹克",
       "theme": "保守",
       "series": "Chic西装"
@@ -7377,10 +9246,21 @@
         "gold": "crops/gold/173-cosplay-17-002-rcosplaypartsarm.png",
         "black": "crops/black/173-cosplay-17-002-rcosplaypartsarm.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": -1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": -4,
+        "handcuff_proficiency_base": 3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "臂套，属于Sweater 毛衣系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "毛衣·臂套",
       "theme": "保守",
       "series": "毛衣"
@@ -7420,10 +9300,21 @@
         "gold": "crops/gold/174-cosplay-16-003-rcosplaypartsidpants.png",
         "black": "crops/black/174-cosplay-16-003-rcosplaypartsidpants.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "ID 裤子，属于SuitLuxe 奢华西装系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4300,
       "name": "奢华西装·ID 裤子",
       "theme": "保守",
       "series": "奢华西装"
@@ -7462,10 +9353,21 @@
         "gold": "crops/gold/175-cosplay-15-007-rcosplaypartsshoes.png",
         "black": "crops/black/175-cosplay-15-007-rcosplaypartsshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 3,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "鞋子，属于SuitChic 西装系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 4000,
       "name": "Chic西装·鞋子",
       "theme": "保守",
       "series": "Chic西装"
@@ -7504,10 +9406,21 @@
         "gold": "crops/gold/176-cosplay-19-004-rcosplaypartsshirts.png",
         "black": "crops/black/176-cosplay-19-004-rcosplaypartsshirts.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": -3,
+        "normality": 2,
+        "strength": 1,
+        "speed": 0,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": 4,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "衬衫，属于SchoolHoodie 校园连帽系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园连帽·衬衫",
       "theme": "保守",
       "series": "校园连帽"
@@ -7546,10 +9459,21 @@
         "gold": "crops/gold/177-cosplay-15-003-rcosplaypartsskirt.png",
         "black": "crops/black/177-cosplay-15-003-rcosplaypartsskirt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 4,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 1,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "短裙，属于SuitChic 西装系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4400,
       "name": "Chic西装·短裙",
       "theme": "保守",
       "series": "Chic西装"
@@ -7588,10 +9512,21 @@
         "gold": "crops/gold/178-cosplay-18-000-rcosplaypartsdown.png",
         "black": "crops/black/178-cosplay-18-000-rcosplaypartsdown.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -2,
+        "conservatism": 0,
+        "normality": 4,
+        "strength": 2,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -2
+      },
       "complete": true,
       "description": "羽绒外套，属于Glossy 光泽服系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4600,
       "name": "奢华西装·羽绒外套",
       "theme": "保守",
       "series": "奢华西装"
@@ -7630,10 +9565,21 @@
         "gold": "crops/gold/179-cosplay-15-005-rcosplaypartspanty.png",
         "black": "crops/black/179-cosplay-15-005-rcosplaypartspanty.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": -3,
+        "normality": -2,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 4
+      },
       "complete": true,
       "description": "内裤，属于SuitChic 西装系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 4700,
       "name": "Chic西装·内裤",
       "theme": "开放",
       "series": "Chic西装"
@@ -7672,10 +9618,21 @@
         "gold": "crops/gold/180-cosplay-13-000-rcosplaypartsearcat.png",
         "black": "crops/black/180-cosplay-13-000-rcosplaypartsearcat.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 3,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "猫耳，属于NekoFril 猫娘系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3200,
       "name": "猫娘·猫耳",
       "theme": "保守",
       "series": "猫娘"
@@ -7715,10 +9672,21 @@
         "gold": "crops/gold/181-cosplay-17-000-rcosplaypartstops.png",
         "black": "crops/black/181-cosplay-17-000-rcosplaypartstops.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 4,
+        "normality": 0,
+        "strength": -1,
+        "speed": 1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -3,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "上衣，属于Sweater 毛衣系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "毛衣·上衣",
       "theme": "保守",
       "series": "毛衣"
@@ -7757,10 +9725,21 @@
         "gold": "crops/gold/182-cosplay-18-002-rcosplaypartsboots.png",
         "black": "crops/black/182-cosplay-18-002-rcosplaypartsboots.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": -3,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 4,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "靴子，属于Glossy 光泽服系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 4500,
       "name": "奢华西装·靴子",
       "theme": "保守",
       "series": "奢华西装"
@@ -7799,10 +9778,21 @@
         "gold": "crops/gold/183-cosplay-17-001-rcosplaypartspanty.png",
         "black": "crops/black/183-cosplay-17-001-rcosplaypartspanty.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 3,
+        "stamina_capacity_base": -4,
+        "stamina_recovery_base": 1,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 4
+      },
       "complete": true,
       "description": "内裤，属于Sweater 毛衣系列，可作为内裤装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "毛衣·内裤",
       "theme": "开放",
       "series": "毛衣"
@@ -7841,10 +9831,21 @@
         "gold": "crops/gold/184-cosplay-13-001-rcosplaypartsearfox.png",
         "black": "crops/black/184-cosplay-13-001-rcosplaypartsearfox.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": -2,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 3,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "狐狸耳，属于NekoFril 猫娘系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 3300,
       "name": "猫娘·狐狸耳",
       "theme": "保守",
       "series": "猫娘"
@@ -7883,10 +9884,21 @@
         "gold": "crops/gold/185-cosplay-15-006-rcosplaypartsstocking.png",
         "black": "crops/black/185-cosplay-15-006-rcosplaypartsstocking.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 2,
+        "conservatism": -2,
+        "normality": -2,
+        "strength": 0,
+        "speed": -1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "长袜，属于SuitChic 西装系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 4400,
       "name": "Chic西装·长袜",
       "theme": "开放",
       "series": "Chic西装"
@@ -7925,10 +9937,21 @@
         "gold": "crops/gold/186-cosplay-15-000-rcosplaypartsshirt.png",
         "black": "crops/black/186-cosplay-15-000-rcosplaypartsshirt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 2,
+        "speed": -2,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 4,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "衬衫，属于SuitChic 西装系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 4400,
       "name": "Chic西装·衬衫",
       "theme": "保守",
       "series": "Chic西装"
@@ -7967,10 +9990,21 @@
         "gold": "crops/gold/187-cosplay-20-004-rcosplaypartsskirt.png",
         "black": "crops/black/187-cosplay-20-004-rcosplaypartsskirt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 4,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 0,
+        "speed": 3,
+        "climax_speed_base": -3,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -4,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "短裙，属于SchoolGal 校园辣妹系列，可作为下衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园辣妹·短裙",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8009,10 +10043,21 @@
         "gold": "crops/gold/188-cosplay-20-006-rcosplaypartssocks.png",
         "black": "crops/black/188-cosplay-20-006-rcosplaypartssocks.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": -3,
+        "speed": 0,
+        "climax_speed_base": 4,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 2
+      },
       "complete": true,
       "description": "袜子，属于SchoolGal 校园辣妹系列，可作为袜子装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园辣妹·袜子",
       "theme": "开放",
       "series": "校园辣妹"
@@ -8051,10 +10096,21 @@
         "gold": "crops/gold/189-cosplay-20-008-rcosplaypartsearing.png",
         "black": "crops/black/189-cosplay-20-008-rcosplaypartsearing.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": -1,
+        "stamina_recovery_base": -4,
+        "handcuff_proficiency_base": -2,
+        "reward_base": 3
+      },
       "complete": true,
       "description": "耳钉，属于SchoolGal 校园辣妹系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园辣妹·耳钉",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8093,10 +10149,21 @@
         "gold": "crops/gold/190-cosplay-20-005-rcosplaypartsbag.png",
         "black": "crops/black/190-cosplay-20-005-rcosplaypartsbag.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 3,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 4,
+        "stamina_recovery_base": -3,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "包袋，属于SchoolGal 校园辣妹系列，可作为背包装备使用，提供4×5容量。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园辣妹·包袋",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8135,10 +10202,21 @@
         "gold": "crops/gold/191-cosplay-20-000-rcosplaypartswinterblazer.png",
         "black": "crops/black/191-cosplay-20-000-rcosplaypartswinterblazer.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 3,
+        "normality": -2,
+        "strength": -1,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 4,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 1,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "冬季西装外套，属于SchoolGal 校园辣妹系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园辣妹·冬季西装外套",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8177,10 +10255,21 @@
         "gold": "crops/gold/192-cosplay-20-010-rcosplaypartsbracelet.png",
         "black": "crops/black/192-cosplay-20-010-rcosplaypartsbracelet.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": -2,
+        "speed": -3,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -2,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 4,
+        "reward_base": 1
+      },
       "complete": true,
       "description": "手链，属于SchoolGal 校园辣妹系列，可作为饰品装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园辣妹·手链",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8219,10 +10308,21 @@
         "gold": "crops/gold/193-cosplay-20-007-rcosplaypartsshoes.png",
         "black": "crops/black/193-cosplay-20-007-rcosplaypartsshoes.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 1,
+        "normality": 0,
+        "strength": 4,
+        "speed": 3,
+        "climax_speed_base": -4,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -3
+      },
       "complete": true,
       "description": "鞋子，属于SchoolGal 校园辣妹系列，可作为鞋子装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园辣妹·鞋子",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8261,10 +10361,21 @@
         "gold": "crops/gold/194-cosplay-20-003-rcosplaypartswintercardigan.png",
         "black": "crops/black/194-cosplay-20-003-rcosplaypartswintercardigan.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -4,
+        "conservatism": 2,
+        "normality": 0,
+        "strength": 0,
+        "speed": 1,
+        "climax_speed_base": 1,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 4,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "冬季开衫，属于SchoolGal 校园辣妹系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园辣妹·冬季开衫",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8303,10 +10414,21 @@
         "gold": "crops/gold/195-cosplay-20-013-rcosplaypartssummercardigan.png",
         "black": "crops/black/195-cosplay-20-013-rcosplaypartssummercardigan.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 4,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 0,
+        "speed": 2,
+        "climax_speed_base": -2,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "夏季开衫，属于SchoolGal 校园辣妹系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5400,
       "name": "校园辣妹·夏季开衫",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8345,10 +10467,21 @@
         "gold": "crops/gold/196-cosplay-20-012-rcosplaypartsribbon.png",
         "black": "crops/black/196-cosplay-20-012-rcosplaypartsribbon.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 4,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 1,
+        "stamina_recovery_base": 3,
+        "handcuff_proficiency_base": -4,
+        "reward_base": -3
+      },
       "complete": true,
       "description": "蝴蝶结，属于SchoolGal 校园辣妹系列，可作为项链装备使用。",
-      "reference_price": 0,
+      "reference_price": 5000,
       "name": "校园辣妹·蝴蝶结",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8387,10 +10520,21 @@
         "gold": "crops/gold/197-cosplay-20-011-rcosplayparttsummershirt.png",
         "black": "crops/black/197-cosplay-20-011-rcosplayparttsummershirt.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 3,
+        "conservatism": 0,
+        "normality": 2,
+        "strength": 3,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": -4,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -3,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "夏季衬衫，属于SchoolGal 校园辣妹系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 5200,
       "name": "校园辣妹·夏季衬衫",
       "theme": "保守",
       "series": "校园辣妹"
@@ -8429,10 +10573,21 @@
         "gold": "crops/gold/198-cosplay-06-000-rcosplaypartsear.png",
         "black": "crops/black/198-cosplay-06-000-rcosplaypartsear.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 4,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": -2,
+        "speed": 1,
+        "climax_speed_base": 2,
+        "stamina_capacity_base": 2,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": -3,
+        "reward_base": -5
+      },
       "complete": true,
       "description": "耳饰，属于LatexPonyGirl 乳胶小马娘系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 6700,
       "name": "乳胶小马·耳饰",
       "theme": "开放",
       "series": "乳胶小马"
@@ -8471,10 +10626,21 @@
         "gold": "crops/gold/199-cosplay-00-004-rcosplaypartspolicehat.png",
         "black": "crops/black/199-cosplay-00-004-rcosplaypartspolicehat.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": -1,
+        "conservatism": 0,
+        "normality": 1,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": -1
+      },
       "complete": true,
       "description": "警帽，属于通用配饰系列，可作为头饰装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "通用头部·警帽",
       "theme": "保守",
       "series": "通用头部"
@@ -8513,10 +10679,21 @@
         "gold": "crops/gold/200-adult-003-madultgoodsrecordhandcuff.png",
         "black": "crops/black/200-adult-003-madultgoodsrecordhandcuff.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "手铐，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 1500,
       "name": "成人用品·手铐",
       "theme": "开放",
       "series": "成人用品"
@@ -8557,10 +10734,21 @@
         "gold": "crops/gold/201-adult-002-madultgoodsrecordeyemask.png",
         "black": "crops/black/201-adult-002-madultgoodsrecordeyemask.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "眼罩，属于成人用品系列，可作为头饰、道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 1800,
       "name": "成人用品·眼罩",
       "theme": "开放",
       "series": "成人用品"
@@ -8599,10 +10787,21 @@
         "gold": "crops/gold/202-adult-001-madultgoodsrecordvibrator.png",
         "black": "crops/black/202-adult-001-madultgoodsrecordvibrator.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "振动器，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2000,
       "name": "成人用品·振动器",
       "theme": "开放",
       "series": "成人用品"
@@ -8641,10 +10840,21 @@
         "gold": "crops/gold/205-adult-006-madultgoodsrecordvibratortit.png",
         "black": "crops/black/205-adult-006-madultgoodsrecordvibratortit.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "胸部振动器，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 1800,
       "name": "成人用品·胸部振动器",
       "theme": "开放",
       "series": "成人用品"
@@ -8683,10 +10893,21 @@
         "gold": "crops/gold/206-adult-009-madultgoodsrecordpistonmachineanal.png",
         "black": "crops/black/206-adult-009-madultgoodsrecordpistonmachineanal.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "肛用活塞机，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2600,
       "name": "成人用品·肛用活塞机",
       "theme": "开放",
       "series": "成人用品"
@@ -8725,10 +10946,21 @@
         "gold": "crops/gold/207-adult-007-madultgoodsrecordvibratorkuri.png",
         "black": "crops/black/207-adult-007-madultgoodsrecordvibratorkuri.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "阴部振动器，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2200,
       "name": "成人用品·阴部振动器",
       "theme": "开放",
       "series": "成人用品"
@@ -8767,10 +10999,21 @@
         "gold": "crops/gold/208-adult-008-madultgoodsrecordpistonmachinefuta.png",
         "black": "crops/black/208-adult-008-madultgoodsrecordpistonmachinefuta.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "前庭活塞机，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "成人用品·前庭活塞机",
       "theme": "开放",
       "series": "成人用品"
@@ -8809,10 +11052,21 @@
         "gold": "crops/gold/209-adult-010-madultgoodsrecordpistonmachinepussy.png",
         "black": "crops/black/209-adult-010-madultgoodsrecordpistonmachinepussy.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "女用活塞机，属于成人用品系列，可作为道具装备使用。",
-      "reference_price": 0,
+      "reference_price": 2500,
       "name": "成人用品·女用活塞机",
       "theme": "开放",
       "series": "成人用品"
@@ -8852,10 +11106,21 @@
         "gold": "crops/gold/211-clothes-001-mclothesrecordcoat.png",
         "black": "crops/black/211-clothes-001-mclothesrecordcoat.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 2,
+        "normality": 1,
+        "strength": 0,
+        "speed": -1,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": -2,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "complete": true,
       "description": "外套，属于基础外衣系列，可作为上衣装备使用。",
-      "reference_price": 0,
+      "reference_price": 2800,
       "name": "基础服装·外套",
       "theme": "保守",
       "series": "基础服装"
@@ -8867,7 +11132,7 @@
       "series": "成人用品",
       "theme": "开放",
       "description": "独立放置型成人用品，可部署到地面并使用。",
-      "reference_price": 0,
+      "reference_price": 2000,
       "categories": [
         "prop"
       ],
@@ -8899,7 +11164,18 @@
         "gold": "crops/gold/217-adult-011-mitemdildo.png",
         "black": "crops/black/217-adult-011-mitemdildo.png"
       },
-      "stats": {},
+      "stats": {
+        "perception": 0,
+        "conservatism": 0,
+        "normality": 0,
+        "strength": 0,
+        "speed": 0,
+        "climax_speed_base": 0,
+        "stamina_capacity_base": 0,
+        "stamina_recovery_base": 0,
+        "handcuff_proficiency_base": 0,
+        "reward_base": 0
+      },
       "item_type": 1,
       "drop_item_type": 10000,
       "standalone_model": true,

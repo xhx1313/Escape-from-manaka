@@ -876,8 +876,7 @@ double ExhibitionUi_ValueForDefinition(int definition)
     }
     const auto& item = kEquipmentInventoryDefinitions[definition];
     return InventoryUi_InstanceCurrentValue(
-        item.width,
-        item.height,
+        definition,
         4,
         true,
         entry.wearUnits);

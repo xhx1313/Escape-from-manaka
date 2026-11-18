@@ -124,6 +124,7 @@ static float g_gameplayInventoryDragVisualHeight = 0.0f;
 static int g_gameplayInventoryHoveredEquipmentCategory = -1;
 static int g_gameplayInventoryQuickSlotDragSource = -1;
 static bool g_gameplayInventoryRotateKeyDown = false;
+static std::atomic<bool> g_gameplayInventoryRightRotateRequested{false};
 
 void GameplayInventory_Close();
 
@@ -620,6 +621,7 @@ void GameplayInventory_EnsureState()
         const InventoryStateLoadResult loadResult = InventoryUi_LoadState();
         InventoryUi_EnsureStarterGrant(loadResult);
         InventoryUi_ApplyBackpackCapacity();
+        EquipmentStats_RefreshFromEquipment();
     }
 }
 
@@ -1930,6 +1932,7 @@ void GameplayInventory_OpenInternal(bool rewardMode)
         (GameplayInput_ReadRawAsyncKeyState(VK_LBUTTON) & 0x8000) != 0;
     g_gameplayInventoryDraggingView = -1;
     g_gameplayInventoryDragMoved = false;
+    g_gameplayInventoryRightRotateRequested = false;
     LogInfo(LogCategory_Inventory, L"Inventory", L"Gameplay Tab inventory opened.");
 }
 
@@ -1990,6 +1993,7 @@ void GameplayInventory_Close()
     g_gameplayInventoryDraggingView = -1;
     g_gameplayInventoryMouseWasDown = false;
     g_gameplayInventoryDragMoved = false;
+    g_gameplayInventoryRightRotateRequested = false;
     g_gameplayInventoryHoveredEquipmentCategory = -1;
     g_gameplayInventoryDragVisualWidth = 0.0f;
     g_gameplayInventoryDragVisualHeight = 0.0f;
@@ -2068,6 +2072,7 @@ void GameplayInventory_RecoverInvalidOpenState(
     g_gameplayInventoryMouseWasDown = false;
     g_gameplayInventoryDragMoved = false;
     g_gameplayInventoryRotateKeyDown = false;
+    g_gameplayInventoryRightRotateRequested = false;
     ExtendedMode_ClearGameplayInputMode();
     ExtendedMode_SetGameplayHudRaycastsEnabled(true);
     LogInfo(LogCategory_Inventory, L"Inventory", 
@@ -2740,9 +2745,31 @@ void GameplayInventory_CancelPointerInteraction()
     g_gameplayInventoryDragMoved = false;
     g_gameplayInventoryQuickSlotDragSource = -1;
     g_gameplayInventoryRotateKeyDown = false;
+    g_gameplayInventoryRightRotateRequested = false;
     g_gameplayInventoryHoveredEquipmentCategory = -1;
     g_gameplayInventoryDragVisualWidth = 0.0f;
     g_gameplayInventoryDragVisualHeight = 0.0f;
+}
+
+bool GameplayInventory_RequestDraggedItemRotation()
+{
+    if (!g_gameplayInventoryOpen.load() ||
+        g_gameplayInventoryDraggingView < 0 ||
+        g_gameplayInventoryDraggingView >=
+            static_cast<int>(g_gameplayInventoryViews.size()))
+    {
+        return false;
+    }
+    g_gameplayInventoryRightRotateRequested = true;
+    g_gameplayInventoryObservedRightPressSerial =
+        g_extendedManualRightPressSerial.load();
+    LogInfo(
+        LogCategory_Inventory,
+        L"InventoryRotate",
+        L"Gameplay inventory right-click requested rotation while dragging "
+        L"view=%d.",
+        g_gameplayInventoryDraggingView);
+    return true;
 }
 
 void GameplayInventory_ProcessMouse()
@@ -2818,6 +2845,7 @@ void GameplayInventory_ProcessMouse()
         g_gameplayInventoryObservedPressSerial = pressSerial;
         g_gameplayInventoryMouseWasDown = true;
         g_gameplayInventoryDragMoved = false;
+        g_gameplayInventoryRightRotateRequested = false;
         POINT pressPoint{
             g_extendedManualPointerPressX.load(),
             g_extendedManualPointerPressY.load()};
@@ -2979,7 +3007,10 @@ void GameplayInventory_ProcessMouse()
                 static_cast<size_t>(g_gameplayInventoryDraggingView)];
             const bool rotateDown =
                 (GameplayInput_ReadRawAsyncKeyState('R') & 0x8000) != 0;
-            if (rotateDown && !g_gameplayInventoryRotateKeyDown)
+            const bool rightRotateRequested =
+                g_gameplayInventoryRightRotateRequested.exchange(false);
+            if ((rotateDown && !g_gameplayInventoryRotateKeyDown) ||
+                rightRotateRequested)
             {
                 const int oldWidth = view.width;
                 view.width = view.height;
@@ -3236,6 +3267,7 @@ void GameplayInventory_ProcessMouse()
         g_gameplayInventoryDragMoved = false;
         g_gameplayInventoryQuickSlotDragSource = -1;
         g_gameplayInventoryRotateKeyDown = false;
+        g_gameplayInventoryRightRotateRequested = false;
     }
 }
 
@@ -3484,6 +3516,7 @@ void GameplayInventory_Reset()
     g_gameplayInventoryDraggingView = -1;
     g_gameplayInventoryMouseWasDown = false;
     g_gameplayInventoryDragMoved = false;
+    g_gameplayInventoryRightRotateRequested = false;
     g_gameplayInventoryHoveredEquipmentCategory = -1;
     g_gameplayInventoryDragVisualWidth = 0.0f;
     g_gameplayInventoryDragVisualHeight = 0.0f;

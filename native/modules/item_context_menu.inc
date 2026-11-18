@@ -12,6 +12,12 @@ enum ItemContextMenuAction
 constexpr int kItemContextMenuActionCount = 5;
 constexpr float kItemContextMenuWidth = 0.165f;
 constexpr float kItemContextMenuHeight = 0.300f;
+constexpr int kItemInspectStatCount = 10;
+constexpr float kItemInspectStatTooltipMinWidth = 0.120f;
+constexpr float kItemInspectStatTooltipMaxWidth = 0.680f;
+constexpr float kItemInspectStatTooltipMaxHeight = 0.065f;
+constexpr float kItemInspectStatTooltipCursorOffset = 0.018f;
+constexpr float kItemInspectStatTooltipEdgePadding = 0.022f;
 
 static Il2CppObject* g_itemContextMenuRoot = nullptr;
 static Il2CppObject* g_itemContextMenuCanvas = nullptr;
@@ -28,6 +34,23 @@ static SceneUiElement g_itemInspectCloseButton{};
 static Il2CppObject* g_itemInspectName = nullptr;
 static SceneUiElement g_itemInspectImage{};
 static Il2CppObject* g_itemInspectStats = nullptr;
+static Il2CppObject* g_itemInspectEquipmentStats = nullptr;
+static SceneUiElement
+    g_itemInspectStatElements[kItemInspectStatCount]{};
+static float
+    g_itemInspectStatMinX[kItemInspectStatCount]{};
+static float
+    g_itemInspectStatMaxX[kItemInspectStatCount]{};
+static int
+    g_itemInspectVisibleStats[kItemInspectStatCount]{};
+static int g_itemInspectVisibleStatCount = 0;
+static int g_itemInspectHoveredStat = -1;
+static int g_itemInspectDefinition = -1;
+static SceneUiElement g_itemInspectStatTooltip{};
+static SceneUiElement g_itemInspectStatTooltipText{};
+static float g_itemInspectStatTooltipWidth =
+    kItemInspectStatTooltipMinWidth;
+static float g_itemInspectStatTooltipHeight = 0.045f;
 static Il2CppObject* g_itemInspectDescription = nullptr;
 static SceneUiElement g_itemInspectBadgeCircle{};
 static SceneUiElement g_itemInspectBadgeText{};
@@ -75,6 +98,7 @@ static float g_itemAppraisalDragOffsetX = 0.0f;
 static float g_itemAppraisalDragOffsetY = 0.0f;
 static bool g_itemContextCanAppraise = false;
 static bool g_itemContextCanExhibit = false;
+static bool g_itemContextCanSell = false;
 static int g_itemContextItemIndex = -1;
 static int g_itemContextGameplayTempIndex = -1;
 static Il2CppObject* g_itemDiscardRoot = nullptr;
@@ -82,6 +106,13 @@ static Il2CppObject* g_itemDiscardCanvas = nullptr;
 static SceneUiElement g_itemDiscardYesButton{};
 static SceneUiElement g_itemDiscardNoButton{};
 static bool g_itemDiscardOpen = false;
+static Il2CppObject* g_itemSaleRoot = nullptr;
+static Il2CppObject* g_itemSaleCanvas = nullptr;
+static Il2CppObject* g_itemSaleMessage = nullptr;
+static SceneUiElement g_itemSaleYesButton{};
+static SceneUiElement g_itemSaleNoButton{};
+static bool g_itemSaleOpen = false;
+static long long g_itemSaleAmount = 0;
 
 bool ItemContextMenu_PointIn(
     float x,
@@ -150,6 +181,25 @@ void ItemContextMenu_CloseInspect()
     g_itemInspectName = nullptr;
     g_itemInspectImage = SceneUiElement{};
     g_itemInspectStats = nullptr;
+    g_itemInspectEquipmentStats = nullptr;
+    for (auto& element : g_itemInspectStatElements)
+    {
+        element = SceneUiElement{};
+    }
+    for (int index = 0; index < kItemInspectStatCount; ++index)
+    {
+        g_itemInspectStatMinX[index] = 0.0f;
+        g_itemInspectStatMaxX[index] = 0.0f;
+        g_itemInspectVisibleStats[index] = -1;
+    }
+    g_itemInspectVisibleStatCount = 0;
+    g_itemInspectHoveredStat = -1;
+    g_itemInspectDefinition = -1;
+    g_itemInspectStatTooltip = SceneUiElement{};
+    g_itemInspectStatTooltipText = SceneUiElement{};
+    g_itemInspectStatTooltipWidth =
+        kItemInspectStatTooltipMinWidth;
+    g_itemInspectStatTooltipHeight = 0.045f;
     g_itemInspectDescription = nullptr;
     g_itemInspectBadgeCircle = SceneUiElement{};
     g_itemInspectBadgeText = SceneUiElement{};
@@ -211,12 +261,35 @@ void ItemContextMenu_CloseDiscard()
     }
 }
 
+void ItemContextMenu_CloseSale()
+{
+    const bool wasOpen = g_itemSaleOpen;
+    if (g_itemSaleRoot != nullptr)
+    {
+        ExtendedMode_DestroyUnityObject(g_itemSaleRoot);
+    }
+    g_itemSaleCanvas = nullptr;
+    g_itemSaleMessage = nullptr;
+    g_itemSaleYesButton = SceneUiElement{};
+    g_itemSaleNoButton = SceneUiElement{};
+    g_itemSaleOpen = false;
+    g_itemSaleAmount = 0;
+    if (wasOpen)
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"SaleClose",
+            L"Item sale confirmation closed.");
+    }
+}
+
 void ItemContextMenu_Reset()
 {
     ItemContextMenu_CloseMenu();
     ItemContextMenu_CloseInspect();
     ItemContextMenu_CloseAppraisal();
     ItemContextMenu_CloseDiscard();
+    ItemContextMenu_CloseSale();
     g_itemContextConsumeUntilRelease = false;
     g_itemContextDefinition = -1;
     g_itemContextQuality = 0;
@@ -224,6 +297,7 @@ void ItemContextMenu_Reset()
     g_itemContextGameplayTempIndex = -1;
     g_itemContextCanAppraise = false;
     g_itemContextCanExhibit = false;
+    g_itemContextCanSell = false;
     g_itemContextObservedRightSerial =
         g_extendedManualRightPressSerial.load();
     g_itemContextObservedLeftSerial =
@@ -235,7 +309,8 @@ bool ItemContextMenu_IsOpen()
     return g_itemContextMenuOpen ||
            g_itemInspectOpen ||
            g_itemAppraisalOpen ||
-           g_itemDiscardOpen;
+           g_itemDiscardOpen ||
+           g_itemSaleOpen;
 }
 
 bool ItemContextMenu_ShouldBlockPointer()
@@ -244,6 +319,7 @@ bool ItemContextMenu_ShouldBlockPointer()
            g_itemInspectOpen ||
            g_itemAppraisalOpen ||
            g_itemDiscardOpen ||
+           g_itemSaleOpen ||
            g_itemContextConsumeUntilRelease;
 }
 
@@ -402,7 +478,7 @@ void ItemContextMenu_BuildMenu(
         true,
         g_itemContextCanAppraise,
         g_itemContextCanExhibit,
-        true,
+        g_itemContextCanSell,
         true,
     };
     int visibleCount = 0;
@@ -620,7 +696,7 @@ void ItemContextMenu_BuildInspectWindow(Il2CppObject* canvas)
         "ItemInspectPreviewBackground",
         root.rect,
         0.045f,
-        0.405f,
+        0.480f,
         0.955f,
         0.855f,
         0.035f,
@@ -682,22 +758,63 @@ void ItemContextMenu_BuildInspectWindow(Il2CppObject* canvas)
         root.rect,
         "",
         0.055f,
-        0.275f,
+        0.365f,
         0.945f,
-        0.385f,
-        16.0f,
+        0.465f,
+        14.0f,
         514,
         0.78f,
         0.86f,
         0.96f,
         1.0f).text;
+    g_itemInspectEquipmentStats = CreateSceneTextElement(
+        "ItemInspectEquipmentStats",
+        root.rect,
+        "",
+        0.055f,
+        0.315f,
+        0.945f,
+        0.355f,
+        13.0f,
+        514,
+        0.86f,
+        0.92f,
+        1.0f,
+        1.0f).text;
+    for (int index = 0; index < kItemInspectStatCount; ++index)
+    {
+        char objectName[64]{};
+        sprintf_s(
+            objectName,
+            "ItemInspectStat%02d",
+            index);
+        auto element = CreateSceneTextElement(
+            objectName,
+            root.rect,
+            "",
+            0.055f,
+            0.315f,
+            0.055f,
+            0.355f,
+            12.0f,
+            513,
+            0.86f,
+            0.92f,
+            1.0f,
+            1.0f);
+        g_itemInspectStatElements[index] = element;
+        SetWorldGameObjectActive(element.gameObject, false);
+        g_itemInspectStatMinX[index] = 0.0f;
+        g_itemInspectStatMaxX[index] = 0.0f;
+        g_itemInspectVisibleStats[index] = -1;
+    }
     CreateScenePanel(
         "ItemInspectDivider",
         root.rect,
         0.055f,
-        0.255f,
+        0.300f,
         0.945f,
-        0.258f,
+        0.303f,
         0.18f,
         0.22f,
         0.27f,
@@ -707,15 +824,48 @@ void ItemContextMenu_BuildInspectWindow(Il2CppObject* canvas)
         root.rect,
         "",
         0.055f,
-        0.050f,
+        0.165f,
         0.945f,
-        0.235f,
+        0.285f,
         15.0f,
         513,
         0.82f,
         0.85f,
         0.89f,
         1.0f).text;
+    g_itemInspectStatTooltip = CreateScenePanel(
+        "ItemInspectStatTooltip",
+        root.rect,
+        kItemInspectStatTooltipEdgePadding,
+        kItemInspectStatTooltipEdgePadding,
+        kItemInspectStatTooltipEdgePadding +
+            g_itemInspectStatTooltipWidth,
+        kItemInspectStatTooltipEdgePadding +
+            g_itemInspectStatTooltipHeight,
+        0.035f,
+        0.048f,
+        0.070f,
+        0.990f);
+    g_itemInspectStatTooltipText = CreateSceneTextElement(
+        "ItemInspectStatTooltipText",
+        g_itemInspectStatTooltip.rect,
+        "",
+        0.025f,
+        0.10f,
+        0.975f,
+        0.90f,
+        12.0f,
+        513,
+        0.90f,
+        0.94f,
+        1.0f,
+        1.0f);
+    SetWorldGameObjectActive(
+        g_itemInspectStatTooltip.gameObject,
+        false);
+    SetWorldGameObjectActive(
+        g_itemInspectStatTooltipText.gameObject,
+        false);
     SetWorldGameObjectActive(g_itemInspectRoot, false);
 }
 
@@ -1300,6 +1450,204 @@ void ItemContextMenu_DiscardSelectedItem()
         g_itemContextInGameplay ? 1 : 0);
 }
 
+void ItemContextMenu_BuildSaleWindow(Il2CppObject* canvas)
+{
+    if (canvas == nullptr)
+    {
+        return;
+    }
+    if (g_itemSaleRoot != nullptr &&
+        g_itemSaleCanvas != canvas)
+    {
+        ItemContextMenu_CloseSale();
+    }
+    if (g_itemSaleRoot != nullptr)
+    {
+        return;
+    }
+    constexpr float minX = 0.250f;
+    constexpr float minY = 0.345f;
+    constexpr float maxX = 0.750f;
+    constexpr float maxY = 0.655f;
+    auto root = CreateScenePanel(
+        "ItemSaleConfirmation",
+        GetWorldTransform(canvas),
+        minX,
+        minY,
+        maxX,
+        maxY,
+        0.055f,
+        0.060f,
+        0.070f,
+        0.995f);
+    g_itemSaleRoot = root.gameObject;
+    g_itemSaleCanvas = canvas;
+    CreateSceneTextElement(
+        "ItemSaleTitle",
+        root.rect,
+        "出售物品",
+        0.055f,
+        0.720f,
+        0.945f,
+        0.925f,
+        24.0f,
+        514,
+        0.96f,
+        0.82f,
+        0.40f,
+        1.0f);
+    g_itemSaleMessage = CreateSceneTextElement(
+        "ItemSaleMessage",
+        root.rect,
+        "",
+        0.075f,
+        0.300f,
+        0.925f,
+        0.700f,
+        18.0f,
+        514,
+        0.94f,
+        0.95f,
+        0.97f,
+        1.0f).text;
+    g_itemSaleYesButton = CreateSceneButton(
+        "ItemSaleYes",
+        root.rect,
+        "确认出售",
+        0.115f,
+        0.105f,
+        0.485f,
+        0.275f,
+        0.32f,
+        0.24f,
+        0.10f,
+        1.0f,
+        18.0f,
+        514,
+        true);
+    g_itemSaleNoButton = CreateSceneButton(
+        "ItemSaleNo",
+        root.rect,
+        "取消",
+        0.515f,
+        0.105f,
+        0.885f,
+        0.275f,
+        0.12f,
+        0.14f,
+        0.18f,
+        1.0f,
+        18.0f,
+        514,
+        true);
+    SetWorldGameObjectActive(g_itemSaleRoot, false);
+}
+
+void ItemContextMenu_OpenSaleConfirmation()
+{
+    if (g_itemContextInGameplay ||
+        !InventoryUi_IsItemSlot(g_itemContextItemIndex) ||
+        g_inventoryItems[g_itemContextItemIndex].storage < 0)
+    {
+        return;
+    }
+    auto* canvas = ItemContextMenu_GetCanvas();
+    const double currentValue =
+        InventoryUi_ItemCurrentValue(g_itemContextItemIndex);
+    if (canvas == nullptr || currentValue < 0.5)
+    {
+        return;
+    }
+    g_itemSaleAmount = std::max(
+        1ll,
+        static_cast<long long>(std::llround(currentValue)));
+    ItemContextMenu_BuildSaleWindow(canvas);
+    if (g_itemSaleRoot == nullptr || g_itemSaleMessage == nullptr)
+    {
+        return;
+    }
+    const auto& item = g_inventoryItems[g_itemContextItemIndex];
+    const auto& definition =
+        kEquipmentInventoryDefinitions[item.definition];
+    wchar_t message[512]{};
+    swprintf_s(
+        message,
+        L"确定出售“%s”吗？\n\n本次可获得 %s。\n"
+        L"确认后物品将从仓库永久移除。",
+        Utf8ToWide(definition.name).c_str(),
+        InventoryUi_FormatCurrency(g_itemSaleAmount).c_str());
+    const auto messageUtf8 = WideToUtf8(message);
+    SetSceneText(
+        g_itemSaleMessage,
+        messageUtf8.c_str(),
+        18.0f,
+        514,
+        0.94f,
+        0.95f,
+        0.97f,
+        1.0f);
+    SetWorldGameObjectActive(g_itemSaleRoot, true);
+    BringSceneObjectToFront(g_itemSaleRoot);
+    g_itemSaleOpen = true;
+    LogInfo(
+        LogCategory_Inventory,
+        L"SaleOpen",
+        L"Item sale confirmation opened: definition=%d itemSlot=%d "
+        L"amount=%lld.",
+        item.definition,
+        g_itemContextItemIndex,
+        g_itemSaleAmount);
+}
+
+void ItemContextMenu_SellSelectedItem()
+{
+    if (g_itemContextInGameplay ||
+        !InventoryUi_IsItemSlot(g_itemContextItemIndex))
+    {
+        return;
+    }
+    auto& item = g_inventoryItems[g_itemContextItemIndex];
+    if (item.storage < 0 || g_itemSaleAmount <= 0)
+    {
+        LogInfo(
+            LogCategory_Inventory,
+            L"Sale",
+            L"Item sale skipped because the selected item is no longer "
+            L"available: itemSlot=%d storage=%d amount=%lld.",
+            g_itemContextItemIndex,
+            item.storage,
+            g_itemSaleAmount);
+        return;
+    }
+    const int definition = item.definition;
+    const int storage = item.storage;
+    const int quality = item.quality;
+    const long long amount = g_itemSaleAmount;
+    if (item.element.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(item.element.gameObject, false);
+    }
+    item = InventoryItemState{};
+    item.storage = -1;
+    InventoryUi_PruneQuickSlotBindings();
+    const long long balance =
+        InventoryUi_AddBalance(amount, L"item sale");
+    InventoryUi_RefreshEquipment();
+    InventoryUi_SaveState();
+    InventoryUi_SetStatus("物品已出售");
+    LogInfo(
+        LogCategory_Inventory,
+        L"Sale",
+        L"Item sold: definition=%d slot=%d storage=%d quality=%d "
+        L"amount=%lld balance=%lld.",
+        definition,
+        g_itemContextItemIndex,
+        storage,
+        quality,
+        amount,
+        balance);
+}
+
 void ItemContextMenu_UpdateMenuHover(float cursorX, float cursorY)
 {
     for (int index = 0;
@@ -1345,6 +1693,457 @@ void ItemContextMenu_UpdateMenuHover(float cursorX, float cursorY)
     }
 }
 
+const wchar_t* ItemContextMenu_StatLabel(int index)
+{
+    static const wchar_t* labels[kItemInspectStatCount] = {
+        L"感知力",
+        L"保守度",
+        L"正常度",
+        L"忍耐力",
+        L"速度",
+        L"高潮速度",
+        L"体力上限",
+        L"体力恢复",
+        L"手铐熟练度",
+        L"奖励值",
+    };
+    if (index < 0 || index >= kItemInspectStatCount)
+    {
+        return L"属性";
+    }
+    return labels[index];
+}
+
+const wchar_t* ItemContextMenu_StatDescription(int index)
+{
+    static const wchar_t* descriptions[kItemInspectStatCount] = {
+        L"眼罩状态下的可视范围。",
+        L"NPC 正向怀疑值的增长效率，数值越高越不容易被发现。",
+        L"怀疑值开始下降前的等待时间和下降速度，数值越高下降越快。",
+        L"爬行和振动器强档状态下的移动速度。",
+        L"行走和奔跑状态下的移动速度。",
+        L"普通高潮值的累计速度与自然衰减速度，数值越高累计越快、衰减越慢。",
+        L"最大体力，以及体力开始恢复前的等待时间。",
+        L"体力消耗倍率和体力恢复速度。",
+        L"普通手铐的解锁效率与解锁动画时间。",
+        L"暴露状态下的金钱收益倍率。",
+    };
+    if (index < 0 || index >= kItemInspectStatCount)
+    {
+        return L"该属性会影响对应的游戏机制。";
+    }
+    return descriptions[index];
+}
+
+void ItemContextMenu_HideInspectStatTooltip()
+{
+    if (g_itemInspectHoveredStat >= 0)
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InspectStatTooltip",
+            L"Inspect stat tooltip hidden: definition=%d stat=%d.",
+            g_itemInspectDefinition,
+            g_itemInspectHoveredStat);
+    }
+    g_itemInspectHoveredStat = -1;
+    if (g_itemInspectStatTooltip.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_itemInspectStatTooltip.gameObject,
+            false);
+    }
+    if (g_itemInspectStatTooltipText.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_itemInspectStatTooltipText.gameObject,
+            false);
+    }
+}
+
+void ItemContextMenu_ResetInspectStatLayout(const wchar_t* message)
+{
+    ItemContextMenu_HideInspectStatTooltip();
+    g_itemInspectVisibleStatCount = 0;
+    for (int index = 0; index < kItemInspectStatCount; ++index)
+    {
+        g_itemInspectVisibleStats[index] = -1;
+        g_itemInspectStatMinX[index] = 0.0f;
+        g_itemInspectStatMaxX[index] = 0.0f;
+        if (g_itemInspectStatElements[index].gameObject != nullptr)
+        {
+            SetWorldGameObjectActive(
+                g_itemInspectStatElements[index].gameObject,
+                false);
+        }
+    }
+    if (g_itemInspectEquipmentStats != nullptr)
+    {
+        const auto text = WideToUtf8(
+            message != nullptr ? message : L"无属性加成");
+        SetSceneText(
+            g_itemInspectEquipmentStats,
+            text.c_str(),
+            13.0f,
+            514,
+            0.86f,
+            0.92f,
+            1.0f,
+            1.0f);
+        SetWorldGameObjectActive(
+            g_itemInspectEquipmentStats,
+            true);
+    }
+}
+
+void ItemContextMenu_LayoutInspectStats(const int values[kItemInspectStatCount])
+{
+    ItemContextMenu_HideInspectStatTooltip();
+    g_itemInspectVisibleStatCount = 0;
+    double totalUnits = 0.0;
+    for (int index = 0; index < kItemInspectStatCount; ++index)
+    {
+        if (values[index] == 0)
+        {
+            g_itemInspectVisibleStats[index] = -1;
+            continue;
+        }
+        const int digitCount =
+            std::abs(values[index]) >= 10 ? 2 : 1;
+        totalUnits +=
+            static_cast<double>(
+                wcslen(ItemContextMenu_StatLabel(index))) +
+            3.0 +
+            static_cast<double>(digitCount);
+        g_itemInspectVisibleStats[
+            g_itemInspectVisibleStatCount] = index;
+        ++g_itemInspectVisibleStatCount;
+    }
+    if (g_itemInspectVisibleStatCount == 0 || totalUnits <= 0.0)
+    {
+        ItemContextMenu_ResetInspectStatLayout(L"无属性加成");
+        return;
+    }
+
+    if (g_itemInspectEquipmentStats != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_itemInspectEquipmentStats,
+            false);
+    }
+    constexpr double rowMinX = 0.055;
+    constexpr double rowMaxX = 0.945;
+    constexpr double columnGap = 0.012;
+    const double availableWidth =
+        rowMaxX -
+        rowMinX -
+        columnGap *
+            static_cast<double>(
+                g_itemInspectVisibleStatCount - 1);
+    const float fontSize =
+        g_itemInspectVisibleStatCount >= 7 ? 11.0f :
+        (g_itemInspectVisibleStatCount >= 5 ? 12.0f : 13.0f);
+    double cursorX = rowMinX;
+    for (int visibleIndex = 0;
+         visibleIndex < g_itemInspectVisibleStatCount;
+         ++visibleIndex)
+    {
+        const int statIndex =
+            g_itemInspectVisibleStats[visibleIndex];
+        const int value = values[statIndex];
+        const int digitCount = std::abs(value) >= 10 ? 2 : 1;
+        const double units =
+            static_cast<double>(
+                wcslen(ItemContextMenu_StatLabel(statIndex))) +
+            3.0 +
+            static_cast<double>(digitCount);
+        const double width =
+            availableWidth * units / totalUnits;
+        const double maxX = cursorX + width;
+        auto& element = g_itemInspectStatElements[visibleIndex];
+        SetSceneRect(
+            element.rect,
+            static_cast<float>(cursorX),
+            0.315f,
+            static_cast<float>(maxX),
+            0.355f);
+        g_itemInspectStatMinX[visibleIndex] =
+            static_cast<float>(cursorX);
+        g_itemInspectStatMaxX[visibleIndex] =
+            static_cast<float>(maxX);
+        wchar_t valueText[32]{};
+        swprintf_s(
+            valueText,
+            value > 0
+                ? L"<color=#66B3FF>%+d</color>"
+                : L"<color=#FF6666>%+d</color>",
+            value);
+        std::wstring line = ItemContextMenu_StatLabel(statIndex);
+        line += L"：";
+        line += valueText;
+        const auto lineUtf8 = WideToUtf8(line);
+        SetSceneText(
+            element.text,
+            lineUtf8.c_str(),
+            fontSize,
+            513,
+            0.86f,
+            0.92f,
+            1.0f,
+            1.0f);
+        SetWorldGameObjectActive(element.gameObject, true);
+        cursorX =
+            maxX + (visibleIndex + 1 < g_itemInspectVisibleStatCount
+                ? columnGap
+                : 0.0);
+    }
+    for (int visibleIndex = g_itemInspectVisibleStatCount;
+         visibleIndex < kItemInspectStatCount;
+         ++visibleIndex)
+    {
+        g_itemInspectVisibleStats[visibleIndex] = -1;
+        g_itemInspectStatMinX[visibleIndex] = 0.0f;
+        g_itemInspectStatMaxX[visibleIndex] = 0.0f;
+        if (g_itemInspectStatElements[visibleIndex].gameObject != nullptr)
+        {
+            SetWorldGameObjectActive(
+                g_itemInspectStatElements[visibleIndex].gameObject,
+                false);
+        }
+    }
+}
+
+void ItemContextMenu_PositionInspectStatTooltip(
+    float cursorX,
+    float cursorY)
+{
+    if (g_itemInspectStatTooltip.rect == nullptr ||
+        g_itemInspectWidth <= 0.0f ||
+        g_itemInspectHeight <= 0.0f)
+    {
+        return;
+    }
+    const float relativeX =
+        (cursorX - g_itemInspectX) / g_itemInspectWidth;
+    const float relativeY =
+        (cursorY - g_itemInspectY) / g_itemInspectHeight;
+    float minX =
+        relativeX + kItemInspectStatTooltipCursorOffset;
+    if (minX + g_itemInspectStatTooltipWidth >
+        1.0f - kItemInspectStatTooltipEdgePadding)
+    {
+        minX =
+            relativeX -
+            g_itemInspectStatTooltipWidth -
+            kItemInspectStatTooltipCursorOffset;
+    }
+    minX = std::clamp(
+        minX,
+        kItemInspectStatTooltipEdgePadding,
+        1.0f -
+            kItemInspectStatTooltipEdgePadding -
+            g_itemInspectStatTooltipWidth);
+    float minY =
+        relativeY + kItemInspectStatTooltipCursorOffset;
+    if (minY + g_itemInspectStatTooltipHeight >
+        1.0f - kItemInspectStatTooltipEdgePadding)
+    {
+        minY =
+            relativeY -
+            g_itemInspectStatTooltipHeight -
+            kItemInspectStatTooltipCursorOffset;
+    }
+    minY = std::clamp(
+        minY,
+        kItemInspectStatTooltipEdgePadding,
+        1.0f -
+            kItemInspectStatTooltipEdgePadding -
+            g_itemInspectStatTooltipHeight);
+    SetSceneRect(
+        g_itemInspectStatTooltip.rect,
+        minX,
+        minY,
+        minX + g_itemInspectStatTooltipWidth,
+        minY + g_itemInspectStatTooltipHeight);
+}
+
+void ItemContextMenu_UpdateInspectStatHover(
+    float cursorX,
+    float cursorY)
+{
+    if (!g_itemInspectOpen ||
+        g_itemInspectVisibleStatCount <= 0 ||
+        g_itemInspectWidth <= 0.0f ||
+        g_itemInspectHeight <= 0.0f)
+    {
+        ItemContextMenu_HideInspectStatTooltip();
+        return;
+    }
+    const float relativeX =
+        (cursorX - g_itemInspectX) / g_itemInspectWidth;
+    const float relativeY =
+        (cursorY - g_itemInspectY) / g_itemInspectHeight;
+    if (relativeX < 0.0f || relativeX > 1.0f ||
+        relativeY < 0.300f || relativeY > 0.365f)
+    {
+        ItemContextMenu_HideInspectStatTooltip();
+        return;
+    }
+    int hoveredVisual = -1;
+    for (int visibleIndex = 0;
+         visibleIndex < g_itemInspectVisibleStatCount;
+         ++visibleIndex)
+    {
+        if (relativeX >= g_itemInspectStatMinX[visibleIndex] &&
+            relativeX <= g_itemInspectStatMaxX[visibleIndex])
+        {
+            hoveredVisual = visibleIndex;
+            break;
+        }
+    }
+    if (hoveredVisual < 0)
+    {
+        ItemContextMenu_HideInspectStatTooltip();
+        return;
+    }
+    const int statIndex =
+        g_itemInspectVisibleStats[hoveredVisual];
+    if (statIndex < 0)
+    {
+        ItemContextMenu_HideInspectStatTooltip();
+        return;
+    }
+    if (g_itemInspectHoveredStat == statIndex)
+    {
+        ItemContextMenu_PositionInspectStatTooltip(
+            cursorX,
+            cursorY);
+        return;
+    }
+    if (g_itemInspectHoveredStat >= 0)
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InspectStatTooltip",
+            L"Inspect stat tooltip switched: definition=%d from=%d to=%d.",
+            g_itemInspectDefinition,
+            g_itemInspectHoveredStat,
+            statIndex);
+    }
+    else
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InspectStatTooltip",
+            L"Inspect stat tooltip shown: definition=%d stat=%d.",
+            g_itemInspectDefinition,
+            statIndex);
+    }
+    g_itemInspectHoveredStat = statIndex;
+    if (g_itemInspectStatTooltip.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_itemInspectStatTooltip.gameObject,
+            true);
+    }
+    if (g_itemInspectStatTooltipText.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_itemInspectStatTooltipText.gameObject,
+            true);
+    }
+    if (g_itemInspectStatTooltipText.text != nullptr)
+    {
+        std::wstring tooltipText = L"<color=#8FB4D9>作用：</color>";
+        tooltipText += ItemContextMenu_StatDescription(statIndex);
+        const auto tooltipTextUtf8 = WideToUtf8(tooltipText);
+        SetSceneText(
+            g_itemInspectStatTooltipText.text,
+            tooltipTextUtf8.c_str(),
+            12.0f,
+            513,
+            0.90f,
+            0.94f,
+            1.0f,
+            1.0f);
+        int horizontalOverflow = 1;
+        void* overflowParameters[] = { &horizontalOverflow };
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine.UI", "Text"),
+                "set_horizontalOverflow",
+                1),
+            g_itemInspectStatTooltipText.text,
+            overflowParameters);
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine", "Canvas"),
+                "ForceUpdateCanvases",
+                0),
+            nullptr,
+            nullptr);
+
+        auto* screenClass = FindClass("UnityEngine", "Screen");
+        auto* widthValue = Invoke(
+            FindMethod(screenClass, "get_width", 0),
+            nullptr,
+            nullptr);
+        auto* heightValue = Invoke(
+            FindMethod(screenClass, "get_height", 0),
+            nullptr,
+            nullptr);
+        const float screenWidth =
+            widthValue != nullptr && il2cpp_object_unbox != nullptr
+                ? static_cast<float>(
+                    *static_cast<int*>(
+                        il2cpp_object_unbox(widthValue)))
+                : 0.0f;
+        const float screenHeight =
+            heightValue != nullptr && il2cpp_object_unbox != nullptr
+                ? static_cast<float>(
+                    *static_cast<int*>(
+                        il2cpp_object_unbox(heightValue)))
+                : 0.0f;
+        if (screenWidth > 0.0f &&
+            screenHeight > 0.0f &&
+            g_itemInspectWidth > 0.0f &&
+            g_itemInspectHeight > 0.0f)
+        {
+            const float rootPixelWidth =
+                screenWidth * g_itemInspectWidth;
+            const float rootPixelHeight =
+                screenHeight * g_itemInspectHeight;
+            const float preferredWidth =
+                ExtendedMode_GetTextPreferredWidth(
+                    g_itemInspectStatTooltipText.text);
+            const float desiredWidthPixels =
+                std::max(96.0f, preferredWidth + 24.0f);
+            constexpr float desiredHeightPixels = 38.0f;
+            g_itemInspectStatTooltipWidth = std::clamp(
+                desiredWidthPixels / rootPixelWidth,
+                kItemInspectStatTooltipMinWidth,
+                kItemInspectStatTooltipMaxWidth);
+            g_itemInspectStatTooltipHeight = std::clamp(
+                desiredHeightPixels / rootPixelHeight,
+                0.034f,
+                kItemInspectStatTooltipMaxHeight);
+            const float horizontalInset = std::clamp(
+                10.0f / rootPixelWidth,
+                0.012f,
+                0.060f);
+            SetSceneRect(
+                g_itemInspectStatTooltipText.rect,
+                horizontalInset,
+                0.12f,
+                1.0f - horizontalInset,
+                0.88f);
+        }
+    }
+    ItemContextMenu_PositionInspectStatTooltip(
+        cursorX,
+        cursorY);
+}
+
 void ItemContextMenu_OpenInspect(
     int definition,
     int quality,
@@ -1366,6 +2165,7 @@ void ItemContextMenu_OpenInspect(
     }
     const auto& itemDefinition =
         kEquipmentInventoryDefinitions[definition];
+    g_itemInspectDefinition = definition;
     const std::wstring name = Utf8ToWide(itemDefinition.name);
     const std::wstring category =
         ItemContextMenu_CategoryText(definition);
@@ -1381,57 +2181,107 @@ void ItemContextMenu_OpenInspect(
         0.97f,
         0.99f,
         1.0f);
-    wchar_t stats[640]{};
-    double value = static_cast<double>(
-        InventoryUi_BaseValueForGrid(
-            itemDefinition.width,
-            itemDefinition.height,
-            quality));
+    wchar_t stats[768]{};
+    double value = 0.0;
     if (InventoryUi_IsItemSlot(itemIndex))
     {
         const auto& item = g_inventoryItems[itemIndex];
-        value = InventoryUi_ItemCurrentValue(itemIndex);
         appraised = item.appraised;
         wearUnits = item.wearUnits;
+        value = InventoryUi_ItemCurrentValue(itemIndex);
     }
     else
     {
         value = InventoryUi_InstanceCurrentValue(
-            itemDefinition.width,
-            itemDefinition.height,
+            definition,
             quality,
             appraised,
             wearUnits);
     }
+    const long long qualityGrade =
+        InventoryUi_QualityGrade(quality);
+    const double wearFactor =
+        InventoryUi_WearFactor(
+            quality,
+            appraised,
+            wearUnits);
     std::wstring wearText;
     if (appraised)
     {
         wchar_t wearLine[128]{};
         swprintf_s(
             wearLine,
-            L"\n磨损度：%s",
-            InventoryUi_FormatWear(wearUnits).c_str());
+            L"\n磨损度：%s    磨损系数：%.3f",
+            InventoryUi_FormatWear(wearUnits).c_str(),
+            wearFactor);
         wearText = wearLine;
     }
     swprintf_s(
         stats,
-        L"类别：%s\n品质：%s    尺寸：%d × %d 格\n价值：%.2f%s",
+        L"类别：%s    尺寸：%d × %d 格\n"
+        L"品质：%s × %lld    参考价：￥%d\n"
+        L"装备价值：￥%.2f%s",
         category.c_str(),
-        qualityText.c_str(),
         itemDefinition.width,
         itemDefinition.height,
+        qualityText.c_str(),
+        qualityGrade,
+        itemDefinition.referencePrice,
         value,
         wearText.c_str());
     const auto statsUtf8 = WideToUtf8(stats);
     SetSceneText(
         g_itemInspectStats,
         statsUtf8.c_str(),
-        16.0f,
+        14.0f,
         514,
         0.78f,
         0.86f,
         0.96f,
         1.0f);
+    const bool isProp =
+        (itemDefinition.categories &
+         kInventoryPropCategoryBit) != 0;
+    if (isProp)
+    {
+        ItemContextMenu_ResetInspectStatLayout(
+            L"道具类装备不提供属性加成");
+    }
+    else
+    {
+        const auto scaledStat =
+            [qualityGrade](int base) -> int
+            {
+                return std::clamp(
+                    static_cast<int>(
+                        static_cast<long long>(base) * qualityGrade),
+                    -25,
+                    25);
+            };
+        const int values[] = {
+            scaledStat(itemDefinition.perceptionBase),
+            scaledStat(itemDefinition.conservatismBase),
+            scaledStat(itemDefinition.normalityBase),
+            scaledStat(itemDefinition.strengthBase),
+            scaledStat(itemDefinition.speedBase),
+            scaledStat(itemDefinition.climaxSpeedBase),
+            scaledStat(itemDefinition.staminaCapacityBase),
+            scaledStat(itemDefinition.staminaRecoveryBase),
+            scaledStat(itemDefinition.handcuffProficiencyBase),
+            scaledStat(itemDefinition.rewardBase),
+        };
+        static_assert(
+            std::size(values) ==
+                static_cast<size_t>(kItemInspectStatCount));
+        ItemContextMenu_LayoutInspectStats(values);
+        LogDebug(
+            LogCategory_Inventory,
+            L"InspectStatLayout",
+            L"Inspect stat row laid out: definition=%d visible=%d.",
+            definition,
+            g_itemInspectVisibleStatCount);
+    }
+    ItemContextMenu_HideInspectStatTooltip();
     wchar_t description[512]{};
     swprintf_s(
         description,
@@ -1584,10 +2434,14 @@ void ItemContextMenu_OpenInspect(
     g_itemInspectOpen = true;
     g_itemInspectDragging = false;
     LogInfo(LogCategory_Inventory, L"Inventory", 
-        L"Item inspect opened: definition=%d quality=%d itemSlot=%d.",
+        L"Item inspect opened: definition=%d quality=%d itemSlot=%d "
+        L"referencePrice=%d wearFactor=%.3f value=%.2f.",
         definition,
         quality,
-        itemIndex);
+        itemIndex,
+        itemDefinition.referencePrice,
+        wearFactor,
+        value);
 }
 
 void ItemContextMenu_HandleRightClick(
@@ -1638,16 +2492,22 @@ void ItemContextMenu_HandleRightClick(
     g_itemContextCanExhibit =
         !g_itemContextInGameplay &&
         ExhibitionUi_CanDepositItem(itemIndex);
+    g_itemContextCanSell =
+        !g_itemContextInGameplay &&
+        InventoryUi_IsItemSlot(itemIndex) &&
+        g_inventoryItems[itemIndex].storage >= 0;
     ItemContextMenu_BuildMenu(canvas, cursorX, cursorY);
     g_itemContextConsumeUntilRelease = true;
     LogInfo(LogCategory_Inventory, L"Inventory", 
-        L"Item context menu opened: definition=%d quality=%d gameplay=%d itemSlot=%d appraisable=%d exhibitable=%d.",
+        L"Item context menu opened: definition=%d quality=%d gameplay=%d "
+        L"itemSlot=%d appraisable=%d exhibitable=%d sellable=%d.",
         definition,
         quality,
         g_itemContextInGameplay ? 1 : 0,
         itemIndex,
         g_itemContextCanAppraise ? 1 : 0,
-        g_itemContextCanExhibit ? 1 : 0);
+        g_itemContextCanExhibit ? 1 : 0,
+        g_itemContextCanSell ? 1 : 0);
 }
 
 void ItemContextMenu_Tick()
@@ -1711,9 +2571,13 @@ void ItemContextMenu_Tick()
             g_extendedManualPointerPressX.load(),
             g_extendedManualPointerPressY.load()};
         ScreenToClient(window, &pressPoint);
-        ItemContextMenu_HandleRightClick(
-            static_cast<float>(pressPoint.x) / width,
-            1.0f - static_cast<float>(pressPoint.y) / height);
+        if (!InventoryUi_RequestDraggedItemRotation() &&
+            !GameplayInventory_RequestDraggedItemRotation())
+        {
+            ItemContextMenu_HandleRightClick(
+                static_cast<float>(pressPoint.x) / width,
+                1.0f - static_cast<float>(pressPoint.y) / height);
+        }
     }
 
     const bool leftDown = g_extendedManualPointerDown.load();
@@ -1726,6 +2590,7 @@ void ItemContextMenu_Tick()
         g_itemContextObservedLeftSerial = leftSerial;
     }
     bool openedDiscardThisTick = false;
+    bool openedSaleThisTick = false;
 
     if (g_itemContextMenuOpen)
     {
@@ -1796,6 +2661,12 @@ void ItemContextMenu_Tick()
                 ExhibitionUi_DepositItem(
                     g_itemContextItemIndex);
             }
+            else if (action == ItemContextMenu_Sell &&
+                     g_itemContextCanSell)
+            {
+                ItemContextMenu_OpenSaleConfirmation();
+                openedSaleThisTick = true;
+            }
             else if (action == ItemContextMenu_Discard)
             {
                 ItemContextMenu_OpenDiscardConfirmation();
@@ -1804,6 +2675,65 @@ void ItemContextMenu_Tick()
             ItemContextMenu_CloseMenu();
             g_itemContextConsumeUntilRelease = true;
         }
+    }
+
+    if (g_itemSaleOpen &&
+        !openedSaleThisTick &&
+        leftPressed)
+    {
+        constexpr float rootMinX = 0.250f;
+        constexpr float rootMinY = 0.345f;
+        constexpr float rootWidth = 0.500f;
+        constexpr float rootHeight = 0.310f;
+        const float rootMaxX = rootMinX + rootWidth;
+        const float rootMaxY = rootMinY + rootHeight;
+        const float yesMinX =
+            rootMinX + rootWidth * 0.115f;
+        const float yesMaxX =
+            rootMinX + rootWidth * 0.485f;
+        const float noMinX =
+            rootMinX + rootWidth * 0.515f;
+        const float noMaxX =
+            rootMinX + rootWidth * 0.885f;
+        const float buttonMinY =
+            rootMinY + rootHeight * 0.105f;
+        const float buttonMaxY =
+            rootMinY + rootHeight * 0.275f;
+        const bool confirmed = ItemContextMenu_PointIn(
+            cursorX,
+            cursorY,
+            yesMinX,
+            buttonMinY,
+            yesMaxX,
+            buttonMaxY);
+        const bool canceled = ItemContextMenu_PointIn(
+            cursorX,
+            cursorY,
+            noMinX,
+            buttonMinY,
+            noMaxX,
+            buttonMaxY);
+        if (confirmed)
+        {
+            ItemContextMenu_SellSelectedItem();
+        }
+        else if (canceled ||
+                 !ItemContextMenu_PointIn(
+                     cursorX,
+                     cursorY,
+                     rootMinX,
+                     rootMinY,
+                     rootMaxX,
+                     rootMaxY))
+        {
+            LogInfo(
+                LogCategory_Inventory,
+                L"SaleCancel",
+                L"Item sale confirmation canceled; no inventory or balance "
+                L"change was made.");
+        }
+        ItemContextMenu_CloseSale();
+        g_itemContextConsumeUntilRelease = true;
     }
 
     if (g_itemDiscardOpen &&
@@ -1873,6 +2803,9 @@ void ItemContextMenu_Tick()
             rootMinX + g_itemInspectWidth * 0.935f;
         const float closeMaxX =
             rootMinX + g_itemInspectWidth * 0.985f;
+        ItemContextMenu_UpdateInspectStatHover(
+            cursorX,
+            cursorY);
         if (leftPressed)
         {
             if (ItemContextMenu_PointIn(

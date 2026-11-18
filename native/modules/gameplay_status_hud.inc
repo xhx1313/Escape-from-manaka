@@ -1,5 +1,5 @@
 // Native.cpp module: gameplay_status_hud.inc
-// Compact, state-driven gameplay status list displayed in the upper-left.
+// Compact, state-driven gameplay status list displayed in the lower-left.
 
 constexpr int kGameplayStatusHudMaxRows = 13;
 constexpr float kGameplayStatusHudFadeSeconds = 0.22f;
@@ -21,6 +21,766 @@ struct GameplayStatusHudRowState
 };
 static std::vector<GameplayStatusHudRowState> g_gameplayStatusHudRows;
 static unsigned long long g_gameplayStatusHudLastUpdateTick = 0;
+static std::string g_gameplayStatusHudNotification;
+static unsigned long long g_gameplayStatusHudNotificationUntil = 0;
+static Il2CppObject* g_gameplayOriginalStaminaGaugeObject = nullptr;
+static Il2CppObject* g_gameplayOriginalStaminaGaugeComponent = nullptr;
+static unsigned long long g_gameplayOriginalStaminaGaugeLayoutTick = 0;
+static float g_gameplayOriginalStaminaGaugeMax = -1.0f;
+static bool g_gameplayOriginalStaminaGaugeLayoutLogged = false;
+static bool g_gameplayOriginalStaminaGaugeSyncLogged = false;
+static SceneUiElement g_gameplayStaminaBarBackground{};
+static SceneUiElement g_gameplayStaminaBarFill{};
+static float g_gameplayStaminaBarWidth = -1.0f;
+static float g_gameplayStaminaBarCapacityMultiplier = -1.0f;
+
+constexpr float kGameplayStaminaBarLeft = 206.0f;
+constexpr float kGameplayStaminaBarCenterY = -106.0f;
+constexpr float kGameplayStaminaBarWidthMax = 498.0f;
+constexpr float kGameplayStaminaBarHeight = 8.0f;
+
+void GameplayStatusHud_SetAnchoredRect(
+    Il2CppObject* rect,
+    float anchorX,
+    float anchorY,
+    float pivotX,
+    float pivotY,
+    float width,
+    float height,
+    float positionX,
+    float positionY);
+
+void GameplayStatusHud_SetRectSize(
+    Il2CppObject* rect,
+    float width,
+    float height)
+{
+    if (rect == nullptr)
+    {
+        return;
+    }
+    float size[] = { width, height };
+    void* parameters[] = { size };
+    Invoke(
+        FindMethod(FindClass("UnityEngine", "RectTransform"), "set_sizeDelta", 1),
+        rect,
+        parameters);
+}
+
+void GameplayStatusHud_BuildOwnedStaminaBar(Il2CppObject* rootTransform)
+{
+    if (rootTransform == nullptr)
+    {
+        return;
+    }
+    if (ExtendedMode_IsUnityObjectAlive(g_gameplayStaminaBarBackground.gameObject) &&
+        ExtendedMode_IsUnityObjectAlive(g_gameplayStaminaBarFill.gameObject))
+    {
+        return;
+    }
+    g_gameplayStaminaBarBackground = CreateScenePanel(
+        "EscapeFromManakaStaminaBarBackground",
+        rootTransform,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.80f);
+    g_gameplayStaminaBarFill = CreateScenePanel(
+        "EscapeFromManakaStaminaBarFill",
+        rootTransform,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.0f,
+        0.257409f,
+        0.773000f,
+        0.276848f,
+        1.0f);
+    GameplayStatusHud_SetAnchoredRect(
+        g_gameplayStaminaBarBackground.rect,
+        0.0f,
+        1.0f,
+        0.0f,
+        0.5f,
+        500.0f,
+        10.0f,
+        kGameplayStaminaBarLeft,
+        kGameplayStaminaBarCenterY);
+    GameplayStatusHud_SetAnchoredRect(
+        g_gameplayStaminaBarFill.rect,
+        0.0f,
+        1.0f,
+        0.0f,
+        0.5f,
+        kGameplayStaminaBarWidthMax,
+        kGameplayStaminaBarHeight,
+        kGameplayStaminaBarLeft + 1.0f,
+        kGameplayStaminaBarCenterY);
+    g_gameplayStaminaBarWidth = kGameplayStaminaBarWidthMax;
+    g_gameplayStaminaBarCapacityMultiplier = 1.0f;
+    SetWorldGameObjectActive(
+        g_gameplayStaminaBarBackground.gameObject,
+        false);
+    SetWorldGameObjectActive(g_gameplayStaminaBarFill.gameObject, false);
+}
+
+void GameplayStatusHud_UpdateOwnedStaminaBar()
+{
+    auto* rootTransform = GetWorldTransform(
+        g_extendedGameplayHudCanvasObject);
+    if (!ExtendedMode_IsUnityObjectAlive(
+            g_gameplayStaminaBarBackground.gameObject) ||
+        !ExtendedMode_IsUnityObjectAlive(
+            g_gameplayStaminaBarFill.gameObject))
+    {
+        GameplayStatusHud_BuildOwnedStaminaBar(rootTransform);
+    }
+    if (!ExtendedMode_IsUnityObjectAlive(
+            g_gameplayStaminaBarBackground.gameObject) ||
+        !ExtendedMode_IsUnityObjectAlive(
+            g_gameplayStaminaBarFill.gameObject))
+    {
+        return;
+    }
+
+    float current = 0.0f;
+    float max = 0.0f;
+    if (!EquipmentStats_ReadStaminaSnapshot(current, max))
+    {
+        SetWorldGameObjectActive(
+            g_gameplayStaminaBarBackground.gameObject,
+            false);
+        SetWorldGameObjectActive(g_gameplayStaminaBarFill.gameObject, false);
+        return;
+    }
+
+    const bool visible =
+        !g_extendedOriginalSystemMenuVisible.load() &&
+        !g_extendedOriginalTutorialActive.load() &&
+        !GameplayInput_IsCustomModalUiOpen();
+    SetWorldGameObjectActive(
+        g_gameplayStaminaBarBackground.gameObject,
+        visible);
+    SetWorldGameObjectActive(g_gameplayStaminaBarFill.gameObject, visible);
+    if (!visible)
+    {
+        return;
+    }
+
+    const float capacityMultiplier =
+        EquipmentStats_GetStaminaCapacityMultiplier();
+    const bool capacityChanged =
+        std::fabs(
+            capacityMultiplier -
+            g_gameplayStaminaBarCapacityMultiplier) >= 0.0001f;
+    if (capacityChanged)
+    {
+        GameplayStatusHud_SetRectSize(
+            g_gameplayStaminaBarBackground.rect,
+            500.0f * capacityMultiplier,
+            10.0f);
+        g_gameplayStaminaBarCapacityMultiplier = capacityMultiplier;
+        g_gameplayStaminaBarWidth = -1.0f;
+    }
+    const float fillMaxWidth =
+        kGameplayStaminaBarWidthMax * capacityMultiplier;
+    const float width = std::clamp(
+        current / max,
+        0.0f,
+        1.0f) *
+        fillMaxWidth;
+    if (std::fabs(width - g_gameplayStaminaBarWidth) >= 0.25f)
+    {
+        GameplayStatusHud_SetRectSize(
+            g_gameplayStaminaBarFill.rect,
+            width,
+            kGameplayStaminaBarHeight);
+        g_gameplayStaminaBarWidth = width;
+    }
+}
+
+void GameplayStatusHud_HideResidualGauges()
+{
+    auto* uiManager = g_extendedInGameUiManager;
+    if (!ExtendedMode_IsUnityObjectAlive(uiManager))
+    {
+        uiManager = ExtendedMode_GetStaticObject(
+            "ExposureUnnoticed2.Object3D.IngameManager",
+            "InGameUiManager",
+            "Instance");
+        g_extendedInGameUiManager = uiManager;
+    }
+    if (uiManager == nullptr)
+    {
+        return;
+    }
+
+    static bool fieldsResolved = false;
+    static size_t staminaGaugeOffset = static_cast<size_t>(-1);
+    static size_t ecstasyGaugeOffset = static_cast<size_t>(-1);
+    static size_t mentalGaugeOffset = static_cast<size_t>(-1);
+    static size_t moistureGaugeOffset = static_cast<size_t>(-1);
+    static size_t moistureIconOffset = static_cast<size_t>(-1);
+    if (!fieldsResolved)
+    {
+        fieldsResolved = true;
+        auto* managerClass = FindClass(
+            "ExposureUnnoticed2.Object3D.IngameManager",
+            "InGameUiManager");
+        const auto resolveOffset =
+            [&](const char* fieldName) -> size_t
+            {
+                auto* field = managerClass != nullptr
+                    ? il2cpp_class_get_field_from_name(
+                        managerClass,
+                        fieldName)
+                    : nullptr;
+                return field != nullptr
+                    ? il2cpp_field_get_offset(field)
+                    : static_cast<size_t>(-1);
+            };
+        staminaGaugeOffset = resolveOffset("staminaGauge");
+        ecstasyGaugeOffset = resolveOffset("ecstasyGauge");
+        mentalGaugeOffset = resolveOffset("mentalGauge");
+        moistureGaugeOffset = resolveOffset("moistureGauge");
+        moistureIconOffset = resolveOffset("moistureIcon");
+        LogInfo(
+            LogCategory_Ui,
+            L"OriginalGaugeFields",
+            L"Resolved InGameUiManager gauge fields: stamina=0x%llX "
+            L"ecstasy=0x%llX mental=0x%llX moisture=0x%llX icon=0x%llX.",
+            static_cast<unsigned long long>(staminaGaugeOffset),
+            static_cast<unsigned long long>(ecstasyGaugeOffset),
+            static_cast<unsigned long long>(mentalGaugeOffset),
+            static_cast<unsigned long long>(moistureGaugeOffset),
+            static_cast<unsigned long long>(moistureIconOffset));
+    }
+
+    const size_t componentOffsets[] = {
+        staminaGaugeOffset,
+        ecstasyGaugeOffset,
+        mentalGaugeOffset,
+        moistureGaugeOffset,
+    };
+    for (const size_t offset : componentOffsets)
+    {
+        if (offset == static_cast<size_t>(-1))
+        {
+            continue;
+        }
+        auto* component = *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(uiManager) + offset);
+        auto* object = component != nullptr
+            ? GetComponentGameObject(component)
+            : nullptr;
+        if (object != nullptr)
+        {
+            SetWorldGameObjectActive(object, false);
+        }
+    }
+
+    // moistureIcon is the FrontImager only. Its BackImage sibling is not
+    // referenced by InGameUiManager and would remain visible if the front
+    // component's GameObject were hidden alone. The shared parent is Scale.
+    if (moistureIconOffset != static_cast<size_t>(-1))
+    {
+        auto* moistureIcon = *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(uiManager) + moistureIconOffset);
+        auto* frontObject = moistureIcon != nullptr
+            ? GetComponentGameObject(moistureIcon)
+            : nullptr;
+        SetWorldGameObjectActive(frontObject, false);
+
+        auto* frontTransform = GetWorldTransform(frontObject);
+        auto* transformClass = FindClass("UnityEngine", "Transform");
+        auto* containerTransform = frontTransform != nullptr &&
+                transformClass != nullptr
+            ? Invoke(
+                FindMethod(transformClass, "get_parent", 0),
+                frontTransform,
+                nullptr)
+            : nullptr;
+        auto* containerObject = containerTransform != nullptr
+            ? GetComponentGameObject(containerTransform)
+            : nullptr;
+        if (containerObject != nullptr &&
+            GetObjectName(containerObject) == L"Scale")
+        {
+            SetWorldGameObjectActive(containerObject, false);
+            LogOnce(
+                "gameplay-original-moisture-icon-hidden",
+                LogLevel_Info,
+                LogCategory_Ui,
+                L"OriginalMoistureIcon",
+                L"Hid the original moisture icon container (Scale) so both "
+                L"BackImage and FrontImager are removed; field=0x%llX "
+                L"front=%p container=%p.",
+                static_cast<unsigned long long>(moistureIconOffset),
+                frontObject,
+                containerObject);
+        }
+        else
+        {
+            LogOnce(
+                "gameplay-original-moisture-icon-container-missing",
+                LogLevel_Warn,
+                LogCategory_Ui,
+                L"OriginalMoistureIcon",
+                L"Hid only the original moisture foreground because the "
+                L"expected Scale parent was unavailable; front=%p parent=%p.",
+                frontObject,
+                containerObject);
+        }
+    }
+
+    auto* statusInfoObject = *reinterpret_cast<Il2CppObject**>(
+        reinterpret_cast<char*>(uiManager) + 0xD0);
+    SetWorldGameObjectActive(statusInfoObject, false);
+}
+
+void GameplayStatusHud_SetAnchoredRect(
+    Il2CppObject* rect,
+    float anchorX,
+    float anchorY,
+    float pivotX,
+    float pivotY,
+    float width,
+    float height,
+    float positionX,
+    float positionY)
+{
+    if (rect == nullptr)
+    {
+        return;
+    }
+    auto* rectClass = FindClass("UnityEngine", "RectTransform");
+    float anchorMin[] = { anchorX, anchorY };
+    float anchorMax[] = { anchorX, anchorY };
+    float pivot[] = { pivotX, pivotY };
+    float size[] = { width, height };
+    float position[] = { positionX, positionY };
+    void* anchorMinParameters[] = { anchorMin };
+    void* anchorMaxParameters[] = { anchorMax };
+    void* pivotParameters[] = { pivot };
+    void* sizeParameters[] = { size };
+    void* positionParameters[] = { position };
+    Invoke(
+        FindMethod(rectClass, "set_anchorMin", 1),
+        rect,
+        anchorMinParameters);
+    Invoke(
+        FindMethod(rectClass, "set_anchorMax", 1),
+        rect,
+        anchorMaxParameters);
+    Invoke(
+        FindMethod(rectClass, "set_pivot", 1),
+        rect,
+        pivotParameters);
+    Invoke(
+        FindMethod(rectClass, "set_sizeDelta", 1),
+        rect,
+        sizeParameters);
+    Invoke(
+        FindMethod(rectClass, "set_anchoredPosition", 1),
+        rect,
+        positionParameters);
+}
+
+void GameplayStatusHud_SetGraphicAlpha(
+    Il2CppObject* graphic,
+    float alpha)
+{
+    if (graphic == nullptr)
+    {
+        return;
+    }
+    auto* graphicClass = FindClass("UnityEngine.UI", "Graphic");
+    auto* colorObject = Invoke(
+        FindMethod(graphicClass, "get_color", 0),
+        graphic,
+        nullptr);
+    if (colorObject == nullptr || il2cpp_object_unbox == nullptr)
+    {
+        return;
+    }
+    auto* color =
+        static_cast<float*>(il2cpp_object_unbox(colorObject));
+    float adjustedColor[] = {
+        color[0],
+        color[1],
+        color[2],
+        alpha};
+    void* colorParameters[] = { adjustedColor };
+    Invoke(
+        FindMethod(graphicClass, "set_color", 1),
+        graphic,
+        colorParameters);
+}
+
+void GameplayStatusHud_ForceStaminaGaugeVisible(
+    Il2CppObject* gameObject,
+    int depth)
+{
+    if (gameObject == nullptr || depth > 8)
+    {
+        return;
+    }
+    SetWorldGameObjectActive(gameObject, true);
+
+    auto* canvasGroup = GetSceneComponentByClass(
+        gameObject,
+        "UnityEngine",
+        "CanvasGroup");
+    if (canvasGroup != nullptr)
+    {
+        float alpha = 1.0f;
+        bool interactable = false;
+        bool blocksRaycasts = false;
+        void* alphaParameters[] = { &alpha };
+        void* interactableParameters[] = { &interactable };
+        void* blocksParameters[] = { &blocksRaycasts };
+        Invoke(
+            FindMethod(FindClass("UnityEngine", "CanvasGroup"), "set_alpha", 1),
+            canvasGroup,
+            alphaParameters);
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine", "CanvasGroup"),
+                "set_interactable",
+                1),
+            canvasGroup,
+            interactableParameters);
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine", "CanvasGroup"),
+                "set_blocksRaycasts",
+                1),
+            canvasGroup,
+            blocksParameters);
+    }
+
+    auto* image = GetSceneComponentByClass(
+        gameObject,
+        "UnityEngine.UI",
+        "Image");
+    if (image != nullptr)
+    {
+        ExtendedMode_SetComponentEnabled(image, true);
+        GameplayStatusHud_SetGraphicAlpha(image, 1.0f);
+    }
+    auto* rawImage = GetSceneComponentByClass(
+        gameObject,
+        "UnityEngine.UI",
+        "RawImage");
+    if (rawImage != nullptr)
+    {
+        ExtendedMode_SetComponentEnabled(rawImage, true);
+        GameplayStatusHud_SetGraphicAlpha(rawImage, 1.0f);
+    }
+
+    auto* transform = GetWorldTransform(gameObject);
+    auto* transformClass = FindClass("UnityEngine", "Transform");
+    auto* childCountObject = transform != nullptr
+        ? Invoke(
+            FindMethod(transformClass, "get_childCount", 0),
+            transform,
+            nullptr)
+        : nullptr;
+    const int childCount =
+        childCountObject != nullptr && il2cpp_object_unbox != nullptr
+            ? *static_cast<int*>(il2cpp_object_unbox(childCountObject))
+            : 0;
+    for (int index = 0; index < childCount; ++index)
+    {
+        int childIndex = index;
+        void* childParameters[] = { &childIndex };
+        auto* childTransform = Invoke(
+            FindMethod(transformClass, "GetChild", 1),
+            transform,
+            childParameters);
+        auto* childObject = childTransform != nullptr
+            ? Invoke(
+                FindMethod(
+                    FindClass("UnityEngine", "Component"),
+                    "get_gameObject",
+                    0),
+                childTransform,
+                nullptr)
+            : nullptr;
+        GameplayStatusHud_ForceStaminaGaugeVisible(
+            childObject,
+            depth + 1);
+    }
+}
+
+void GameplayStatusHud_PositionOriginalStaminaGauge()
+{
+    if (g_extendedModeState.load() != ExtendedMode_Gameplay)
+    {
+        return;
+    }
+    const unsigned long long now = GetTickCount64();
+    const bool shouldRelayout =
+        g_gameplayOriginalStaminaGaugeLayoutTick == 0 ||
+        now - g_gameplayOriginalStaminaGaugeLayoutTick >= 500;
+    if (shouldRelayout)
+    {
+        g_gameplayOriginalStaminaGaugeLayoutTick = now;
+    }
+
+    if (!ExtendedMode_IsUnityObjectAlive(g_extendedInGameUiManager))
+    {
+        g_extendedInGameUiManager = ExtendedMode_GetStaticObject(
+            "ExposureUnnoticed2.Object3D.IngameManager",
+            "InGameUiManager",
+            "Instance");
+    }
+    auto* uiManager = g_extendedInGameUiManager;
+    if (uiManager == nullptr)
+    {
+        return;
+    }
+    auto* gauge = g_gameplayOriginalStaminaGaugeComponent;
+    auto* gaugeObject = g_gameplayOriginalStaminaGaugeObject;
+    if (!ExtendedMode_IsUnityObjectAlive(gaugeObject))
+    {
+        gaugeObject = nullptr;
+        gauge = nullptr;
+        auto* sourceGauge = *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(uiManager) + 0x28);
+        if (sourceGauge == nullptr)
+        {
+            return;
+        }
+        auto* objectClass = FindClass("UnityEngine", "Object");
+        auto* instantiate = FindMethod(objectClass, "Instantiate", 1);
+        if (instantiate == nullptr)
+        {
+            return;
+        }
+        void* instantiateParameters[] = { sourceGauge };
+        gauge = Invoke(instantiate, nullptr, instantiateParameters);
+        gaugeObject = gauge != nullptr
+            ? GetComponentGameObject(gauge)
+            : nullptr;
+        if (gaugeObject == nullptr)
+        {
+            return;
+        }
+        g_gameplayOriginalStaminaGaugeComponent = gauge;
+        g_gameplayOriginalStaminaGaugeObject = gaugeObject;
+        g_gameplayOriginalStaminaGaugeMax = -1.0f;
+        g_gameplayOriginalStaminaGaugeLayoutLogged = false;
+        LogInfo(
+            LogCategory_Ui,
+            L"GameplayStaminaGauge",
+            L"Cloned the original stamina gauge for the MOD HUD: "
+            L"source=%p clone=%p component=%p.",
+            sourceGauge,
+            gaugeObject,
+            gauge);
+    }
+    SetWorldGameObjectActive(gaugeObject, true);
+    if (shouldRelayout)
+    {
+        auto* gaugeAnimator = GetSceneComponentByClass(
+            gaugeObject,
+            "UnityEngine",
+            "Animator");
+        if (gaugeAnimator != nullptr)
+        {
+            ExtendedMode_SetComponentEnabled(gaugeAnimator, false);
+        }
+        GameplayStatusHud_ForceStaminaGaugeVisible(gaugeObject, 0);
+        if (gauge != nullptr)
+        {
+            const auto* gaugeRaw =
+                reinterpret_cast<const char*>(gauge);
+            auto* frontRect = *reinterpret_cast<Il2CppObject* const*>(
+                gaugeRaw + 0x20);
+            auto* frameRect = *reinterpret_cast<Il2CppObject* const*>(
+                gaugeRaw + 0x28);
+            auto* frontImage = *reinterpret_cast<Il2CppObject* const*>(
+                gaugeRaw + 0x30);
+            auto* frontObject = frontRect != nullptr
+                ? GetComponentGameObject(frontRect)
+                : nullptr;
+            auto* frameObject = frameRect != nullptr
+                ? GetComponentGameObject(frameRect)
+                : nullptr;
+            SetWorldGameObjectActive(frontObject, true);
+            SetWorldGameObjectActive(frameObject, true);
+            if (frontImage != nullptr)
+            {
+                ExtendedMode_SetComponentEnabled(frontImage, true);
+                SetSceneGraphicColor(
+                    frontImage,
+                    0.86f,
+                    0.94f,
+                    0.98f,
+                    1.0f);
+            }
+            auto* frameImage = GetSceneComponentByClass(
+                frameObject,
+                "UnityEngine.UI",
+                "Image");
+            if (frameImage != nullptr)
+            {
+                ExtendedMode_SetComponentEnabled(frameImage, true);
+                SetSceneGraphicColor(
+                    frameImage,
+                    0.020f,
+                    0.027f,
+                    0.035f,
+                    0.90f);
+            }
+        }
+        auto* gaugeRect = GetSceneComponentByClass(
+            gaugeObject,
+            "UnityEngine",
+            "RectTransform");
+        if (gaugeRect != nullptr)
+        {
+            auto* gaugeTransform = GetWorldTransform(gaugeObject);
+            auto* hudTransform = GetWorldTransform(
+                g_extendedGameplayHudCanvasObject);
+            if (gaugeTransform != nullptr && hudTransform != nullptr)
+            {
+                bool keepWorldPosition = false;
+                void* parentParameters[] = {
+                    hudTransform,
+                    &keepWorldPosition};
+                Invoke(
+                    FindMethod(
+                        FindClass("UnityEngine", "Transform"),
+                        "SetParent",
+                        2),
+                    gaugeTransform,
+                    parentParameters);
+            }
+
+            float width = 280.0f;
+            float height = 20.0f;
+            auto* rectClass = FindClass("UnityEngine", "RectTransform");
+            auto* sizeObject = Invoke(
+                FindMethod(rectClass, "get_sizeDelta", 0),
+                gaugeRect,
+                nullptr);
+            if (sizeObject != nullptr && il2cpp_object_unbox != nullptr)
+            {
+                const auto* size =
+                    static_cast<const float*>(
+                        il2cpp_object_unbox(sizeObject));
+                if (std::isfinite(size[0]) &&
+                    std::isfinite(size[1]) &&
+                    size[0] >= 40.0f &&
+                    size[1] >= 8.0f)
+                {
+                    width = size[0];
+                    height = size[1];
+                }
+            }
+
+            // The map is anchored at (18, -18), diameter 176. The cloned
+            // GaugeView root is 100 wide while its centered frame is 500 wide,
+            // so root x=406 makes the actual frame begin at x=206.
+            constexpr float gaugeLeft = 406.0f;
+            constexpr float gaugeCenterY = -106.0f;
+            GameplayStatusHud_SetAnchoredRect(
+                gaugeRect,
+                0.0f,
+                1.0f,
+                0.0f,
+                0.5f,
+                width,
+                height,
+                gaugeLeft,
+                gaugeCenterY);
+            if (!g_gameplayOriginalStaminaGaugeLayoutLogged)
+            {
+                g_gameplayOriginalStaminaGaugeLayoutLogged = true;
+                BringSceneObjectToFront(gaugeObject);
+                LogInfo(
+                    LogCategory_Ui,
+                    L"GameplayStaminaGauge",
+                    L"Cloned original stamina gauge positioned beside the "
+                    L"minimap: x=%.1f centerY=%.1f width=%.1f height=%.1f.",
+                    gaugeLeft,
+                    gaugeCenterY,
+                    width,
+                    height);
+            }
+        }
+    }
+
+    float current = 0.0f;
+    float max = 0.0f;
+    if (EquipmentStats_ReadStaminaSnapshot(current, max))
+    {
+        auto* gaugeClass = FindClass(
+            "Common.CommonUI.CommonGauge",
+            "GaugeView");
+        auto* setMax = FindMethod(gaugeClass, "SetMax", 1);
+        auto* setValue = FindMethod(gaugeClass, "Set", 1);
+        if (setMax != nullptr &&
+            setValue != nullptr &&
+            std::fabs(max - g_gameplayOriginalStaminaGaugeMax) > 0.0001f)
+        {
+            // GaugeView.SetMax early-outs when the value is unchanged. A clone
+            // can carry max=1 while its internal length fields were not
+            // initialized by Awake, leaving GaugeFront at width 0. Invalidate
+            // the cached max once so SetMax rebuilds lengthScale/length.
+            auto* cachedMax = reinterpret_cast<float*>(
+                reinterpret_cast<char*>(gauge) + 0x48);
+            if (std::fabs(*cachedMax - max) <= 0.0001f)
+            {
+                *cachedMax = 0.0f;
+            }
+            void* maxParameters[] = { &max };
+            Invoke(setMax, gauge, maxParameters);
+            g_gameplayOriginalStaminaGaugeMax = max;
+        }
+        if (setValue != nullptr)
+        {
+            void* valueParameters[] = { &current };
+            Invoke(setValue, gauge, valueParameters);
+        }
+        if (!g_gameplayOriginalStaminaGaugeSyncLogged)
+        {
+            g_gameplayOriginalStaminaGaugeSyncLogged = true;
+            LogInfo(
+                LogCategory_Ui,
+                L"GameplayStaminaGauge",
+                L"Cloned stamina gauge synchronized from StaminaManager: "
+                L"current=%.4f max=%.4f.",
+                current,
+                max);
+        }
+    }
+}
+
+void GameplayStatusHud_ShowNotification(
+    const char* message,
+    unsigned int durationMs)
+{
+    if (message == nullptr || message[0] == '\0')
+    {
+        return;
+    }
+    g_gameplayStatusHudNotification = message;
+    g_gameplayStatusHudNotificationUntil =
+        GetTickCount64() + durationMs;
+    LogDebug(
+        LogCategory_Ui,
+        L"GameplayNotification",
+        L"Gameplay notification shown for %u ms: %S.",
+        durationMs,
+        message);
+}
 
 Il2CppObject* GameplayStatusHud_GetPlayerClassAccessor()
 {
@@ -372,6 +1132,8 @@ void GameplayStatusHud_Build()
         static_cast<int>(g_gameplayStatusHudRows.size()) ==
             kGameplayStatusHudMaxRows)
     {
+        GameplayStatusHud_BuildOwnedStaminaBar(
+            GetWorldTransform(g_extendedGameplayHudCanvasObject));
         SetWorldGameObjectActive(g_gameplayStatusHudPanel.gameObject, true);
         return;
     }
@@ -380,13 +1142,14 @@ void GameplayStatusHud_Build()
     g_gameplayStatusHudRows.clear();
     g_gameplayStatusHudLastUpdateTick = 0;
     auto* rootTransform = GetWorldTransform(g_extendedGameplayHudCanvasObject);
+    GameplayStatusHud_BuildOwnedStaminaBar(rootTransform);
     g_gameplayStatusHudPanel = CreateScenePanel(
         "EscapeFromManakaStatusHud",
         rootTransform,
         0.016f,
-        0.515f,
+        0.120f,
         0.305f,
-        0.965f,
+        0.520f,
         0.012f,
         0.018f,
         0.026f,
@@ -410,8 +1173,8 @@ void GameplayStatusHud_Build()
             sizeof(textName),
             "StatusRowText%02d",
             index);
-        const float maxY = 0.955f - static_cast<float>(index) * 0.071f;
-        const float minY = maxY - 0.064f;
+        const float minY = 0.010f + static_cast<float>(index) * 0.071f;
+        const float maxY = minY + 0.064f;
         auto background = CreateScenePanel(
             backgroundName,
             g_gameplayStatusHudPanel.rect,
@@ -449,9 +1212,22 @@ void GameplayStatusHud_Build()
 
 void GameplayStatusHud_Reset()
 {
+    ExtendedMode_DestroyUnityObject(g_gameplayOriginalStaminaGaugeObject);
     g_gameplayStatusHudPanel = SceneUiElement{};
     g_gameplayStatusHudRows.clear();
     g_gameplayStatusHudLastUpdateTick = 0;
+    g_gameplayStatusHudNotification.clear();
+    g_gameplayStatusHudNotificationUntil = 0;
+    g_gameplayOriginalStaminaGaugeObject = nullptr;
+    g_gameplayOriginalStaminaGaugeComponent = nullptr;
+    g_gameplayOriginalStaminaGaugeLayoutTick = 0;
+    g_gameplayOriginalStaminaGaugeMax = -1.0f;
+    g_gameplayOriginalStaminaGaugeLayoutLogged = false;
+    g_gameplayOriginalStaminaGaugeSyncLogged = false;
+    g_gameplayStaminaBarBackground = SceneUiElement{};
+    g_gameplayStaminaBarFill = SceneUiElement{};
+    g_gameplayStaminaBarWidth = -1.0f;
+    g_gameplayStaminaBarCapacityMultiplier = -1.0f;
     GameplayControlsHint_Reset();
 }
 
@@ -468,6 +1244,9 @@ void GameplayStatusHud_Update()
         }
         return;
     }
+    EquipmentStats_UpdateExposureReward();
+    GameplayStatusHud_UpdateOwnedStaminaBar();
+    GameplayStatusHud_HideResidualGauges();
     GameplayControlsHint_Update();
     if (!ExtendedMode_IsUnityObjectAlive(g_gameplayStatusHudPanel.gameObject))
     {
@@ -539,6 +1318,24 @@ void GameplayStatusHud_Update()
 
     std::vector<std::string> lines;
     lines.reserve(kGameplayStatusHudMaxRows);
+    lines.emplace_back(
+        WideToUtf8(
+            L"本局获得金钱：" +
+            InventoryUi_FormatCurrency(
+                EquipmentStats_GetRaidEarnings())));
+    const unsigned long long notificationNow = GetTickCount64();
+    if (!g_gameplayStatusHudNotification.empty())
+    {
+        if (notificationNow < g_gameplayStatusHudNotificationUntil)
+        {
+            lines.emplace_back(g_gameplayStatusHudNotification);
+        }
+        else
+        {
+            g_gameplayStatusHudNotification.clear();
+            g_gameplayStatusHudNotificationUntil = 0;
+        }
+    }
     if (isCrouch)
     {
         lines.emplace_back(

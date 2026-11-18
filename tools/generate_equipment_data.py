@@ -8,6 +8,20 @@ import json
 from pathlib import Path
 
 
+STAT_KEYS = (
+    "perception",
+    "conservatism",
+    "normality",
+    "strength",
+    "speed",
+    "climax_speed_base",
+    "stamina_capacity_base",
+    "stamina_recovery_base",
+    "handcuff_proficiency_base",
+    "reward_base",
+)
+
+
 def c_string(value: str) -> str:
     escaped = (
         value.replace("\\", "\\\\")
@@ -18,6 +32,29 @@ def c_string(value: str) -> str:
     return f'"{escaped}"'
 
 
+def signed_stat_base(item: dict, key: str) -> int:
+    stats = item.get("stats")
+    if not isinstance(stats, dict):
+        raise ValueError(f"Item {item['id']!r} has no stats object")
+    if set(stats) != set(STAT_KEYS):
+        missing = sorted(set(STAT_KEYS) - set(stats))
+        extra = sorted(set(stats) - set(STAT_KEYS))
+        raise ValueError(
+            f"Item {item['id']!r} stats mismatch; "
+            f"missing={missing}, extra={extra}"
+        )
+    value = stats[key]
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise ValueError(
+            f"Item {item['id']!r} stat {key!r} must be an integer"
+        )
+    if value < -5 or value > 5:
+        raise ValueError(
+            f"Item {item['id']!r} stat {key!r}={value} is outside [-5, 5]"
+        )
+    return value
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("catalog", type=Path)
@@ -25,6 +62,16 @@ def main() -> int:
     args = parser.parse_args()
 
     catalog = json.loads(args.catalog.read_text(encoding="utf-8"))
+    if catalog.get("schema_version") != 5:
+        raise ValueError("Equipment catalog schema_version must be 5")
+    if tuple(catalog.get("stat_order", ())) != STAT_KEYS:
+        raise ValueError(
+            "Equipment catalog stat_order does not match the runtime contract"
+        )
+    if tuple(catalog.get("stats", {}).keys()) != STAT_KEYS:
+        raise ValueError(
+            "Equipment catalog stats definitions are incomplete or out of order"
+        )
     category_keys = [entry["key"] for entry in catalog["categories"]]
     category_bits = {key: index for index, key in enumerate(category_keys)}
     series_order = catalog["series_order"]
@@ -38,15 +85,36 @@ def main() -> int:
         "static constexpr EquipmentInventoryDefinition kEquipmentInventoryDefinitions[] = {",
     ]
     for item in items:
+        categories = item.get("categories", [])
         mask = 0
-        for category in item.get("categories", []):
+        for category in categories:
             if category not in category_bits:
                 raise ValueError(f"Unknown category {category!r} in {item['id']}")
             mask |= 1 << category_bits[category]
+        if "prop" in categories:
+            nonzero_stats = {
+                key: value
+                for key in STAT_KEYS
+                if (value := signed_stat_base(item, key)) != 0
+            }
+            if nonzero_stats:
+                raise ValueError(
+                    f"Prop item {item['id']!r} must keep all stats at zero; "
+                    f"found {nonzero_stats}"
+                )
         occupancy = item["occupancy"]
         series = item.get("series")
         if series not in series_index:
             raise ValueError(f"Unknown series {series!r} in {item['id']}")
+        reference_price = item.get("reference_price")
+        if (
+            isinstance(reference_price, bool)
+            or not isinstance(reference_price, int)
+            or reference_price <= 0
+        ):
+            raise ValueError(
+                f"Item {item['id']!r} reference_price must be a positive integer"
+            )
         lines.append(
             "    { "
             f"{c_string(item['id'])}, "
@@ -54,7 +122,18 @@ def main() -> int:
             f"{int(occupancy['width'])}, "
             f"{int(occupancy['height'])}, "
             f"0x{mask:03x}u, "
-            f"{series_index[series]} "
+            f"{series_index[series]}, "
+            f"{reference_price}, "
+            f"{signed_stat_base(item, 'perception')}, "
+            f"{signed_stat_base(item, 'conservatism')}, "
+            f"{signed_stat_base(item, 'normality')}, "
+            f"{signed_stat_base(item, 'strength')}, "
+            f"{signed_stat_base(item, 'speed')}, "
+            f"{signed_stat_base(item, 'climax_speed_base')}, "
+            f"{signed_stat_base(item, 'stamina_capacity_base')}, "
+            f"{signed_stat_base(item, 'stamina_recovery_base')}, "
+            f"{signed_stat_base(item, 'handcuff_proficiency_base')}, "
+            f"{signed_stat_base(item, 'reward_base')} "
             "},"
         )
     lines.extend(

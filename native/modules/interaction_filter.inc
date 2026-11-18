@@ -123,6 +123,100 @@ void InteractionFilter_HideDeniedController(
     }
 }
 
+void InteractionFilter_DisablePortalTriggers(
+    bool hideObjects,
+    bool forceLog)
+{
+    auto* portalClass = FindClass(
+        "ExposureUnnoticed2.Object3D.Portal",
+        "PortalController");
+    auto* objectClass = FindClass("UnityEngine", "Object");
+    if (portalClass == nullptr ||
+        objectClass == nullptr ||
+        il2cpp_runtime_class_init == nullptr ||
+        il2cpp_type_get_object == nullptr ||
+        il2cpp_array_length == nullptr ||
+        il2cpp_array_object_header_size == nullptr)
+    {
+        return;
+    }
+
+    il2cpp_runtime_class_init(portalClass);
+    auto* portalType = il2cpp_type_get_object(
+        il2cpp_class_get_type(portalClass));
+    bool includeInactive = true;
+    void* portalParameters[] = { portalType, &includeInactive };
+    auto* portals = Invoke(
+        FindMethod(objectClass, "FindObjectsOfType", 2),
+        nullptr,
+        portalParameters);
+    if (portals == nullptr)
+    {
+        return;
+    }
+
+    auto* colliderClass = FindClass("UnityEngine", "Collider");
+    auto* setColliderEnabled = colliderClass != nullptr
+        ? FindMethod(colliderClass, "set_enabled", 1)
+        : nullptr;
+    auto* portalElements = reinterpret_cast<Il2CppObject**>(
+        reinterpret_cast<char*>(portals) +
+        il2cpp_array_object_header_size());
+    const auto portalCount = il2cpp_array_length(portals);
+    int disabledTriggers = 0;
+    int hiddenObjects = 0;
+    for (uint32_t index = 0; index < portalCount; ++index)
+    {
+        auto* portal = portalElements[index];
+        auto* portalObject = portal != nullptr
+            ? GetComponentGameObject(portal)
+            : nullptr;
+        if (portalObject == nullptr)
+        {
+            continue;
+        }
+        if (setColliderEnabled != nullptr)
+        {
+            auto* collider = GetSceneComponentByClass(
+                portalObject,
+                "UnityEngine",
+                "Collider");
+            if (collider != nullptr)
+            {
+                bool enabled = false;
+                void* enabledParameters[] = { &enabled };
+                Invoke(setColliderEnabled, collider, enabledParameters);
+                ++disabledTriggers;
+            }
+        }
+        if (hideObjects)
+        {
+            SetWorldGameObjectActive(portalObject, false);
+            ++hiddenObjects;
+        }
+    }
+
+    static int lastDisabledTriggers = -1;
+    static int lastHiddenObjects = -1;
+    int& lastCount = hideObjects
+        ? lastHiddenObjects
+        : lastDisabledTriggers;
+    const int currentCount = hideObjects
+        ? hiddenObjects
+        : disabledTriggers;
+    if (forceLog || currentCount != lastCount)
+    {
+        lastCount = currentCount;
+        LogInfo(
+            LogCategory_Scene,
+            L"Scene",
+            L"Escape interaction filter pre-disabled %d portal trigger(s); "
+            L"hidden portal object(s)=%d.",
+            disabledTriggers,
+            hiddenObjects);
+    }
+}
+
 void InteractionFilter_ApplySceneWhitelist()
 {
     auto* controllerClass = FindClass(
@@ -195,57 +289,10 @@ void InteractionFilter_ApplySceneWhitelist()
         ++deniedCount;
     }
 
-    // Portals are a separate trigger/interaction pipeline from
-    // InteractManager and are what still allowed map-to-map teleporting.
-    // Scene entry has already resolved its spawn point before this function
-    // runs, so disabling every portal here is safe.
-    auto* portalClass = FindClass(
-        "ExposureUnnoticed2.Object3D.Portal",
-        "PortalController");
-    if (portalClass != nullptr &&
-        il2cpp_runtime_class_init != nullptr &&
-        il2cpp_type_get_object != nullptr)
-    {
-        il2cpp_runtime_class_init(portalClass);
-        auto* portalType = il2cpp_type_get_object(
-            il2cpp_class_get_type(portalClass));
-        void* portalParameters[] = { portalType, &includeInactive };
-        auto* portals = Invoke(
-            FindMethod(objectClass, "FindObjectsOfType", 2),
-            nullptr,
-            portalParameters);
-        if (portals != nullptr)
-        {
-            const auto portalCount = il2cpp_array_length(portals);
-            auto* portalElements = reinterpret_cast<Il2CppObject**>(
-                reinterpret_cast<char*>(portals) +
-                il2cpp_array_object_header_size());
-            int hiddenPortals = 0;
-            for (uint32_t index = 0; index < portalCount; ++index)
-            {
-                auto* portal = portalElements[index];
-                if (portal == nullptr)
-                {
-                    continue;
-                }
-                auto* portalObject = GetComponentGameObject(portal);
-                if (portalObject != nullptr)
-                {
-                    SetWorldGameObjectActive(portalObject, false);
-                    ++hiddenPortals;
-                }
-            }
-            static unsigned int lastPortalCount = 0xFFFFFFFFu;
-            if (hiddenPortals != static_cast<int>(lastPortalCount))
-            {
-                lastPortalCount =
-                    static_cast<unsigned int>(hiddenPortals);
-                LogInfo(LogCategory_Scene, L"Scene", 
-                    L"Escape interaction filter disabled %d portal trigger(s).",
-                    hiddenPortals);
-            }
-        }
-    }
+    // Disable the portal trigger before any later scene code can accept an
+    // entry. The spawn path calls this helper earlier, before moving the
+    // player, so a spawn overlapping the portal cannot teleport immediately.
+    InteractionFilter_DisablePortalTriggers(true, false);
 
     static unsigned int lastDenied = 0xFFFFFFFFu;
     static unsigned int lastAllowed = 0xFFFFFFFFu;

@@ -125,6 +125,7 @@ SceneUiElement g_extendedPoseMenuButtons[24]{};
 std::atomic<bool> g_extendedPoseMenuHeld{false};
 std::atomic<bool> g_extendedPoseMenuVisible{false};
 std::atomic<bool> g_extendedPoseMenuClickRequested{false};
+std::atomic<int> g_extendedPoseMenuRequestedAction{-1};
 bool g_extendedPoseMenuSuppressedUntilRelease = false;
 int g_extendedPoseMenuHoverIndex = -1;
 std::vector<ExtendedLayerSnapshot> g_extendedLayerSnapshots;
@@ -1829,6 +1830,18 @@ void GameplayInput_ApplyAdultQuickSlot(
                 L"Adult goods vibrator input rejected by PlayerFacade.CanUseHand.");
             return;
         }
+        // MOD inventory is authoritative. Mirror the selected vibrator into
+        // the shipped GameState before its one-shot input is processed so the
+        // original save cannot emit a false "vibrator not equipped" warning.
+        GameplayInput_SetAdultGoodsActiveState(
+            adultGoodsType,
+            true);
+        LogInfo(
+            LogCategory_Action,
+            L"Action",
+            L"MOD vibrator type=%d synchronized to original equipment "
+            L"state before action validation.",
+            adultGoodsType);
         GameplayInput_ScheduleVibratorModel(adultGoodsType);
         // Reuse the shipped PlayerAction.OnUpdate path. It validates hand
         // availability, starts SwitchVibrator through TransAction, advances
@@ -1911,6 +1924,7 @@ void ExtendedMode_DestroyRuntimeWindows(const wchar_t* reason)
     InventoryUi_PrepareForSceneTransition();
     CheckpointSystem_ClearSceneObjects();
     GameplayStatusHud_Reset();
+    EquipmentStats_ResetSceneRuntimeBindings();
     GameplayMinimap_Reset();
     CheckpointCompass_Reset();
     ExtendedMode_DestroyUnityObject(g_extendedGameplayHudCanvasObject);
@@ -4208,7 +4222,7 @@ void ExtendedMode_ConfigureCamera()
 
     auto* cameraGameObject = GetComponentGameObject(g_extendedCamera);
     auto* transform = GetWorldTransform(cameraGameObject);
-    constexpr float targetScreenX = 0.185f;
+    constexpr float targetScreenX = 0.12f;
     auto* aspectValue = Invoke(
         FindMethod(cameraClass, "get_aspect", 0),
         g_extendedCamera,
@@ -4371,7 +4385,7 @@ void ExtendedMode_FrameModel()
         : 0.67f;
     auto* cameraTransform = GetWorldTransform(
         GetComponentGameObject(g_extendedCamera));
-    constexpr float targetScreenX = 0.185f;
+    constexpr float targetScreenX = 0.12f;
     auto* aspectValue = Invoke(
         FindMethod(FindClass("UnityEngine", "Camera"), "get_aspect", 0),
         g_extendedCamera,
@@ -4457,7 +4471,9 @@ void ExtendedMode_HideGameplayUi()
     // one of its children. Hide only HUD elements, leaving the menu functional.
     constexpr int hidableComponentOffsets[] = {
         0x28, 0x38, 0x40, 0x50, 0x58, 0x60, 0x68,
-        0x70, 0x78, 0x80, 0x88, 0x90, 0x98, 0xA0,
+        // 0x78 is TempUnlockPanelView. Keep it active so the original
+        // first-stage and accumulated unlock rings remain visible.
+        0x70, 0x80, 0x88, 0x90, 0x98, 0xA0,
         0xE8, 0xF0,
         0xF8, 0x110, 0x118, 0x120, 0x138, 0x140
     };
@@ -4484,32 +4500,45 @@ void ExtendedMode_HideGameplayUi()
             reinterpret_cast<char*>(g_extendedInGameUiManager) + offset);
         SetWorldGameObjectActive(gameObject, false);
     }
+    static bool loggedTempUnlockPanelRetained = false;
+    if (!loggedTempUnlockPanelRetained)
+    {
+        loggedTempUnlockPanelRetained = true;
+        LogInfo(
+            LogCategory_Action,
+            L"Action",
+            L"Escape retained the original TempUnlockPanelView for handcuff "
+            L"unlock progress rings.");
+    }
     auto* statusInfoObject = *reinterpret_cast<Il2CppObject**>(
         reinterpret_cast<char*>(g_extendedInGameUiManager) + 0xD0);
     auto* ecstasyGauge = *reinterpret_cast<Il2CppObject**>(
         reinterpret_cast<char*>(g_extendedInGameUiManager) + 0x30);
     auto* ecstasyHeart = *reinterpret_cast<Il2CppObject**>(
         reinterpret_cast<char*>(g_extendedInGameUiManager) + 0xE0);
-    const bool showEcstasyHud =
-        g_extendedModeState.load() == ExtendedMode_Gameplay;
-    SetWorldGameObjectActive(statusInfoObject, showEcstasyHud);
+    SetWorldGameObjectActive(statusInfoObject, false);
     if (ecstasyGauge != nullptr)
     {
         SetWorldGameObjectActive(
             GetComponentGameObject(ecstasyGauge),
-            showEcstasyHud);
+            false);
     }
     if (ecstasyHeart != nullptr)
     {
         SetWorldGameObjectActive(
             GetComponentGameObject(ecstasyHeart),
-            showEcstasyHud);
+            false);
     }
     static bool loggedHide = false;
     if (!loggedHide)
     {
         loggedHide = true;
-        LogInfo(LogCategory_Action, L"Action", L"Extended mode hidden original HUD elements while retaining the system menu root.");
+        LogInfo(
+            LogCategory_Action,
+            L"Action",
+            L"Extended mode hid original status/RP, stamina, ecstasy, mental, "
+            L"and moisture gauges while retaining the "
+            L"system menu root.");
     }
 }
 
@@ -5200,6 +5229,10 @@ void ExtendedMode_ApplyLoadedStageSpawn()
         rawPosition = checkpointSpawn;
         spawnSource = "checkpoint spawn";
     }
+    // Disable the original portal collider before moving the player onto the
+    // resolved spawn. Otherwise a checkpoint spawn overlapping a portal can
+    // trigger PortalController.OnTriggerEnter during this assignment.
+    InteractionFilter_DisablePortalTriggers(false, true);
     void* positionParameters[] = { rawPosition };
     void* rotationParameters[] = { rawRotation };
     Invoke(
@@ -5558,7 +5591,7 @@ void ExtendedMode_BuildPoseMenu()
     CreateSceneTextElement(
         "PoseMenuTitle",
         panel.rect,
-        "原版动作  /  HOLD E TO CHOOSE",
+        "原版动作",
         0.035f,
         0.900f,
         0.965f,
@@ -5774,10 +5807,21 @@ bool ExtendedMode_PlayOriginalPose(int actionType)
                 changeAction,
                 playerAction,
                 parameters);
-            LogInfo(LogCategory_Action, L"Action", 
-                L"Escape pose menu executed original PlayerAction.ChangeAction type=%d.",
-                actionType);
-            return true;
+            const int observedActionType =
+                GameplayInput_GetCurrentActionType();
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"Escape pose menu PlayerAction.ChangeAction type=%d "
+                L"accepted=%d observed=%d vibrationMode=%d.",
+                actionType,
+                observedActionType == actionType ? 1 : 0,
+                observedActionType,
+                GameplayInput_GetOriginalVibrationMode());
+            // The original method owns the strong-vibration rejection and its
+            // localized message. Only start the MOD pursuit session when the
+            // original PlayerAction actually accepted the requested pose.
+            return observedActionType == actionType;
         }
     }
     auto* animationManager = ExtendedMode_GetAnimationManager();
@@ -5797,7 +5841,11 @@ bool ExtendedMode_PlayOriginalPose(int actionType)
     }
     void* parameters[] = { &actionType };
     Invoke(transAction, animationManager, parameters);
-    LogInfo(LogCategory_Action, L"Action", L"Escape pose menu executed original ActionType=%d.", actionType);
+    LogInfo(
+        LogCategory_Action,
+        L"Action",
+        L"Escape pose menu could not apply original PlayerAction for type=%d.",
+        actionType);
     return false;
 }
 
@@ -5892,10 +5940,13 @@ void ExtendedMode_TickPoseMenu(
     }
     const int actionType = kExtendedPoseMenuOptions[selected].actionType;
     ExtendedMode_ClosePoseMenu(true);
-    if (ExtendedMode_PlayOriginalPose(actionType))
-    {
-        GameplayActionPursuit_RequestFromEMenu(actionType);
-    }
+    g_extendedPoseMenuRequestedAction = actionType;
+    LogInfo(
+        LogCategory_Action,
+        L"Action",
+        L"Escape pose menu queued action=%d for the original "
+        L"PlayerAction.OnUpdate validation.",
+        actionType);
 }
 
 constexpr int kExtendedInteractionPromptOwnerNpc = 0;
@@ -7017,7 +7068,7 @@ void ExtendedMode_BuildUi()
     CreateSceneTextElement(
         "EFM_SceneSelectorTitle",
         g_extendedSceneSelectorPanel.rect,
-        "进入游戏  /  SELECT DEPLOYMENT",
+        "进入游戏",
         0.045f,
         0.910f,
         0.955f,
@@ -7148,21 +7199,6 @@ void ExtendedMode_BuildUi()
         true);
     SetWorldGameObjectActive(g_extendedSceneSelectorPanel.gameObject, false);
     ExtendedMode_RefreshSceneSelector();
-
-    g_extendedSelectedActionLabel = CreateSceneTextElement(
-        "EFM_SelectedAction",
-        rootTransform,
-        "当前动作",
-        0.033f,
-        0.008f,
-        0.345f,
-        0.045f,
-        13.0f,
-        257,
-        0.92f,
-        0.94f,
-        0.96f,
-        1.0f).text;
 
     auto actionPanel = CreateScenePanel(
         "EFM_ActionPanel",
@@ -7818,6 +7854,7 @@ bool ExtendedMode_PrepareQueuedSceneTransition()
     g_extendedPoseMenuHeld = false;
     g_extendedPoseMenuVisible = false;
     g_extendedPoseMenuClickRequested = false;
+    g_extendedPoseMenuRequestedAction = -1;
     g_extendedManualPointerDown = false;
     g_extendedManualPointerConsumed = false;
     g_extendedManualPointerInventoryEligible = false;
@@ -7993,6 +8030,10 @@ void ExtendedMode_BeginSelectedGameplay()
     if (g_extendedModeState.load() != ExtendedMode_Active)
     {
         return;
+    }
+    if (g_extendedPendingDeploymentStageType < 0)
+    {
+        EquipmentStats_BeginRaid(L"selected deployment");
     }
     g_extendedSuppressPlayerUpdate = true;
     ExtendedMode_ForceCursor();
@@ -8856,6 +8897,7 @@ void ExtendedMode_ClearCrossSceneUiCaches()
 
 void ExtendedMode_ResetForTitle()
 {
+    EquipmentStats_DiscardRaidEarnings(L"title reset");
     GameplayInput_RestoreVibratorSaveState();
     ItemContextMenu_Reset();
     ExhibitionUi_Reset();
@@ -8867,6 +8909,7 @@ void ExtendedMode_ResetForTitle()
     {
         LogInfo(LogCategory_Action, L"Action", L"Warehouse loading cover retained across the Title scene.");
     }
+    ExtendedMode_HideGameplayUiCompletely();
     ExtendedMode_DestroyRuntimeWindows(L"the mode reset");
     CheckpointSystem_Reset();
     ExtendedMode_RestoreClothingStateSnapshot();
@@ -8878,6 +8921,10 @@ void ExtendedMode_ResetForTitle()
     GameplayMinimap_Reset();
     ModGuideUi_Reset();
     ClearScenePngTextureCache();
+    if (ExtendedMode_IsUnityObjectAlive(g_nativeButton))
+    {
+        SetWorldGameObjectActive(g_nativeButton, false);
+    }
     g_nativeButtonInjected = false;
     g_nativeButtonTitleInstance = nullptr;
     g_nativeButton = nullptr;
@@ -9317,50 +9364,70 @@ bool ExtendedMode_IsGameplayManagerHealthy()
         return false;
     }
 
-    auto* eventReferencer = *reinterpret_cast<Il2CppObject**>(
-        reinterpret_cast<char*>(eventManager) + 0x38);
-    auto* referencerManager = *reinterpret_cast<Il2CppObject**>(
-        reinterpret_cast<char*>(referencer) + 0x20);
-    auto* referencerPlayer = *reinterpret_cast<Il2CppObject**>(
-        reinterpret_cast<char*>(referencer) + 0x30);
-    auto* managerReferencer = *reinterpret_cast<Il2CppObject**>(
-        reinterpret_cast<char*>(inGameManager) + 0x28);
-    auto* managerEventMethod = *reinterpret_cast<Il2CppObject**>(
-        reinterpret_cast<char*>(inGameManager) + 0x78);
-    if (eventReferencer != referencer ||
-        referencerManager != inGameManager ||
-        referencerPlayer != player ||
-        managerReferencer != referencer ||
-        managerEventMethod != eventManager)
-    {
-        return false;
-    }
-
-    const int listOffsets[] = { 0x20, 0x28, 0x30 };
-    for (const int offset : listOffsets)
-    {
-        auto* list = *reinterpret_cast<Il2CppObject**>(
-            reinterpret_cast<char*>(eventManager) + offset);
-        auto* items = list != nullptr
-            ? *reinterpret_cast<Il2CppObject**>(
-                reinterpret_cast<char*>(list) + 0x10)
-            : nullptr;
-        const int size = list != nullptr
-            ? *reinterpret_cast<int*>(
-                reinterpret_cast<char*>(list) + 0x18)
-            : -1;
-        const int capacity = items != nullptr
-            ? *reinterpret_cast<int*>(
-                reinterpret_cast<char*>(items) + 0x18)
-            : -1;
-        if (size < 0 || capacity < 0 || size > capacity)
-        {
-            return false;
-        }
-    }
-
-    return g_extendedEventManagerUpdateFrames >= 3 &&
+    // Scene objects can be rebuilt in a different order between stages.
+    // Core liveness plus a short update window is sufficient here; deep
+    // cross-reference identity churn made otherwise healthy stages stall.
+    return g_extendedEventManagerUpdateFrames >= 2 &&
            !ExtendedMode_IsOriginalSystemMenuActive();
+}
+
+void ExtendedMode_LogGameplayBindingDiagnostic(const wchar_t* source)
+{
+    auto* eventManager = g_extendedActiveEventMethodManager;
+    auto* referencer = g_extendedInGameReferencer;
+    auto* inGameManager = g_extendedInGameManager;
+    auto* player = g_extendedPlayerController;
+    auto* eventReferencer = eventManager != nullptr
+        ? *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(eventManager) + 0x38)
+        : nullptr;
+    auto* referencerManager = referencer != nullptr
+        ? *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(referencer) + 0x20)
+        : nullptr;
+    auto* referencerPlayer = referencer != nullptr
+        ? *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(referencer) + 0x30)
+        : nullptr;
+    auto* managerReferencer = inGameManager != nullptr
+        ? *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(inGameManager) + 0x28)
+        : nullptr;
+    auto* managerEventMethod = inGameManager != nullptr
+        ? *reinterpret_cast<Il2CppObject**>(
+            reinterpret_cast<char*>(inGameManager) + 0x78)
+        : nullptr;
+    LogInfo(
+        LogCategory_Action,
+        L"Action",
+        L"Scene transition diagnostic (%s): stage=%d target=%d "
+        L"bound=%d healthy=%d menu=%d updateFrames=%d stable=%d "
+        L"settled=%d spawn=%d time=%d event=%p ref=%p inGame=%p "
+        L"player=%p ui=%p eventRef=%p refManager=%p refPlayer=%p "
+        L"managerRef=%p managerEvent=%p.",
+        source != nullptr ? source : L"unknown",
+        ExtendedMode_GetLoadedStageType(),
+        g_extendedTargetStageType.load(),
+        g_extendedPlayerGameObject != nullptr &&
+            g_extendedAvatarRoot != nullptr &&
+            g_previewAnimator != nullptr,
+        ExtendedMode_IsGameplayManagerHealthy() ? 1 : 0,
+        ExtendedMode_IsOriginalSystemMenuActive() ? 1 : 0,
+        g_extendedEventManagerUpdateFrames,
+        g_extendedSceneBindingStableFrames,
+        g_extendedSettledStageFrames,
+        g_extendedSpawnPositionApplied ? 1 : 0,
+        g_extendedTimeApplied ? 1 : 0,
+        eventManager,
+        referencer,
+        inGameManager,
+        player,
+        g_extendedInGameUiManager,
+        eventReferencer,
+        referencerManager,
+        referencerPlayer,
+        managerReferencer,
+        managerEventMethod);
 }
 
 bool ExtendedMode_TryBindGameplay(Il2CppObject* playerInstance)
@@ -9606,23 +9673,6 @@ void ExtendedMode_ExitToTitle()
     auto* saveAndGoToTitle = systemMenuClass != nullptr
         ? FindMethod(systemMenuClass, "OnClickSaveAndGoToTitle", 0)
         : nullptr;
-    if (systemMenuInstance == nullptr && systemMenuClass != nullptr)
-    {
-        auto* openSystemMenu = FindMethod(
-            systemMenuClass,
-            "Open",
-            0);
-        if (openSystemMenu != nullptr)
-        {
-            Invoke(openSystemMenu, nullptr, nullptr);
-            systemMenuInstance = Invoke(
-                FindMethod(systemMenuClass, "get_Instance", 0),
-                nullptr,
-                nullptr);
-            LogInfo(LogCategory_Action, L"Action", L"Escape opened the original system menu before destroying custom runtime state.");
-        }
-    }
-
     if (!retry)
     {
         g_extendedGameplayUpdateObserved = false;
@@ -9688,6 +9738,19 @@ void ExtendedMode_ExitToTitle()
     }
     else
     {
+        if (ExtendedMode_IsUnityObjectAlive(systemMenuInstance))
+        {
+            SetWorldGameObjectActive(
+                GetComponentGameObject(systemMenuInstance),
+                false);
+            g_extendedOriginalSystemMenuOpen = false;
+            g_extendedOriginalSystemMenuVisible = false;
+            ExtendedMode_SetCustomUiBehindSystemMenu(false);
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"Escape hid the original system menu before the direct Title transition.");
+        }
         auto* sceneManager = FindClass(
             "UnityEngine.SceneManagement",
             "SceneManager");
@@ -9709,6 +9772,10 @@ void ExtendedMode_RequestReturnToWarehouse(
     {
         return;
     }
+    EquipmentStats_DiscardRaidEarnings(
+        systemMenuAlreadyOpen
+            ? L"system-menu warehouse return"
+            : L"non-extraction warehouse return");
     g_extendedReturnToWarehouseAfterExit = true;
     g_extendedWarehouseReturnInProgress = true;
     g_extendedWarehouseCoverHideDelayFrames = 0;
@@ -9727,6 +9794,7 @@ void ExtendedMode_RequestReturnToWarehouse(
 
 bool ExtendedMode_RequestFailureReturnToWarehouse()
 {
+    EquipmentStats_DiscardRaidEarnings(L"game failure");
     if (g_extendedModeState.load() != ExtendedMode_Gameplay)
     {
         LogInfo(LogCategory_Action, L"Action", 
@@ -10014,6 +10082,19 @@ void ExtendedMode_ActivateHoveredOriginalHandcuffsItem()
         reinterpret_cast<char*>(panel) + 0x58);
     if (buttonGroup == nullptr)
     {
+        auto* panelClass = FindClass(
+            "ExposureUnnoticed2.ObjectUI.ChooseHandcuffsPanel",
+            "ChooseHandcuffsPanelView");
+        auto* cancel = FindMethod(panelClass, "OnClickCancel", 0);
+        if (cancel != nullptr)
+        {
+            Invoke(cancel, panel, nullptr);
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"Original handcuffs panel dispatched OnClickCancel "
+                L"because no hovered choice group was available.");
+        }
         return;
     }
     auto* buttons = *reinterpret_cast<Il2CppObject**>(
@@ -10022,6 +10103,19 @@ void ExtendedMode_ActivateHoveredOriginalHandcuffsItem()
         il2cpp_array_length == nullptr ||
         il2cpp_array_object_header_size == nullptr)
     {
+        auto* panelClass = FindClass(
+            "ExposureUnnoticed2.ObjectUI.ChooseHandcuffsPanel",
+            "ChooseHandcuffsPanelView");
+        auto* cancel = FindMethod(panelClass, "OnClickCancel", 0);
+        if (cancel != nullptr)
+        {
+            Invoke(cancel, panel, nullptr);
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"Original handcuffs panel dispatched OnClickCancel "
+                L"because the choice button array was unavailable.");
+        }
         return;
     }
 
@@ -10043,6 +10137,19 @@ void ExtendedMode_ActivateHoveredOriginalHandcuffsItem()
     }
     if (selectedIndex < 0)
     {
+        auto* panelClass = FindClass(
+            "ExposureUnnoticed2.ObjectUI.ChooseHandcuffsPanel",
+            "ChooseHandcuffsPanelView");
+        auto* cancel = FindMethod(panelClass, "OnClickCancel", 0);
+        if (cancel != nullptr)
+        {
+            Invoke(cancel, panel, nullptr);
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"Original handcuffs panel dispatched OnClickCancel "
+                L"for a click outside the PutBack/PutMap choices.");
+        }
         return;
     }
 
@@ -10606,6 +10713,11 @@ void ExtendedMode_TickMainThread(Il2CppObject* playerInstance)
                 g_extendedSceneBindingEventManagerCandidate = nullptr;
                 g_extendedSceneBindingStableFrames = 0;
             }
+            if (g_extendedStateFrames % 120 == 0)
+            {
+                ExtendedMode_LogGameplayBindingDiagnostic(
+                    L"waiting for stable gameplay bindings");
+            }
             if (g_extendedDirectWarehouseTransition)
             {
                 if (g_extendedSettledStageFrames == 1)
@@ -10613,8 +10725,8 @@ void ExtendedMode_TickMainThread(Il2CppObject* playerInstance)
                     CheckpointSystem_Reset();
                 }
                 if (managerHealthy &&
-                    g_extendedSettledStageFrames >= 60 &&
-                    g_extendedSceneBindingStableFrames >= 60)
+                    g_extendedSettledStageFrames >= 30 &&
+                    g_extendedSceneBindingStableFrames >= 30)
                 {
                     LogInfo(LogCategory_Action, L"Action", 
                         L"Direct warehouse transition reached a stable stage 0 manager; rebuilding the warehouse runtime.");
@@ -10642,10 +10754,33 @@ void ExtendedMode_TickMainThread(Il2CppObject* playerInstance)
             {
                 ExtendedMode_ApplySelectedTime();
             }
-            if (managerHealthy &&
-                g_extendedSceneBindingStableFrames >= 60 &&
+            const bool relaxedTransitionReady =
+                !managerHealthy &&
+                gameplayBound &&
+                g_extendedSpawnPositionApplied &&
                 g_extendedTimeApplied &&
-                g_extendedSettledStageFrames >= 60)
+                g_extendedSettledStageFrames >= 180 &&
+                g_extendedInGameUiManager != nullptr &&
+                !ExtendedMode_IsOriginalSystemMenuActive();
+            if (relaxedTransitionReady)
+            {
+                LogInfo(
+                    LogCategory_Action,
+                    L"Action",
+                    L"Escape completed the loaded stage with relaxed manager "
+                    L"readiness after %d settled frames: stage=%d "
+                    L"updateFrames=%d event=%p.",
+                    g_extendedSettledStageFrames,
+                    checkpointStageType,
+                    g_extendedEventManagerUpdateFrames,
+                    g_extendedActiveEventMethodManager);
+                ExtendedMode_FinalizeGameplay();
+                return;
+            }
+            if (managerHealthy &&
+                g_extendedSceneBindingStableFrames >= 30 &&
+                g_extendedTimeApplied &&
+                g_extendedSettledStageFrames >= 30)
             {
                 ExtendedMode_FinalizeGameplay();
             }
@@ -11157,6 +11292,39 @@ void PlayerActionUpdateHook(
     Il2CppObject* inputData,
     const Il2CppMethod* method)
 {
+    int requestedAction = -1;
+    bool blockedByStrongVibration = false;
+    if (inputData != nullptr &&
+        g_extendedModeState.load() == ExtendedMode_Gameplay)
+    {
+        requestedAction =
+            g_extendedPoseMenuRequestedAction.exchange(-1);
+        if (requestedAction >= 0)
+        {
+            auto* playerState = ExtendedMode_GetPlayerStateModel();
+            blockedByStrongVibration =
+                playerState != nullptr &&
+                (*reinterpret_cast<bool*>(
+                    reinterpret_cast<char*>(playerState) + 0x120) ||
+                 GameplayInput_GetOriginalVibrationMode() == 2);
+            LogInfo(
+                LogCategory_Action,
+                L"Action",
+                L"E-menu action request=%d strongVibration=%d route=%s.",
+                requestedAction,
+                blockedByStrongVibration ? 1 : 0,
+                blockedByStrongVibration
+                    ? L"mod-notification"
+                    : L"direct-change-action");
+            if (blockedByStrongVibration)
+            {
+                GameplayStatusHud_ShowNotification(
+                    "振动器强档时无法使用动作",
+                    1800);
+                requestedAction = -1;
+            }
+        }
+    }
     const bool justSwitchVibrator =
         inputData != nullptr &&
         *reinterpret_cast<unsigned char*>(
@@ -11184,6 +11352,32 @@ void PlayerActionUpdateHook(
             instance,
             inputData,
             method);
+    }
+    if (requestedAction >= 0)
+    {
+        auto* changeAction = FindMethod(
+            FindClass(
+                "ExposureUnnoticed2.Object3D.Player.Scripts",
+                "PlayerAction"),
+            "ChangeAction",
+            1);
+        int action = requestedAction;
+        void* parameters[] = { &action };
+        Invoke(changeAction, instance, parameters);
+        const int observedAction =
+            GameplayInput_GetCurrentActionType();
+        const bool accepted = observedAction == requestedAction;
+        LogInfo(
+            LogCategory_Action,
+            L"Action",
+            L"Direct E-menu action request=%d accepted=%d observed=%d.",
+            requestedAction,
+            accepted ? 1 : 0,
+            observedAction);
+        if (accepted)
+        {
+            GameplayActionPursuit_RequestFromEMenu(requestedAction);
+        }
     }
 }
 
@@ -11530,10 +11724,12 @@ void PlayerControllerUpdateHook(
             L"PlayerController.OnUpdate hook entered (state=%d).",
             g_extendedModeState.load());
     }
+    EquipmentStats_PrepareHandcuffUnlock(instance);
     if (ExtendedMode_IsRunning() &&
         (ExtendedMode_ShouldSuppressPlayerUpdate() ||
          ExtendedMode_ShouldPreserveModalPoseAnimation()))
     {
+        EquipmentStats_ObserveHandcuffUnlock(instance);
         return;
     }
     if (g_originalPlayerUpdate != nullptr)
@@ -11541,6 +11737,7 @@ void PlayerControllerUpdateHook(
         using OriginalFn = void (*)(Il2CppObject*, const Il2CppMethod*);
         reinterpret_cast<OriginalFn>(g_originalPlayerUpdate)(instance, method);
     }
+    EquipmentStats_ObserveHandcuffUnlock(instance);
     if (g_extendedPoseMenuVisible.load())
     {
         ExtendedMode_ForceCursor();
@@ -11865,10 +12062,6 @@ bool GameplayInput_GetKeyHook(
     {
         return false;
     }
-    if (EyeMaskVision_ShouldSuppressUnityArrowKey(keyCode))
-    {
-        return false;
-    }
     if (keyCode == VK_ESCAPE &&
         NpcDialogue_ShouldBlockSystemMenuOpen())
     {
@@ -11947,10 +12140,6 @@ bool GameplayInput_GetKeyDownHook(
     int keyCode,
     const Il2CppMethod* method)
 {
-    if (EyeMaskVision_ShouldSuppressUnityArrowKey(keyCode))
-    {
-        return false;
-    }
     if (keyCode == VK_ESCAPE &&
         NpcDialogue_ShouldBlockSystemMenuOpen())
     {
@@ -12040,10 +12229,6 @@ bool GameplayInput_GetKeyUpHook(
     int keyCode,
     const Il2CppMethod* method)
 {
-    if (EyeMaskVision_ShouldSuppressUnityArrowKey(keyCode))
-    {
-        return false;
-    }
     if (keyCode == VK_ESCAPE &&
         NpcDialogue_ShouldBlockSystemMenuOpen())
     {
@@ -12547,6 +12732,10 @@ void BaseCameraLateUpdateHook(
             instance,
             method);
     }
+    if (g_extendedModeState.load() == ExtendedMode_Gameplay)
+    {
+        GameplayStatusHud_HideResidualGauges();
+    }
     if (g_extendedPoseMenuVisible.load())
     {
         ExtendedMode_ForceCursor();
@@ -12567,6 +12756,10 @@ void TpCameraLateUpdateHook(
         reinterpret_cast<OriginalFn>(g_originalTpCameraLateUpdate)(
             instance,
             method);
+    }
+    if (g_extendedModeState.load() == ExtendedMode_Gameplay)
+    {
+        GameplayStatusHud_HideResidualGauges();
     }
     if (g_extendedPoseMenuVisible.load())
     {
@@ -12589,6 +12782,10 @@ void InventoryCameraLateUpdateHook(
             instance,
             method);
     }
+    if (g_extendedModeState.load() == ExtendedMode_Gameplay)
+    {
+        GameplayStatusHud_HideResidualGauges();
+    }
     if (g_extendedPoseMenuVisible.load())
     {
         ExtendedMode_ForceCursor();
@@ -12609,6 +12806,10 @@ void FpCameraLateUpdateHook(
         reinterpret_cast<OriginalFn>(g_originalFpCameraLateUpdate)(
             instance,
             method);
+    }
+    if (g_extendedModeState.load() == ExtendedMode_Gameplay)
+    {
+        GameplayStatusHud_HideResidualGauges();
     }
     if (g_extendedPoseMenuVisible.load())
     {

@@ -139,8 +139,6 @@ double g_checkpointItemQualityWeights[5][5] = {
 };
 Il2CppObject* g_checkpointRingTexture = nullptr;
 Il2CppObject* g_checkpointRingSprite = nullptr;
-int g_checkpointVisualCheckFrame = 0;
-bool g_checkpointVisualCheckDone = false;
 
 struct CheckpointActiveTaskRuntime
 {
@@ -359,8 +357,6 @@ void CheckpointSystem_Reset()
     g_checkpointPendingLoot.clear();
     g_checkpointActiveTask = CheckpointActiveTaskRuntime{};
     g_checkpointRequestedTaskCrouch = -1;
-    g_checkpointVisualCheckFrame = 0;
-    g_checkpointVisualCheckDone = false;
     g_checkpointOverlayMode = CheckpointOverlayMode::None;
     g_checkpointOverlayRuntimeIndex = -1;
     g_checkpointOverlayRoot = SceneUiElement{};
@@ -1761,18 +1757,21 @@ bool CheckpointSystem_TryGetSelectedSpawn(
 
 void CheckpointSystem_ClearSceneObjects()
 {
-    auto* objectClass = FindClass("UnityEngine", "Object");
-    auto* destroy = objectClass != nullptr
-        ? FindMethod(objectClass, "Destroy", 1)
-        : nullptr;
-    for (auto& runtime : g_checkpointRuntime)
+    // These roots are scene-owned. During a timed-out stage transition Unity
+    // can report op_Inequality as true while the native object is already in
+    // the deferred scene-unload state. Calling Object.Destroy then dereferences
+    // a partially destroyed Unity object and crashes in UnityPlayer.
+    //
+    // Every caller of this function is about to unload or replace the scene.
+    // Drop the MOD-owned raw references and let Unity destroy the scene graph.
+    const size_t releasedVisualCount = g_checkpointRuntime.size();
+    if (releasedVisualCount > 0)
     {
-        if (destroy != nullptr &&
-            ExtendedMode_IsUnityObjectAlive(runtime.visualRoot))
-        {
-            void* parameters[] = { runtime.visualRoot };
-            Invoke(destroy, nullptr, parameters);
-        }
+        LogInfo(
+            LogCategory_Checkpoint,
+            L"Checkpoint",
+            L"Releasing %llu scene-owned checkpoint visual(s) without explicit Unity Destroy.",
+            static_cast<unsigned long long>(releasedVisualCount));
     }
     CheckpointSystem_Reset();
 }
@@ -4985,102 +4984,6 @@ void CheckpointSystem_Tick()
         player[0],
         player[1],
         player[2]);
-    ++g_checkpointVisualCheckFrame;
-    if (!g_checkpointVisualCheckDone &&
-        g_checkpointVisualCheckFrame >= 60)
-    {
-        g_checkpointVisualCheckDone = true;
-        auto* rendererClass = FindClass("UnityEngine", "Renderer");
-        auto* getVisible = FindMethod(
-            rendererClass,
-            "get_isVisible",
-            0);
-        auto* getEnabled = FindMethod(
-            rendererClass,
-            "get_enabled",
-            0);
-        auto* getRendererMaterial = FindMethod(
-            rendererClass,
-            "get_sharedMaterial",
-            0);
-        auto* objectClass = FindClass("UnityEngine", "Object");
-        auto* getObjectName = objectClass != nullptr
-            ? FindMethod(objectClass, "get_name", 0)
-            : nullptr;
-        for (const auto& runtime : g_checkpointRuntime)
-        {
-            auto* renderer = FindFirstComponentInChildrenByClass(
-                runtime.visualRoot,
-                "UnityEngine",
-                "MeshRenderer");
-            const auto& definition =
-                g_checkpointDefinitions[runtime.definitionIndex];
-            if (definition.deleted)
-            {
-                continue;
-            }
-            if (renderer == nullptr)
-            {
-                LogInfo(LogCategory_Checkpoint, L"Checkpoint", 
-                    L"Checkpoint renderer check: id=%s no child MeshRenderer was found.",
-                    Utf8ToWide(definition.id).c_str());
-                continue;
-            }
-            auto* visibleValue = Invoke(
-                getVisible,
-                renderer,
-                nullptr);
-            auto* enabledValue = Invoke(
-                getEnabled,
-                renderer,
-                nullptr);
-            auto* rendererObject = GetComponentGameObject(renderer);
-            auto* rendererTransform = GetWorldTransform(rendererObject);
-            auto* positionValue = rendererTransform != nullptr
-                ? Invoke(
-                      FindMethod(
-                          FindClass("UnityEngine", "Transform"),
-                          "get_position",
-                          0),
-                      rendererTransform,
-                      nullptr)
-                : nullptr;
-            const float* rendererPosition =
-                positionValue != nullptr
-                    ? static_cast<const float*>(
-                          il2cpp_object_unbox(positionValue))
-                    : nullptr;
-            auto* material = Invoke(
-                getRendererMaterial,
-                renderer,
-                nullptr);
-            auto* materialNameValue =
-                material != nullptr && getObjectName != nullptr
-                    ? Invoke(getObjectName, material, nullptr)
-                    : nullptr;
-            LogInfo(LogCategory_Checkpoint, L"Checkpoint", 
-                L"Checkpoint renderer check: id=%s visible=%d enabled=%d layer=%d position=(%.2f, %.2f, %.2f) material=%s.",
-                Utf8ToWide(definition.id).c_str(),
-                visibleValue != nullptr &&
-                    *static_cast<bool*>(
-                        il2cpp_object_unbox(visibleValue))
-                    ? 1
-                    : 0,
-                enabledValue != nullptr &&
-                    *static_cast<bool*>(
-                        il2cpp_object_unbox(enabledValue))
-                    ? 1
-                    : 0,
-                ExtendedMode_GetGameObjectLayer(rendererObject),
-                rendererPosition != nullptr ? rendererPosition[0] : -99999.0f,
-                rendererPosition != nullptr ? rendererPosition[1] : -99999.0f,
-                rendererPosition != nullptr ? rendererPosition[2] : -99999.0f,
-                materialNameValue != nullptr
-                    ? ReadIl2CppString(
-                          static_cast<Il2CppString*>(materialNameValue)).c_str()
-                    : L"<unknown>");
-        }
-    }
     CheckpointRuntime* activeTaskRuntime = nullptr;
     CheckpointRuntime* nearbySupplyRuntime = nullptr;
     CheckpointRuntime* nearbyTransitionRuntime = nullptr;
@@ -5259,6 +5162,7 @@ void CheckpointSystem_Tick()
                 g_checkpointDefinitions[selected->definitionIndex];
             if (definition.kind == "extract")
             {
+                EquipmentStats_CommitRaidEarnings(L"extraction checkpoint");
                 if (selected->visualRoot != nullptr)
                 {
                     SetWorldGameObjectActive(

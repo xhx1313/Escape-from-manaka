@@ -17,6 +17,15 @@ constexpr int kInventoryBackpackCategoryIndex = 9;
 constexpr int kInventoryQualityCount = 5;
 constexpr int kInventoryExtraItemSlotCount = 32;
 constexpr int kInventoryQuickSlotCount = 3;
+constexpr int kInventoryFormalStatCount = 10;
+constexpr float kInventoryStatListMinX = 0.045f;
+constexpr float kInventoryStatListMaxX = 0.550f;
+constexpr float kInventoryStatListTopY = 0.900f;
+constexpr float kInventoryStatRowHeight = 0.036f;
+constexpr float kInventoryStatTooltipMinWidth = 0.150f;
+constexpr float kInventoryStatTooltipMaxWidth = 0.580f;
+constexpr float kInventoryStatTooltipMaxHeight = 0.065f;
+constexpr long long kInventoryBalanceMax = 999999999999LL;
 constexpr uint32_t kInventoryEquipmentCategoryMask = (1u << 9) - 1u;
 constexpr uint32_t kInventoryPropCategoryBit = 1u << 9;
 constexpr uint32_t kInventoryBackpackCategoryBit = 1u << 10;
@@ -44,6 +53,17 @@ struct EquipmentInventoryDefinition
     int height;
     uint32_t categories;
     int series;
+    int referencePrice;
+    int perceptionBase;
+    int conservatismBase;
+    int normalityBase;
+    int strengthBase;
+    int speedBase;
+    int climaxSpeedBase;
+    int staminaCapacityBase;
+    int staminaRecoveryBase;
+    int handcuffProficiencyBase;
+    int rewardBase;
 };
 
 #include "equipment_inventory_data.inc"
@@ -170,7 +190,7 @@ static InventoryStorageLayout kInventoryStorageLayouts[] = {
         0.035f, 0.055f, 0.965f, 0.825f
     },
     {
-        10, 20, 8,
+        10, 20, 11,
         0.616f, 0.055f, 0.975f, 0.884f, 0.055f, 0.055f, 0.945f, 0.865f
     },
     {
@@ -241,7 +261,25 @@ static Il2CppObject* g_inventoryEquipmentPage = nullptr;
 static Il2CppObject* g_inventoryPlaceholderPage = nullptr;
 static Il2CppObject* g_inventoryPlaceholderTitle = nullptr;
 static Il2CppObject* g_inventoryStatusLabel = nullptr;
-static Il2CppObject* g_inventoryStatsLabel = nullptr;
+static SceneUiElement
+    g_inventoryStatRows[kInventoryFormalStatCount]{};
+static float
+    g_inventoryStatScreenMinX[kInventoryFormalStatCount]{};
+static float
+    g_inventoryStatScreenMaxX[kInventoryFormalStatCount]{};
+static float
+    g_inventoryStatScreenMinY[kInventoryFormalStatCount]{};
+static float
+    g_inventoryStatScreenMaxY[kInventoryFormalStatCount]{};
+static int g_inventoryHoveredStat = -1;
+static SceneUiElement g_inventoryStatTooltip{};
+static SceneUiElement g_inventoryStatTooltipText{};
+static float g_inventoryStatTooltipWidth = 0.15f;
+static float g_inventoryStatTooltipHeight = 0.045f;
+static int
+    g_inventoryDisplayedStats[kInventoryFormalStatCount]{};
+static bool g_inventoryDisplayedStatsValid = false;
+static Il2CppObject* g_inventoryBalanceLabel = nullptr;
 static Il2CppObject* g_inventoryBackpackSizeLabel = nullptr;
 static Il2CppObject* g_inventorySafeBoxSizeLabel = nullptr;
 static SceneUiElement g_inventoryStashScrollTrack{};
@@ -273,9 +311,11 @@ static float g_inventoryDragCellHeight = 0.0f;
 static bool g_inventoryDragActive = false;
 static bool g_inventoryDragMoved = false;
 static bool g_inventoryRotateKeyDown = false;
+static std::atomic<bool> g_inventoryRightRotateRequested{false};
 static bool g_inventoryLeftButtonWasDown = false;
 static bool g_inventoryStateLoaded = false;
 static int g_inventoryStarterGrantVersion = 0;
+static std::atomic<long long> g_inventoryBalance{0};
 static InventoryDroppedDildoSnapshot g_inventoryDroppedDildo;
 static Il2CppObject* g_inventoryBadgeTexture = nullptr;
 static Il2CppObject* g_inventoryBadgeSprite = nullptr;
@@ -305,10 +345,433 @@ bool InventoryUi_IsDildoDefinition(int definitionIndex);
 int InventoryUi_FindBackpackTier(int definitionIndex);
 void InventoryUi_SaveState();
 void InventoryUi_InitializeItems();
+long long InventoryUi_GetBalance();
+long long InventoryUi_AddBalance(long long amount, const wchar_t* source);
+void InventoryUi_RefreshBalanceLabel();
+std::wstring InventoryUi_FormatCurrency(long long amount);
 
 bool InventoryUi_IsItemSlot(int itemIndex)
 {
     return itemIndex >= 0 && itemIndex < kInventoryItemSlotCount;
+}
+
+bool InventoryUi_RequestDraggedItemRotation()
+{
+    if (!g_inventoryDragActive ||
+        !InventoryUi_IsItemSlot(g_inventoryDraggingItem))
+    {
+        return false;
+    }
+    g_inventoryRightRotateRequested = true;
+    LogInfo(
+        LogCategory_Inventory,
+        L"InventoryRotate",
+        L"Inventory right-click requested rotation while dragging item=%d.",
+        g_inventoryDraggingItem);
+    return true;
+}
+
+std::wstring InventoryUi_FormatCurrency(long long amount)
+{
+    wchar_t raw[32]{};
+    swprintf_s(raw, L"%lld", amount);
+    std::wstring digits(raw);
+    const size_t signOffset =
+        digits.size() > 1 && digits[0] == L'-' ? 1u : 0u;
+    if (digits.size() > signOffset + 3u)
+    {
+        size_t position = digits.size() - 3u;
+        while (position > signOffset)
+        {
+            digits.insert(position, 1, L',');
+            if (position < 3u)
+            {
+                break;
+            }
+            position -= 3u;
+        }
+    }
+    return L"￥" + digits;
+}
+
+long long InventoryUi_GetBalance()
+{
+    return g_inventoryBalance.load(std::memory_order_relaxed);
+}
+
+void InventoryUi_RefreshBalanceLabel()
+{
+    if (g_inventoryBalanceLabel == nullptr)
+    {
+        return;
+    }
+    const auto text = WideToUtf8(
+        L"余额  " + InventoryUi_FormatCurrency(InventoryUi_GetBalance()));
+    SetSceneText(
+        g_inventoryBalanceLabel,
+        text.c_str(),
+        15.0f,
+        257,
+        0.96f,
+        0.82f,
+        0.40f,
+        1.0f);
+}
+
+void InventoryUi_RefreshEquippedStatTotalLabel()
+{
+    if (g_inventoryStatRows[0].text == nullptr)
+    {
+        return;
+    }
+    const int values[] = {
+        EquipmentStats_GetEffectivePerception(),
+        EquipmentStats_GetEffectiveConservatism(),
+        EquipmentStats_GetEffectiveNormality(),
+        EquipmentStats_GetEffectiveStrength(),
+        EquipmentStats_GetEffectiveSpeed(),
+        EquipmentStats_GetEffectiveClimaxSpeed(),
+        EquipmentStats_GetEffectiveStaminaCapacity(),
+        EquipmentStats_GetEffectiveStaminaRecovery(),
+        EquipmentStats_GetEffectiveHandcuffProficiency(),
+        EquipmentStats_GetEffectiveReward(),
+    };
+    bool unchanged = g_inventoryDisplayedStatsValid;
+    for (int index = 0;
+         unchanged && index < static_cast<int>(std::size(values));
+         ++index)
+    {
+        unchanged =
+            g_inventoryDisplayedStats[index] == values[index];
+    }
+    if (unchanged)
+    {
+        return;
+    }
+    for (int index = 0;
+         index < static_cast<int>(std::size(values));
+         ++index)
+    {
+        g_inventoryDisplayedStats[index] = values[index];
+    }
+    g_inventoryDisplayedStatsValid = true;
+    for (int index = 0;
+         index < static_cast<int>(std::size(values));
+         ++index)
+    {
+        const wchar_t* valueColor =
+            values[index] > 0 ? L"#66B3FF" :
+            (values[index] < 0 ? L"#FF6666" : L"#9AA6B2");
+        wchar_t valueText[64]{};
+        swprintf_s(
+            valueText,
+            L"<color=%s>%+d</color>",
+            valueColor,
+            values[index]);
+        std::wstring text = ItemContextMenu_StatLabel(index);
+        text += L"  ";
+        text += valueText;
+        const auto textUtf8 = WideToUtf8(text);
+        SetSceneText(
+            g_inventoryStatRows[index].text,
+            textUtf8.c_str(),
+            12.0f,
+            257,
+            0.86f,
+            0.91f,
+            1.0f,
+            1.0f);
+    }
+    LogInfo(
+        LogCategory_Inventory,
+        L"EquipmentStatTotals",
+        L"Equipment panel stat totals updated: perception=%d "
+        L"conservatism=%d normality=%d strength=%d speed=%d "
+        L"climaxSpeed=%d staminaCapacity=%d staminaRecovery=%d "
+        L"handcuffProficiency=%d reward=%d.",
+        values[0],
+        values[1],
+        values[2],
+        values[3],
+        values[4],
+        values[5],
+        values[6],
+        values[7],
+        values[8],
+        values[9]);
+}
+
+float InventoryUi_GetTextPreferredWidth(Il2CppObject* text)
+{
+    if (text == nullptr)
+    {
+        return 0.0f;
+    }
+    auto* value = Invoke(
+        FindMethod(
+            FindClass("UnityEngine.UI", "Text"),
+            "get_preferredWidth",
+            0),
+        text,
+        nullptr);
+    return value != nullptr && il2cpp_object_unbox != nullptr
+        ? *static_cast<float*>(il2cpp_object_unbox(value))
+        : 0.0f;
+}
+
+void InventoryUi_HideStatTooltip()
+{
+    if (g_inventoryHoveredStat >= 0)
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InventoryStatTooltip",
+            L"Inventory stat tooltip hidden: stat=%d.",
+            g_inventoryHoveredStat);
+    }
+    g_inventoryHoveredStat = -1;
+    if (g_inventoryStatTooltip.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_inventoryStatTooltip.gameObject,
+            false);
+    }
+    if (g_inventoryStatTooltipText.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_inventoryStatTooltipText.gameObject,
+            false);
+    }
+}
+
+void InventoryUi_PositionStatTooltip(float cursorX, float cursorY)
+{
+    if (g_inventoryStatTooltip.rect == nullptr)
+    {
+        return;
+    }
+    constexpr float cursorOffset = 0.012f;
+    constexpr float edgePadding = 0.010f;
+    float minX = cursorX + cursorOffset;
+    if (minX + g_inventoryStatTooltipWidth >
+        1.0f - edgePadding)
+    {
+        minX =
+            cursorX -
+            g_inventoryStatTooltipWidth -
+            cursorOffset;
+    }
+    minX = std::clamp(
+        minX,
+        edgePadding,
+        1.0f - edgePadding - g_inventoryStatTooltipWidth);
+    float minY = cursorY + cursorOffset;
+    if (minY + g_inventoryStatTooltipHeight >
+        1.0f - edgePadding)
+    {
+        minY =
+            cursorY -
+            g_inventoryStatTooltipHeight -
+            cursorOffset;
+    }
+    minY = std::clamp(
+        minY,
+        edgePadding,
+        1.0f - edgePadding - g_inventoryStatTooltipHeight);
+    SetSceneRect(
+        g_inventoryStatTooltip.rect,
+        minX,
+        minY,
+        minX + g_inventoryStatTooltipWidth,
+        minY + g_inventoryStatTooltipHeight);
+}
+
+void InventoryUi_UpdateStatHover(float cursorX, float cursorY)
+{
+    if (g_inventoryActiveRoute != kInventoryRouteEquipment ||
+        g_inventoryDragActive ||
+        EquipmentPreviewUi_IsOpen())
+    {
+        InventoryUi_HideStatTooltip();
+        return;
+    }
+    int hoveredStat = -1;
+    for (int index = 0;
+         index < kInventoryFormalStatCount;
+         ++index)
+    {
+        if (cursorX >= g_inventoryStatScreenMinX[index] &&
+            cursorX <= g_inventoryStatScreenMaxX[index] &&
+            cursorY >= g_inventoryStatScreenMinY[index] &&
+            cursorY <= g_inventoryStatScreenMaxY[index])
+        {
+            hoveredStat = index;
+            break;
+        }
+    }
+    if (hoveredStat < 0)
+    {
+        InventoryUi_HideStatTooltip();
+        return;
+    }
+    if (g_inventoryHoveredStat == hoveredStat)
+    {
+        InventoryUi_PositionStatTooltip(cursorX, cursorY);
+        return;
+    }
+    if (g_inventoryHoveredStat >= 0)
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InventoryStatTooltip",
+            L"Inventory stat tooltip switched: from=%d to=%d.",
+            g_inventoryHoveredStat,
+            hoveredStat);
+    }
+    else
+    {
+        LogDebug(
+            LogCategory_Inventory,
+            L"InventoryStatTooltip",
+            L"Inventory stat tooltip shown: stat=%d.",
+            hoveredStat);
+    }
+    g_inventoryHoveredStat = hoveredStat;
+    if (g_inventoryStatTooltip.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_inventoryStatTooltip.gameObject,
+            true);
+    }
+    if (g_inventoryStatTooltipText.gameObject != nullptr)
+    {
+        SetWorldGameObjectActive(
+            g_inventoryStatTooltipText.gameObject,
+            true);
+    }
+    if (g_inventoryStatTooltipText.text != nullptr)
+    {
+        std::wstring tooltipText = L"<color=#8FB4D9>作用：</color>";
+        tooltipText += ItemContextMenu_StatDescription(hoveredStat);
+        const auto tooltipTextUtf8 = WideToUtf8(tooltipText);
+        SetSceneText(
+            g_inventoryStatTooltipText.text,
+            tooltipTextUtf8.c_str(),
+            12.0f,
+            513,
+            0.90f,
+            0.94f,
+            1.0f,
+            1.0f);
+        int horizontalOverflow = 1;
+        void* overflowParameters[] = { &horizontalOverflow };
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine.UI", "Text"),
+                "set_horizontalOverflow",
+                1),
+            g_inventoryStatTooltipText.text,
+            overflowParameters);
+        Invoke(
+            FindMethod(
+                FindClass("UnityEngine", "Canvas"),
+                "ForceUpdateCanvases",
+                0),
+            nullptr,
+            nullptr);
+
+        auto* screenClass = FindClass("UnityEngine", "Screen");
+        auto* widthValue = Invoke(
+            FindMethod(screenClass, "get_width", 0),
+            nullptr,
+            nullptr);
+        auto* heightValue = Invoke(
+            FindMethod(screenClass, "get_height", 0),
+            nullptr,
+            nullptr);
+        const float screenWidth =
+            widthValue != nullptr && il2cpp_object_unbox != nullptr
+                ? static_cast<float>(
+                    *static_cast<int*>(
+                        il2cpp_object_unbox(widthValue)))
+                : 0.0f;
+        const float screenHeight =
+            heightValue != nullptr && il2cpp_object_unbox != nullptr
+                ? static_cast<float>(
+                    *static_cast<int*>(
+                        il2cpp_object_unbox(heightValue)))
+                : 0.0f;
+        if (screenWidth > 0.0f && screenHeight > 0.0f)
+        {
+            const float preferredWidth =
+                InventoryUi_GetTextPreferredWidth(
+                    g_inventoryStatTooltipText.text);
+            g_inventoryStatTooltipWidth = std::clamp(
+                std::max(96.0f, preferredWidth + 24.0f) /
+                    screenWidth,
+                kInventoryStatTooltipMinWidth,
+                kInventoryStatTooltipMaxWidth);
+            g_inventoryStatTooltipHeight = std::clamp(
+                38.0f / screenHeight,
+                0.034f,
+                kInventoryStatTooltipMaxHeight);
+            const float horizontalInset = std::clamp(
+                10.0f / screenWidth,
+                0.008f,
+                0.050f);
+            SetSceneRect(
+                g_inventoryStatTooltipText.rect,
+                horizontalInset,
+                0.12f,
+                1.0f - horizontalInset,
+                0.88f);
+        }
+    }
+    InventoryUi_PositionStatTooltip(cursorX, cursorY);
+}
+
+long long InventoryUi_AddBalance(long long amount, const wchar_t* source)
+{
+    if (amount == 0)
+    {
+        return InventoryUi_GetBalance();
+    }
+    long long previous = g_inventoryBalance.load(std::memory_order_relaxed);
+    long long updated = previous;
+    do
+    {
+        if (amount > 0 && previous > kInventoryBalanceMax - amount)
+        {
+            updated = kInventoryBalanceMax;
+        }
+        else if (amount < 0 && previous < -amount)
+        {
+            updated = 0;
+        }
+        else
+        {
+            updated = std::clamp(
+                previous + amount,
+                0LL,
+                kInventoryBalanceMax);
+        }
+    }
+    while (!g_inventoryBalance.compare_exchange_weak(
+        previous,
+        updated,
+        std::memory_order_relaxed,
+        std::memory_order_relaxed));
+
+    InventoryUi_RefreshBalanceLabel();
+    LogInfo(
+        LogCategory_Inventory,
+        L"Balance",
+        L"MOD balance changed by %lld from %lld to %lld; source=%s.",
+        amount,
+        previous,
+        updated,
+        source != nullptr ? source : L"unspecified");
+    return updated;
 }
 
 bool InventoryUi_ItemSlotIsBackpack(int itemIndex)
@@ -354,6 +817,54 @@ long long InventoryUi_BaseValueForGrid(
     return cells * qualityLevel * 1000ll;
 }
 
+long long InventoryUi_QualityGrade(int quality)
+{
+    return static_cast<long long>(
+        std::clamp(
+            quality,
+            0,
+            kInventoryQualityCount - 1)) +
+        1ll;
+}
+
+double InventoryUi_WearFactor(
+    int quality,
+    bool appraised,
+    unsigned int wearUnits)
+{
+    if (quality != kInventoryQualityCount - 1 ||
+        !appraised ||
+        wearUnits == 0)
+    {
+        return 1.0;
+    }
+    const double wearRatio =
+        static_cast<double>(wearUnits) / 100000000.0;
+    return std::clamp(1.0 - wearRatio, 0.05, 1.0);
+}
+
+long long InventoryUi_BaseValueForDefinition(
+    int definitionIndex,
+    int quality)
+{
+    if (definitionIndex < 0 ||
+        definitionIndex >= kEquipmentInventoryDefinitionCount)
+    {
+        return 0;
+    }
+    const auto& definition =
+        kEquipmentInventoryDefinitions[definitionIndex];
+    if (definition.referencePrice <= 0)
+    {
+        return InventoryUi_BaseValueForGrid(
+            definition.width,
+            definition.height,
+            quality);
+    }
+    return static_cast<long long>(definition.referencePrice) *
+        InventoryUi_QualityGrade(quality);
+}
+
 long long InventoryUi_ItemBaseValue(int itemIndex)
 {
     if (!InventoryUi_IsItemSlot(itemIndex))
@@ -361,11 +872,8 @@ long long InventoryUi_ItemBaseValue(int itemIndex)
         return 0;
     }
     const auto& item = g_inventoryItems[itemIndex];
-    const auto& definition =
-        kEquipmentInventoryDefinitions[item.definition];
-    return InventoryUi_BaseValueForGrid(
-        definition.width,
-        definition.height,
+    return InventoryUi_BaseValueForDefinition(
+        item.definition,
         item.quality);
 }
 
@@ -378,46 +886,26 @@ double InventoryUi_ItemCurrentValue(int itemIndex)
     const auto& item = g_inventoryItems[itemIndex];
     const double baseValue =
         static_cast<double>(InventoryUi_ItemBaseValue(itemIndex));
-    if (!item.appraised || item.wearUnits == 0)
-    {
-        return baseValue;
-    }
-    const double wear =
-        static_cast<double>(item.wearUnits) / 100000000.0;
-    if (item.wearUnits >= 1000000u)
-    {
-        return baseValue / wear;
-    }
-    const double denominator =
-        0.01 * std::pow(baseValue / 0.01, 0.25);
-    return baseValue / denominator;
+    return baseValue * InventoryUi_WearFactor(
+        item.quality,
+        item.appraised,
+        item.wearUnits);
 }
 
 double InventoryUi_InstanceCurrentValue(
-    int width,
-    int height,
+    int definitionIndex,
     int quality,
     bool appraised,
     unsigned int wearUnits)
 {
     const double baseValue = static_cast<double>(
-        InventoryUi_BaseValueForGrid(
-            width,
-            height,
+        InventoryUi_BaseValueForDefinition(
+            definitionIndex,
             quality));
-    if (!appraised || wearUnits == 0)
-    {
-        return baseValue;
-    }
-    const double wear =
-        static_cast<double>(wearUnits) / 100000000.0;
-    if (wearUnits >= 1000000u)
-    {
-        return baseValue / wear;
-    }
-    const double denominator =
-        0.01 * std::pow(baseValue / 0.01, 0.25);
-    return baseValue / denominator;
+    return baseValue * InventoryUi_WearFactor(
+        quality,
+        appraised,
+        wearUnits);
 }
 
 std::wstring InventoryUi_FormatWear(unsigned int wearUnits)
@@ -1139,6 +1627,7 @@ void InventoryUi_SaveState()
     {
         return;
     }
+    EquipmentStats_RefreshFromEquipment();
     const std::wstring path = InventoryUi_GetStatePath();
     const std::wstring temporary = path + L".tmp";
     FILE* file = nullptr;
@@ -1152,8 +1641,9 @@ void InventoryUi_SaveState()
         return;
     }
     nlohmann::json root;
-    root["schema"] = 12;
+    root["schema"] = 13;
     root["slot"] = InventoryUi_GetSaveSlotIndex();
+    root["balance"] = InventoryUi_GetBalance();
     root["stash_scroll_row"] = g_inventoryStashScrollRow;
     if (g_inventoryStarterGrantVersion > 0)
     {
@@ -1240,6 +1730,7 @@ enum class InventoryStateLoadResult
 InventoryStateLoadResult InventoryUi_LoadState()
 {
     g_inventoryStarterGrantVersion = 0;
+    g_inventoryBalance = 0;
     const std::wstring path = InventoryUi_GetStatePath();
     HANDLE file = CreateFileW(
         path.c_str(),
@@ -1311,6 +1802,10 @@ InventoryStateLoadResult InventoryUi_LoadState()
     const int schemaVersion = root.value("schema", 1);
     g_inventoryStarterGrantVersion =
         root.value("starter_grant_version", 0);
+    g_inventoryBalance = std::clamp(
+        root.value("balance", 0LL),
+        0LL,
+        kInventoryBalanceMax);
     g_inventoryDroppedDildo = InventoryDroppedDildoSnapshot{};
     if (root.contains("dropped_dildo") &&
         root["dropped_dildo"].is_object())
@@ -1494,6 +1989,12 @@ InventoryStateLoadResult InventoryUi_LoadState()
     LogInfo(LogCategory_Inventory, L"Inventory", L"Inventory state loaded with %d item record(s); starter grant version=%d.",
         static_cast<int>(loaded.size()),
         g_inventoryStarterGrantVersion);
+    LogInfo(
+        LogCategory_Inventory,
+        L"Balance",
+        L"MOD balance loaded: %lld, schema=%d.",
+        InventoryUi_GetBalance(),
+        schemaVersion);
     return InventoryStateLoadResult::Loaded;
 }
 
@@ -2654,7 +3155,6 @@ void InventoryUi_UpdateEquipmentSlotHighlights()
 
 void InventoryUi_UpdateEquipmentSlots()
 {
-    int occupiedCount = 0;
     for (int category = 0;
          category < kInventoryEquipmentCategoryCount;
          ++category)
@@ -2664,7 +3164,6 @@ void InventoryUi_UpdateEquipmentSlots()
         const bool occupied = itemIndex >= 0;
         if (occupied)
         {
-            ++occupiedCount;
             const auto& item = g_inventoryItems[itemIndex];
             const auto& definition =
                 kEquipmentInventoryDefinitions[item.definition];
@@ -2781,25 +3280,6 @@ void InventoryUi_UpdateEquipmentSlots()
             1.0f);
     }
     InventoryUi_UpdateEquipmentSlotHighlights();
-    if (g_inventoryStatsLabel != nullptr)
-    {
-        char countLabel[128]{};
-        std::snprintf(
-            countLabel,
-            sizeof(countLabel),
-            "已装备 %d / %d 分类",
-            occupiedCount,
-            kInventoryEquipmentCategoryCount);
-        SetSceneText(
-            g_inventoryStatsLabel,
-            countLabel,
-            12.0f,
-            257,
-            0.77f,
-            0.80f,
-            0.84f,
-            1.0f);
-    }
 }
 
 void InventoryUi_UpdateQuickSlots()
@@ -2954,6 +3434,8 @@ void InventoryUi_RefreshEquipment()
         InventoryUi_UpdateQuickSlots();
     }
     InventoryUi_RefreshCharacterModel();
+    EquipmentStats_RefreshFromEquipment();
+    InventoryUi_RefreshEquippedStatTotalLabel();
 }
 
 void InventoryUi_UpdateDynamicLayout()
@@ -3392,6 +3874,7 @@ void InventoryUi_SetRoute(int route)
     {
         route = kInventoryRouteEquipment;
     }
+    InventoryUi_HideStatTooltip();
     g_inventoryActiveRoute = route;
     g_activeUiTab = route;
     if (route != kInventoryRouteEquipment && EquipmentPreviewUi_IsOpen())
@@ -3749,20 +4232,6 @@ void InventoryUi_CreateBackpackSlot(
         0.72f,
         0.77f,
         0.83f,
-        1.0f);
-    CreateSceneTextElement(
-        "BackpackSlotHint",
-        backpackTransform,
-        "背包装备位\n拖入包袋改变容量",
-        0.035f,
-        0.008f,
-        0.965f,
-        0.042f,
-        13.0f,
-        514,
-        0.78f,
-        0.82f,
-        0.88f,
         1.0f);
     SetWorldGameObjectActive(slot.icon.gameObject, false);
     InventoryUi_SetBackpackSlotGeometry();
@@ -4153,6 +4622,7 @@ void InventoryUi_Build(
     g_inventoryDraggingItem = -1;
     g_inventoryDragActive = false;
     g_inventoryRotateKeyDown = false;
+    g_inventoryRightRotateRequested = false;
     g_inventoryHoveredEquipmentSlot = -1;
     g_inventoryHoveredQuickSlot = -1;
     g_inventoryQuickSlotDragSource = -1;
@@ -4190,6 +4660,20 @@ void InventoryUi_Build(
             514,
             true);
     }
+    g_inventoryBalanceLabel = CreateSceneTextElement(
+        "InventoryBalance",
+        headerTransform,
+        "",
+        0.018f,
+        0.012f,
+        0.255f,
+        0.250f,
+        15.0f,
+        257,
+        0.96f,
+        0.82f,
+        0.40f,
+        1.0f).text;
 
     auto equipmentPage = CreateScenePanel(
         "EquipmentPage",
@@ -4220,7 +4704,7 @@ void InventoryUi_Build(
     CreateSceneTextElement(
         "EquipmentTitle",
         loadoutTransform,
-        "装备  /  EQUIPMENT",
+        "装备",
         0.035f,
         0.925f,
         0.965f,
@@ -4231,71 +4715,62 @@ void InventoryUi_Build(
         0.97f,
         0.99f,
         1.0f);
-    CreateSceneTextElement(
-        "EquipmentSubtitle",
-        loadoutTransform,
-        "SURVIVAL OPERATOR  ·  TACTICAL LOADOUT",
-        0.045f,
-        0.875f,
-        0.955f,
-        0.918f,
-        12.0f,
-        257,
-        0.67f,
-        0.72f,
-        0.78f,
-        1.0f);
-
+    constexpr float equipmentPanelMinX = 0.024f;
+    constexpr float equipmentPanelMinY = 0.055f;
+    constexpr float equipmentPanelMaxX = 0.350f;
+    constexpr float equipmentPanelMaxY = 0.884f;
+    const float equipmentPanelWidth =
+        equipmentPanelMaxX - equipmentPanelMinX;
+    const float equipmentPanelHeight =
+        equipmentPanelMaxY - equipmentPanelMinY;
+    for (int index = 0;
+         index < kInventoryFormalStatCount;
+         ++index)
+    {
+        char objectName[64]{};
+        std::snprintf(
+            objectName,
+            sizeof(objectName),
+            "EquipmentStatTotal_%02d",
+            index);
+        const float rowMaxY =
+            kInventoryStatListTopY -
+            static_cast<float>(index) *
+                kInventoryStatRowHeight;
+        const float rowMinY = rowMaxY - kInventoryStatRowHeight;
+        g_inventoryStatRows[index] = CreateSceneTextElement(
+            objectName,
+            loadoutTransform,
+            "",
+            kInventoryStatListMinX,
+            rowMinY,
+            kInventoryStatListMaxX,
+            rowMaxY,
+            12.0f,
+            257,
+            0.86f,
+            0.91f,
+            1.0f,
+            1.0f);
+        g_inventoryStatScreenMinX[index] =
+            equipmentPanelMinX +
+            kInventoryStatListMinX * equipmentPanelWidth;
+        g_inventoryStatScreenMaxX[index] =
+            equipmentPanelMinX +
+            kInventoryStatListMaxX * equipmentPanelWidth;
+        g_inventoryStatScreenMinY[index] =
+            equipmentPanelMinY + rowMinY * equipmentPanelHeight;
+        g_inventoryStatScreenMaxY[index] =
+            equipmentPanelMinY + rowMaxY * equipmentPanelHeight;
+    }
+    g_inventoryDisplayedStatsValid = false;
     for (int category = 0;
          category < kInventoryEquipmentCategoryCount;
          ++category)
     {
         InventoryUi_CreateEquipmentSlot(category, loadoutTransform);
     }
-    CreateSceneTextElement(
-        "QuickItemTitle",
-        loadoutTransform,
-        "成人用品快捷键  /  ADULT GOODS",
-        0.285f,
-        0.254f,
-        0.715f,
-        0.298f,
-        11.0f,
-        514,
-        0.81f,
-        0.73f,
-        0.55f,
-        1.0f);
     InventoryUi_CreateQuickSlots(loadoutTransform);
-
-    CreateSceneTextElement(
-        "EquipmentHint",
-        loadoutTransform,
-        "拖动物品至分类槽穿戴  ·  拖回背包或仓库卸下  ·  R 旋转",
-        0.035f,
-        0.018f,
-        0.965f,
-        0.064f,
-        11.0f,
-        257,
-        0.66f,
-        0.70f,
-        0.75f,
-        1.0f);
-    g_inventoryStatsLabel = CreateSceneTextElement(
-        "EquipmentStats",
-        loadoutTransform,
-        "",
-        0.035f,
-        0.072f,
-        0.965f,
-        0.120f,
-        12.0f,
-        257,
-        0.77f,
-        0.80f,
-        0.84f,
-        1.0f).text;
 
     auto backpackPanel = CreateScenePanel(
         "BackpackColumn",
@@ -4311,7 +4786,7 @@ void InventoryUi_Build(
     CreateSceneTextElement(
         "BackpackTitle",
         backpackPanel.rect,
-        "背包  /  BACKPACK",
+        "背包",
         0.035f,
         0.915f,
         0.965f,
@@ -4362,7 +4837,7 @@ void InventoryUi_Build(
     CreateSceneTextElement(
         "SafeBoxTitle",
         safeBoxPanel.rect,
-        "安全箱  /  SECURE CONTAINER",
+        "安全箱",
         0.035f,
         0.760f,
         0.760f,
@@ -4373,22 +4848,6 @@ void InventoryUi_Build(
         0.86f,
         0.66f,
         1.0f);
-    auto safeBoxSize = CreateSceneTextElement(
-        "SafeBoxSize",
-        safeBoxPanel.rect,
-        "2 × 2  ·  固定",
-        0.775f,
-        0.760f,
-        0.965f,
-        0.965f,
-        11.0f,
-        514,
-        0.78f,
-        0.76f,
-        0.72f,
-        1.0f);
-    g_inventorySafeBoxSizeLabel = safeBoxSize.text;
-
     auto stashPanel = CreateScenePanel(
         "StashColumn",
         equipmentTransform,
@@ -4403,7 +4862,7 @@ void InventoryUi_Build(
     CreateSceneTextElement(
         "StashTitle",
         stashPanel.rect,
-        "仓库  /  STASH",
+        "仓库",
         0.025f,
         0.915f,
         0.760f,
@@ -4413,20 +4872,6 @@ void InventoryUi_Build(
         0.95f,
         0.96f,
         0.98f,
-        1.0f);
-    CreateSceneTextElement(
-        "StashSize",
-        stashPanel.rect,
-        "10 x 20  ·  200 CELLS",
-        0.765f,
-        0.915f,
-        0.975f,
-        0.975f,
-        12.0f,
-        514,
-        0.71f,
-        0.75f,
-        0.80f,
         1.0f);
     g_inventoryStashScrollTrack = CreateScenePanel(
         "StashScrollTrack",
@@ -4467,7 +4912,7 @@ void InventoryUi_Build(
     g_inventoryStatusLabel = CreateSceneTextElement(
         "InventoryStatus",
         equipmentTransform,
-        "默认穿着基础外衣·外套  ·  外套同时占用上衣与下衣",
+        "",
         0.620f,
         0.012f,
         0.975f,
@@ -4505,10 +4950,42 @@ void InventoryUi_Build(
         0.86f,
         0.92f,
         1.0f).text;
+    g_inventoryStatTooltip = CreateScenePanel(
+        "InventoryStatTooltip",
+        equipmentTransform,
+        0.050f,
+        0.050f,
+        0.050f + g_inventoryStatTooltipWidth,
+        0.050f + g_inventoryStatTooltipHeight,
+        0.035f,
+        0.047f,
+        0.065f,
+        0.990f);
+    g_inventoryStatTooltipText = CreateSceneTextElement(
+        "InventoryStatTooltipText",
+        g_inventoryStatTooltip.rect,
+        "",
+        0.020f,
+        0.12f,
+        0.980f,
+        0.88f,
+        12.0f,
+        513,
+        0.90f,
+        0.94f,
+        1.0f,
+        1.0f);
+    SetWorldGameObjectActive(
+        g_inventoryStatTooltip.gameObject,
+        false);
+    SetWorldGameObjectActive(
+        g_inventoryStatTooltipText.gameObject,
+        false);
 
     ExhibitionUi_Build(rootTransform);
     InventoryUi_SetRoute(kInventoryRouteEquipment);
     InventoryUi_RefreshEquipment();
+    InventoryUi_RefreshBalanceLabel();
     ClearSceneEventSelection();
     LogInfo(LogCategory_Inventory, L"Inventory", L"Inventory equipment categories, backpack and stash UI created.");
 }
@@ -4522,6 +4999,7 @@ void InventoryUi_PrepareForSceneTransition()
     g_inventoryBadgeSprite = nullptr;
     g_inventoryDragActive = false;
     g_inventoryDragMoved = false;
+    g_inventoryRightRotateRequested = false;
     g_inventoryDraggingItem = -1;
     g_inventoryHoveredEquipmentSlot = -1;
     g_inventoryHoveredQuickSlot = -1;
@@ -4532,7 +5010,15 @@ void InventoryUi_PrepareForSceneTransition()
     g_inventoryPlaceholderPage = nullptr;
     g_inventoryPlaceholderTitle = nullptr;
     g_inventoryStatusLabel = nullptr;
-    g_inventoryStatsLabel = nullptr;
+    for (auto& row : g_inventoryStatRows)
+    {
+        row = SceneUiElement{};
+    }
+    g_inventoryHoveredStat = -1;
+    g_inventoryStatTooltip = SceneUiElement{};
+    g_inventoryStatTooltipText = SceneUiElement{};
+    g_inventoryDisplayedStatsValid = false;
+    g_inventoryBalanceLabel = nullptr;
     g_inventoryBackpackSizeLabel = nullptr;
     g_inventorySafeBoxSizeLabel = nullptr;
     g_inventoryStashScrollTrack = SceneUiElement{};
@@ -4724,6 +5210,7 @@ void InventoryUi_RestoreDraggedItem()
     InventoryUi_SetTileColor(g_inventoryDraggingItem, true, false);
     g_inventoryDragActive = false;
     g_inventoryDragMoved = false;
+    g_inventoryRightRotateRequested = false;
     g_inventoryHoveredEquipmentSlot = -1;
     g_inventoryHoveredQuickSlot = -1;
     g_inventoryQuickSlotDragSource = -1;
@@ -4746,6 +5233,7 @@ void InventoryUi_CancelUnmovedDrag()
     // UI/model refresh calls on this path.
     g_inventoryDragActive = false;
     g_inventoryDragMoved = false;
+    g_inventoryRightRotateRequested = false;
     g_inventoryHoveredEquipmentSlot = -1;
     g_inventoryHoveredQuickSlot = -1;
     g_inventoryQuickSlotDragSource = -1;
@@ -4756,6 +5244,7 @@ void InventoryUi_UpdateDrag()
 {
     if (ItemContextMenu_ShouldBlockPointer())
     {
+        InventoryUi_HideStatTooltip();
         return;
     }
     const bool leftDown =
@@ -4766,19 +5255,14 @@ void InventoryUi_UpdateDrag()
                 0x8000) != 0);
     const bool leftPressed = leftDown && !g_inventoryLeftButtonWasDown;
     g_inventoryLeftButtonWasDown = leftDown;
-    if (g_extendedModeState.load() == kExtendedModeActiveStateValue &&
-        !g_inventoryDragActive &&
-        !g_extendedManualPointerInventoryEligible.load())
-    {
-        g_inventoryLeftButtonWasDown = leftDown;
-        return;
-    }
     if (GetTickCount64() < g_inventoryInputUnlockTick)
     {
+        InventoryUi_HideStatTooltip();
         return;
     }
     if (EquipmentPreviewUi_IsOpen())
     {
+        InventoryUi_HideStatTooltip();
         return;
     }
     if (g_inventoryActiveRoute != kInventoryRouteEquipment ||
@@ -4787,6 +5271,7 @@ void InventoryUi_UpdateDrag()
     {
         if (!g_inventoryDragActive)
         {
+            InventoryUi_HideStatTooltip();
             return;
         }
     }
@@ -4814,6 +5299,13 @@ void InventoryUi_UpdateDrag()
         static_cast<float>(cursor.y - clientRect.top);
     const float cursorX = cursorPixelsX / width;
     const float cursorY = 1.0f - cursorPixelsY / height;
+    InventoryUi_UpdateStatHover(cursorX, cursorY);
+    if (g_extendedModeState.load() == kExtendedModeActiveStateValue &&
+        !g_inventoryDragActive &&
+        !g_extendedManualPointerInventoryEligible.load())
+    {
+        return;
+    }
     const bool rotateDown =
         (GameplayInput_ReadRawAsyncKeyState('R') & 0x8000) != 0;
 
@@ -4856,6 +5348,7 @@ void InventoryUi_UpdateDrag()
     {
         if (!g_inventoryDragActive)
         {
+            g_inventoryRightRotateRequested = false;
             g_inventoryRotateKeyDown = rotateDown;
             g_inventoryHoveredEquipmentSlot = -1;
             g_inventoryHoveredQuickSlot = -1;
@@ -4998,6 +5491,7 @@ void InventoryUi_UpdateDrag()
                 const int movedItemIndex = g_inventoryDraggingItem;
                 g_inventoryDragActive = false;
                 g_inventoryDragMoved = false;
+                g_inventoryRightRotateRequested = false;
                 g_inventoryHoveredEquipmentSlot = -1;
                 g_inventoryDraggingItem = -1;
                 if (g_inventoryQuickSlotDragSource >= 0)
@@ -5047,6 +5541,7 @@ void InventoryUi_UpdateDrag()
                 const int equippedItemIndex = g_inventoryDraggingItem;
                 g_inventoryDragActive = false;
                 g_inventoryDragMoved = false;
+                g_inventoryRightRotateRequested = false;
                 g_inventoryHoveredEquipmentSlot = -1;
                 g_inventoryDraggingItem = -1;
                 if (g_inventoryQuickSlotDragSource >= 0)
@@ -5128,6 +5623,7 @@ void InventoryUi_UpdateDrag()
             g_inventoryDragCellHeight = metrics.cellHeight;
             g_inventoryDragActive = true;
             g_inventoryDragMoved = false;
+            g_inventoryRightRotateRequested = false;
             g_inventoryQuickSlotDragSource = pressedQuickSlot;
             g_inventoryRotateKeyDown = rotateDown;
             return;
@@ -5191,6 +5687,7 @@ void InventoryUi_UpdateDrag()
             g_inventoryDragCellHeight = metrics.cellHeight;
             g_inventoryDragActive = true;
             g_inventoryDragMoved = false;
+            g_inventoryRightRotateRequested = false;
             g_inventoryRotateKeyDown = rotateDown;
             return;
         }
@@ -5224,6 +5721,7 @@ void InventoryUi_UpdateDrag()
                 g_inventoryDragCellHeight = metrics.cellHeight;
                 g_inventoryDragActive = true;
                 g_inventoryDragMoved = false;
+                g_inventoryRightRotateRequested = false;
                 g_inventoryRotateKeyDown = rotateDown;
                 return;
             }
@@ -5248,8 +5746,10 @@ void InventoryUi_UpdateDrag()
     }
     InventoryUi_SetTileColor(g_inventoryDraggingItem, true, true);
     InventoryUi_UpdateEquipmentSlotHighlights();
-    InventoryUi_SetStatus("正在移动物品  ·  按 R 旋转  ·  左侧区域自动装备");
-    if (rotateDown && !g_inventoryRotateKeyDown)
+    const bool rightRotateRequested =
+        g_inventoryRightRotateRequested.exchange(false);
+    if ((rotateDown && !g_inventoryRotateKeyDown) ||
+        rightRotateRequested)
     {
         const int oldWidth = item.width;
         item.width = item.height;
@@ -5437,7 +5937,15 @@ void InventoryUi_Reset()
     g_inventoryPlaceholderPage = nullptr;
     g_inventoryPlaceholderTitle = nullptr;
     g_inventoryStatusLabel = nullptr;
-    g_inventoryStatsLabel = nullptr;
+    for (auto& row : g_inventoryStatRows)
+    {
+        row = SceneUiElement{};
+    }
+    g_inventoryHoveredStat = -1;
+    g_inventoryStatTooltip = SceneUiElement{};
+    g_inventoryStatTooltipText = SceneUiElement{};
+    g_inventoryDisplayedStatsValid = false;
+    g_inventoryBalanceLabel = nullptr;
     g_inventoryBackpackSizeLabel = nullptr;
     g_inventorySafeBoxSizeLabel = nullptr;
     g_inventoryStashScrollTrack = SceneUiElement{};
@@ -5467,6 +5975,7 @@ void InventoryUi_Reset()
     g_inventoryDragActive = false;
     g_inventoryDragMoved = false;
     g_inventoryRotateKeyDown = false;
+    g_inventoryRightRotateRequested = false;
     g_inventoryLeftButtonWasDown = false;
     g_inventoryStateLoaded = false;
     g_inventoryInputUnlockTick = 0;

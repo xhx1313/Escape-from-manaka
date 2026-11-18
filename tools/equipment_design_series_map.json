@@ -1,0 +1,89 @@
+{
+  "schema_version": 1,
+  "default_family": "default",
+  "task_families": {
+    "default": {
+      "label": "默认任务系列",
+      "required_tool_tags": [],
+      "depth": 0
+    },
+    "eye_mask": {
+      "label": "眼罩系列",
+      "required_tool_tags": [
+        "eye_mask"
+      ],
+      "depth": 1
+    },
+    "handcuff": {
+      "label": "手铐系列",
+      "required_tool_tags": [
+        "handcuff"
+      ],
+      "depth": 1
+    },
+    "vibrator": {
+      "label": "振动器系列",
+      "required_tool_tags": [
+        "vibrator"
+      ],
+      "depth": 1
+    },
+    "dildo": {
+      "label": "假阳具系列",
+      "required_tool_tags": [
+        "dildo"
+      ],
+      "depth": 1
+    },
+    "eye_handcuff": {
+      "label": "眼罩+手铐系列",
+      "required_tool_tags": [
+        "eye_mask",
+        "handcuff"
+      ],
+      "depth": 2
+    },
+    "eye_vibrator": {
+      "label": "眼罩+振动器系列",
+      "required_tool_tags": [
+        "eye_mask",
+        "vibrator"
+      ],
+      "depth": 2
+    },
+    "handcuff_vibrator": {
+      "label": "振动器+手铐系列",
+      "required_tool_tags": [
+        "handcuff",
+        "vibrator"
+      ],
+      "depth": 2
+    },
+    "eye_handcuff_vibrator": {
+      "label": "眼罩+手铐+振动器系列",
+      "required_tool_tags": [
+        "eye_mask",
+        "handcuff",
+        "vibrator"
+      ],
+      "depth": 3
+    }
+  },
+  "equipment_series": {
+    "邪教修女": "eye_mask",
+    "忍者": "handcuff",
+    "魅魔": "handcuff",
+    "兔女郎": "vibrator",
+    "奶牛": "vibrator",
+    "猫娘": "vibrator",
+    "战术女仆": "dildo",
+    "野兽": "dildo",
+    "Chic西装": "eye_handcuff",
+    "奢华西装": "eye_handcuff",
+    "狱警": "eye_vibrator",
+    "毛衣": "eye_vibrator",
+    "校园连帽": "handcuff_vibrator",
+    "校园辣妹": "handcuff_vibrator",
+    "乳胶小马": "eye_handcuff_vibrator"
+  }
+}

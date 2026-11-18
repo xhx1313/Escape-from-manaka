@@ -357,9 +357,14 @@ void TitleUpdateHook(Il2CppObject* instance, const Il2CppMethod* method)
     }
     ExtendedMode_TickMainThread(nullptr);
 
+    // ExtendedMode_TickMainThread may have just completed the Exiting ->
+    // Inactive hand-off. Re-read the state so the title button is created only
+    // after the reset, instead of once before and once after it.
+    const bool titleButtonSurfaceActive =
+        g_extendedModeState.load() == ExtendedMode_Inactive;
     if (!g_nativeButtonInjected &&
         instance != nullptr &&
-        titleSurfaceActive)
+        titleButtonSurfaceActive)
     {
         g_titleInstance = instance;
         ProbeCharacterSystems();
@@ -1037,6 +1042,24 @@ void InstallNativeHooks()
         npcManagerClass,
         "OnUpdate",
         0);
+    auto* npcStrangenessManagerClass = FindClass(
+        "ExposureUnnoticed2.Object3D.NPC.Script",
+        "NpcStrangenessManager");
+    const auto npcStrangenessManagerUpdate = FindMethod(
+        npcStrangenessManagerClass,
+        "OnUpdate",
+        0);
+    auto* strangenessValueManagerClass = FindClass(
+        "ExposureUnnoticed2.Object3D.NPC.Script",
+        "StrangenessValueManager");
+    const auto strangenessValueSet = FindMethod(
+        strangenessValueManagerClass,
+        "set_Value",
+        1);
+    const auto strangenessValueUpdate = FindMethod(
+        strangenessValueManagerClass,
+        "OnUpdate",
+        1);
     auto* playerActionClass = FindClass(
         "ExposureUnnoticed2.Object3D.Player.Scripts",
         "PlayerAction");
@@ -1074,6 +1097,42 @@ void InstallNativeHooks()
     const auto playerAnimationSetEcstasy = FindMethod(
         playerAnimationManagerClass,
         "SetEcstasy",
+        1);
+    auto* playerEcstasyControllerClass = FindClass(
+        "ExposureUnnoticed2.Object3D.Player.Scripts",
+        "PlayerEcstasyController");
+    const auto playerEcstasyControllerUpdate = FindMethod(
+        playerEcstasyControllerClass,
+        "OnUpdate",
+        0);
+    auto* playerHandcuffsControllerClass = FindClass(
+        "ExposureUnnoticed2.Object3D.Player.Scripts",
+        "PlayerHandcuffsController");
+    const auto playerHandcuffsControllerUpdate = FindMethod(
+        playerHandcuffsControllerClass,
+        "OnUpdate",
+        1);
+    auto* staminaManagerClass = FindClass(
+        "ExposureUnnoticed2.Object3D.Player.Scripts",
+        "StaminaManager");
+    const auto staminaManagerConsumePerSecond = FindMethod(
+        staminaManagerClass,
+        "ConsumePerSecond",
+        1);
+    const auto staminaManagerOnUpdate = FindMethod(
+        staminaManagerClass,
+        "OnUpdate",
+        0);
+    const auto staminaManagerUpdateMax = FindMethod(
+        staminaManagerClass,
+        "UpdateMax",
+        0);
+    auto* smoothFloatClass = FindClass(
+        "ExposureUnnoticed2.Scripts.Base",
+        "SmoothFloat");
+    const auto smoothFloatUpdateTo = FindMethod(
+        smoothFloatClass,
+        "UpdateTo",
         1);
     auto* playerAdultGoodsControllerClass = FindClass(
         "ExposureUnnoticed2.Object3D.Player.Scripts",
@@ -1310,6 +1369,12 @@ void InstallNativeHooks()
         MethodPointer(playerActionOnFrameEnd);
     auto* npcManagerUpdatePointer = MethodPointer(
         npcManagerUpdate);
+    auto* npcStrangenessManagerUpdatePointer = MethodPointer(
+        npcStrangenessManagerUpdate);
+    auto* strangenessValueSetPointer = MethodPointer(
+        strangenessValueSet);
+    auto* strangenessValueUpdatePointer = MethodPointer(
+        strangenessValueUpdate);
     auto* playerAnimationManagerUpdatePointer = MethodPointer(
         playerAnimationManagerUpdate);
     auto* playerAnimationTransActionPointer =
@@ -1320,6 +1385,18 @@ void InstallNativeHooks()
         MethodPointer(playerAnimationSetGamanBaibu);
     auto* playerAnimationSetEcstasyPointer =
         MethodPointer(playerAnimationSetEcstasy);
+    auto* playerEcstasyControllerUpdatePointer =
+        MethodPointer(playerEcstasyControllerUpdate);
+    auto* playerHandcuffsControllerUpdatePointer =
+        MethodPointer(playerHandcuffsControllerUpdate);
+    auto* staminaManagerConsumePerSecondPointer =
+        MethodPointer(staminaManagerConsumePerSecond);
+    auto* staminaManagerOnUpdatePointer =
+        MethodPointer(staminaManagerOnUpdate);
+    auto* staminaManagerUpdateMaxPointer =
+        MethodPointer(staminaManagerUpdateMax);
+    auto* smoothFloatUpdateToPointer =
+        MethodPointer(smoothFloatUpdateTo);
     auto* playerAdultGoodsControllerUpdatePointer =
         MethodPointer(playerAdultGoodsControllerUpdate);
     auto* playerClothesActionUpdatePointer = MethodPointer(
@@ -1784,6 +1861,31 @@ void InstallNativeHooks()
         &g_originalPlayerAnimationSetEcstasy,
         L"PlayerAnimationManager.SetEcstasy") ? 1 : 0;
     optionalHooksInstalled += installOptionalHook(
+        playerEcstasyControllerUpdatePointer,
+        reinterpret_cast<LPVOID>(&PlayerEcstasyControllerUpdateHook),
+        &g_originalPlayerEcstasyControllerUpdate,
+        L"PlayerEcstasyController.OnUpdate") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        staminaManagerConsumePerSecondPointer,
+        reinterpret_cast<LPVOID>(&StaminaManagerConsumePerSecondHook),
+        &g_originalStaminaManagerConsumePerSecond,
+        L"StaminaManager.ConsumePerSecond") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        staminaManagerOnUpdatePointer,
+        reinterpret_cast<LPVOID>(&StaminaManagerOnUpdateHook),
+        &g_originalStaminaManagerOnUpdate,
+        L"StaminaManager.OnUpdate") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        staminaManagerUpdateMaxPointer,
+        reinterpret_cast<LPVOID>(&StaminaManagerUpdateMaxHook),
+        &g_originalStaminaManagerUpdateMax,
+        L"StaminaManager.UpdateMax") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        smoothFloatUpdateToPointer,
+        reinterpret_cast<LPVOID>(&SmoothFloatUpdateToHook),
+        &g_originalSmoothFloatUpdateTo,
+        L"SmoothFloat.UpdateTo") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
         playerAdultGoodsControllerUpdatePointer,
         reinterpret_cast<LPVOID>(&PlayerAdultGoodsControllerUpdateHook),
         &g_originalPlayerAdultGoodsControllerUpdate,
@@ -1808,10 +1910,26 @@ void InstallNativeHooks()
         reinterpret_cast<LPVOID>(&PlayerAnimationEndEcstasyHook),
         &g_originalPlayerAnimationEndEcstasy,
         L"PlayerAnimationReceiver.OnAnimEndEcstasy") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        npcStrangenessManagerUpdatePointer,
+        reinterpret_cast<LPVOID>(&NpcStrangenessManagerUpdateHook),
+        &g_originalNpcStrangenessManagerUpdate,
+        L"NpcStrangenessManager.OnUpdate") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        strangenessValueSetPointer,
+        reinterpret_cast<LPVOID>(&StrangenessValueManagerSetValueHook),
+        &g_originalStrangenessValueSet,
+        L"StrangenessValueManager.set_Value") ? 1 : 0;
+    optionalHooksInstalled += installOptionalHook(
+        strangenessValueUpdatePointer,
+        reinterpret_cast<LPVOID>(&StrangenessValueManagerUpdateHook),
+        &g_originalStrangenessValueUpdate,
+        L"StrangenessValueManager.OnUpdate") ? 1 : 0;
     LogInfo(
         LogCategory_Hook,
         L"ActionHooks",
-        L"Action and animation logging hooks installed: %d/12.",
+        L"Action, animation, climax/stamina, and equipment stat hooks "
+        L"installed: %d/20.",
         optionalHooksInstalled);
 
     g_nativeHooksInstalled = true;

@@ -6,69 +6,6 @@ WNDPROC g_originalGameplayWindowProc = nullptr;
 HWND g_gameplayWindowSubclassTarget = nullptr;
 std::atomic<bool> g_gameplayInventoryTogglePhysicalDown{false};
 std::atomic<bool> g_gameplayInventoryClosePendingUntilRelease{false};
-std::atomic<bool> g_eyeMaskVisionAdjustmentKeyDown[2]{
-    false,
-    false
-};
-std::atomic<bool> g_eyeMaskVisionAdjustmentKeyConsumed[2]{
-    false,
-    false
-};
-
-bool GameplayInput_ProcessEyeMaskVisionAdjustmentKey(
-    int virtualKey,
-    bool keyDown,
-    bool keyUp,
-    const wchar_t* source)
-{
-    const int direction =
-        virtualKey == VK_UP
-            ? 1
-            : (virtualKey == VK_DOWN ? -1 : 0);
-    if (direction == 0)
-    {
-        return false;
-    }
-    const int index = direction > 0 ? 0 : 1;
-    if (keyDown)
-    {
-        const bool wasDown =
-            g_eyeMaskVisionAdjustmentKeyDown[index].exchange(true);
-        if (wasDown)
-        {
-            return g_eyeMaskVisionAdjustmentKeyConsumed[index].load();
-        }
-        const bool available =
-            g_extendedModeState.load() == ExtendedMode_Gameplay &&
-            g_eyeMaskVisionAdjustmentAvailable.load() &&
-            !g_extendedOriginalSystemMenuVisible.load() &&
-            !g_extendedOriginalInteractionMenuActive.load() &&
-            !g_extendedOriginalHandcuffsPanelActive.load() &&
-            !GameplayInput_IsCustomModalUiOpen();
-        if (available &&
-            EyeMaskVision_RequestAdjustment(direction, source))
-        {
-            g_eyeMaskVisionAdjustmentKeyConsumed[index] = true;
-            return true;
-        }
-        return false;
-    }
-    if (keyUp)
-    {
-        g_eyeMaskVisionAdjustmentKeyDown[index] = false;
-        return g_eyeMaskVisionAdjustmentKeyConsumed[index].exchange(false);
-    }
-    return false;
-}
-
-void GameplayInput_ResetEyeMaskVisionAdjustmentKeys()
-{
-    for (int index = 0; index < 2; ++index)
-    {
-        g_eyeMaskVisionAdjustmentKeyDown[index] = false;
-        g_eyeMaskVisionAdjustmentKeyConsumed[index] = false;
-    }
-}
 
 bool GameplayInput_QueueInventoryToggle(const wchar_t* source)
 {
@@ -109,7 +46,6 @@ LRESULT CALLBACK GameplayWindowProc(
     if (message == WM_KILLFOCUS)
     {
         g_gameplayInventoryTogglePhysicalDown = false;
-        GameplayInput_ResetEyeMaskVisionAdjustmentKeys();
         g_gameplayInventoryClosePendingUntilRelease = false;
         GameplayWorldMap_ResetPhysicalInput();
         CheckpointSystem_ResetMapEditorPhysicalKeys();
@@ -191,14 +127,6 @@ LRESULT CALLBACK GameplayWindowProc(
         if (!systemShortcut)
         {
             if (GameplayInput_ProcessEscapeDismissKey(
-                    virtualKey,
-                    keyDown,
-                    keyUp,
-                    L"the game-window message path"))
-            {
-                return 0;
-            }
-            if (GameplayInput_ProcessEyeMaskVisionAdjustmentKey(
                     virtualKey,
                     keyDown,
                     keyUp,
@@ -1173,14 +1101,6 @@ LRESULT CALLBACK GameplayKeyboardHook(
                     wParam,
                     lParam);
             }
-            if (GameplayInput_ProcessEyeMaskVisionAdjustmentKey(
-                    keyboard->vkCode,
-                    keyDown,
-                    keyUp,
-                    L"the low-level gameplay keyboard hook"))
-            {
-                return 1;
-            }
             switch (keyboard->vkCode)
             {
             case 'E':
@@ -1953,24 +1873,6 @@ void RuntimeThread()
             !NpcDialogue_IsActive() &&
             !g_gameplayInventoryOpen.load() &&
             !CheckpointSystem_IsTaskUiOpen();
-        if (g_gameplayKeyboardHook == nullptr &&
-            foregroundGameplay)
-        {
-            const bool upPressed =
-                (GameplayInput_ReadRawAsyncKeyState(VK_UP) & 0x8000) != 0;
-            const bool downPressed =
-                (GameplayInput_ReadRawAsyncKeyState(VK_DOWN) & 0x8000) != 0;
-            GameplayInput_ProcessEyeMaskVisionAdjustmentKey(
-                VK_UP,
-                upPressed,
-                !upPressed,
-                L"foreground polling fallback");
-            GameplayInput_ProcessEyeMaskVisionAdjustmentKey(
-                VK_DOWN,
-                downPressed,
-                !downPressed,
-                L"foreground polling fallback");
-        }
         for (int quickSlot = 0;
              quickSlot < kInventoryQuickSlotCount;
              ++quickSlot)

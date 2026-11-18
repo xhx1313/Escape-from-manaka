@@ -86,7 +86,13 @@ Expand-Archive -LiteralPath $runtimeArchive `
 $temporaryProxy = $proxyTarget + ".local-new"
 Copy-Item -LiteralPath $nativeProxy -Destination $temporaryProxy -Force
 if (Test-Path -LiteralPath $proxyTarget) {
-    [IO.File]::Replace($temporaryProxy, $proxyTarget, $null, $true)
+    $replaceBackup = $proxyTarget + ".local-previous"
+    [IO.File]::Replace(
+        $temporaryProxy,
+        $proxyTarget,
+        $replaceBackup,
+        $true)
+    Remove-Item -LiteralPath $replaceBackup -Force
 } else {
     [IO.File]::Move($temporaryProxy, $proxyTarget)
 }

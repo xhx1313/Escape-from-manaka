@@ -357,6 +357,12 @@ void* g_originalPlayerAnimationTransAction = nullptr;
 void* g_originalPlayerAnimationSetMoveSpeed = nullptr;
 void* g_originalPlayerAnimationSetGamanBaibu = nullptr;
 void* g_originalPlayerAnimationSetEcstasy = nullptr;
+void* g_originalPlayerEcstasyControllerUpdate = nullptr;
+void* g_originalPlayerHandcuffsControllerUpdate = nullptr;
+void* g_originalStaminaManagerConsumePerSecond = nullptr;
+void* g_originalStaminaManagerOnUpdate = nullptr;
+void* g_originalStaminaManagerUpdateMax = nullptr;
+void* g_originalSmoothFloatUpdateTo = nullptr;
 void* g_originalPlayerAdultGoodsControllerUpdate = nullptr;
 void* g_originalPlayerAnimationCommonStartAnim = nullptr;
 void* g_originalPlayerAnimationCommonOnEndAnim = nullptr;
@@ -364,6 +370,9 @@ void* g_originalPlayerAnimationChangeVibrator = nullptr;
 void* g_originalPlayerAnimationEndEcstasy = nullptr;
 void* g_originalPlayerClothesActionUpdate = nullptr;
 void* g_originalPlayerClothesGetExposedBodyParts = nullptr;
+void* g_originalNpcStrangenessManagerUpdate = nullptr;
+void* g_originalStrangenessValueSet = nullptr;
+void* g_originalStrangenessValueUpdate = nullptr;
 void* g_originalPlayerHoldInHandHold = nullptr;
 void* g_originalPlayerAnimationDropClothes = nullptr;
 void* g_originalPlayerAnimationEndPickingCoat = nullptr;
@@ -450,6 +459,7 @@ void EquipmentPreviewUi_ApplyOutfitToGameplayAvatar(
     int itemCount);
 SHORT GameplayInput_ReadRawAsyncKeyState(int virtualKey);
 void InteractionFilter_ApplySceneWhitelist();
+void InteractionFilter_DisablePortalTriggers(bool hideObjects, bool forceLog);
 bool ExtendedMode_IsUnityObjectAlive(Il2CppObject* object);
 void CheckpointSystem_OnGameplayReady(int stageType);
 void CheckpointSystem_Tick();
@@ -487,15 +497,64 @@ void EyeMaskVision_ApplyAfterOriginalUpdate();
 bool EyeMaskVision_IsEyeMaskActive();
 void EyeMaskVision_ForceThirdPersonAfterRemoval();
 void EyeMaskVision_ResetCameraTracking();
-bool EyeMaskVision_RequestAdjustment(
-    int direction,
-    const wchar_t* source);
-bool EyeMaskVision_ShouldSuppressUnityArrowKey(int keyCode);
+void EquipmentStats_RefreshFromEquipment();
+int EquipmentStats_GetEffectiveConservatism();
+int EquipmentStats_GetEffectiveNormality();
+int EquipmentStats_GetEffectiveStrength();
+int EquipmentStats_GetEffectiveSpeed();
+int EquipmentStats_GetEffectiveClimaxSpeed();
+int EquipmentStats_GetEffectiveStaminaCapacity();
+int EquipmentStats_GetEffectiveStaminaRecovery();
+int EquipmentStats_GetEffectiveHandcuffProficiency();
+int EquipmentStats_GetEffectiveReward();
+long long EquipmentStats_GetRaidEarnings();
+float EquipmentStats_GetStaminaCapacityMultiplier();
+float EquipmentStats_GetRewardMultiplier();
+bool EquipmentStats_ReadStaminaSnapshot(float& current, float& max);
+void EquipmentStats_ResetSceneRuntimeBindings();
+void EquipmentStats_UpdateExposureReward();
+void EquipmentStats_BeginRaid(const wchar_t* source);
+long long EquipmentStats_CommitRaidEarnings(const wchar_t* source);
+void EquipmentStats_DiscardRaidEarnings(const wchar_t* source);
+void EquipmentStats_PrepareHandcuffUnlock(Il2CppObject* playerController);
+void EquipmentStats_ObserveHandcuffUnlock(Il2CppObject* playerController);
+void SmoothFloatUpdateToHook(
+    Il2CppObject* smoothFloat,
+    float target,
+    const Il2CppMethod* method);
+void NpcStrangenessManagerUpdateHook(
+    Il2CppObject* manager,
+    const Il2CppMethod* method);
+void StaminaManagerConsumePerSecondHook(
+    Il2CppObject* manager,
+    float stamina,
+    const Il2CppMethod* method);
+void StaminaManagerOnUpdateHook(
+    Il2CppObject* manager,
+    const Il2CppMethod* method);
+void StaminaManagerUpdateMaxHook(
+    Il2CppObject* manager,
+    const Il2CppMethod* method);
+void StrangenessValueManagerSetValueHook(
+    Il2CppObject* valueManager,
+    float value,
+    const Il2CppMethod* method);
+void StrangenessValueManagerUpdateHook(
+    Il2CppObject* valueManager,
+    bool isSkipReduceCount,
+    const Il2CppMethod* method);
 void GameplayActionPursuit_RequestFromEMenu(int actionType);
 void GameplayActionPursuit_Tick();
 void GameplayActionPursuit_EnforceHoldsAfterNpcUpdate();
 void GameplayActionPursuit_Reset();
 void GameplayActionPursuit_ProbeDependencies();
+void GameplayStatusHud_ShowNotification(
+    const char* message,
+    unsigned int durationMs);
+void GameplayStatusHud_HideResidualGauges();
+int EquipmentStats_GetEffectivePerception();
+const wchar_t* ItemContextMenu_StatLabel(int index);
+const wchar_t* ItemContextMenu_StatDescription(int index);
 
 // --- Feature modules (included in dependency order) ---
 #include "modules/logging.inc"
@@ -520,6 +579,7 @@ void GameplayActionPursuit_ProbeDependencies();
 #include "modules/item_context_menu.inc"
 #include "modules/checkpoint_system.inc"
 #include "modules/eye_mask_vision.inc"
+#include "modules/equipment_stats.inc"
 #include "modules/gameplay_minimap.inc"
 #include "modules/mod_guide_ui.inc"
 #include "modules/checkpoint_map_editor.inc"
